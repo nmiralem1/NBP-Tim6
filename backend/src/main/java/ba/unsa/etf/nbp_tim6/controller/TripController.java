@@ -16,16 +16,37 @@ public class TripController {
         this.tripService = tripService;
     }
 
-    // ➕ CREATE
+    // CREATE
     @PostMapping
     public String createTrip(@RequestBody Trip trip) {
         tripService.createTrip(trip);
         return "Trip kreiran!";
     }
 
-    // 📋 GET
+    // GET by user
     @GetMapping("/user/{userId}")
     public List<Trip> getTrips(@PathVariable Integer userId) {
         return tripService.getTripsByUser(userId);
+    }
+
+    // GET by ID
+    @GetMapping("/{id}")
+    public Trip getTripById(@PathVariable Integer id) {
+        return tripService.getTripById(id);
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public String updateTrip(@PathVariable Integer id, @RequestBody Trip trip) {
+        trip.setId(id);
+        tripService.updateTrip(trip);
+        return "Trip ažuriran!";
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public String deleteTrip(@PathVariable Integer id) {
+        tripService.deleteTrip(id);
+        return "Trip obrisan!";
     }
 }

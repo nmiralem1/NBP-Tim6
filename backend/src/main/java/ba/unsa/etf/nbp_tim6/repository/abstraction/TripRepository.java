@@ -9,4 +9,10 @@ public interface TripRepository {
     int save(Trip trip);
 
     List<Trip> findByUserId(Integer userId);
+
+    Trip findById(Integer id);
+
+    int update(Trip trip);
+
+    int delete(Integer id);
 }

@@ -25,4 +25,28 @@ public class AccommodationServiceImpl implements AccommodationService {
     public List<Accommodation> getAccommodationsByCityId(Integer cityId) {
         return accommodationRepository.findByCityId(cityId);
     }
+
+    @Override
+    public Accommodation getAccommodationById(Integer id) {
+        Accommodation acc = accommodationRepository.findById(id);
+        if (acc == null) {
+            throw new RuntimeException("Accommodation not found!");
+        }
+        return acc;
+    }
+
+    @Override
+    public void createAccommodation(Accommodation accommodation) {
+        accommodationRepository.save(accommodation);
+    }
+
+    @Override
+    public void updateAccommodation(Accommodation accommodation) {
+        accommodationRepository.update(accommodation);
+    }
+
+    @Override
+    public void deleteAccommodation(Integer id) {
+        accommodationRepository.delete(id);
+    }
 }

@@ -23,30 +23,53 @@ public class BookingServiceImpl implements BookingService {
 
     public void createBooking(Booking booking) {
 
-        // 1. VALIDACIJA DATUMA
+        // Date validation
         long days = ChronoUnit.DAYS.between(
                 booking.getCheckIn(),
-                booking.getCheckOut()
-        );
+                booking.getCheckOut());
 
         if (days <= 0) {
             throw new RuntimeException("Check-out mora biti nakon check-in!");
         }
 
-        // 2. UZMI CIJENU
+        // Fetch price per night
         BigDecimal pricePerNight = accommodationRepository.getPricePerNight(booking.getAccommodationId());
 
-        // 3. IZRAČUNAJ UKUPNO
+        // Calculate total price
         BigDecimal total = pricePerNight.multiply(BigDecimal.valueOf(days));
         booking.setTotalPrice(total);
 
-        // 4. STATUS
+        // Set default status
         booking.setBookingStatus("pending");
 
-        // 5. GENERIŠI REFERENCU
+        // Generate booking reference
         booking.setBookingReference(UUID.randomUUID().toString());
 
-        // 6. SAVE
+        // Save
         bookingRepository.save(booking);
+    }
+
+    @Override
+    public Booking getBookingById(Integer id) {
+        Booking booking = bookingRepository.findById(id);
+        if (booking == null) {
+            throw new RuntimeException("Booking not found!");
+        }
+        return booking;
+    }
+
+    @Override
+    public java.util.List<Booking> getBookingsByUserId(Integer userId) {
+        return bookingRepository.findByUserId(userId);
+    }
+
+    @Override
+    public void updateBooking(Booking booking) {
+        bookingRepository.update(booking);
+    }
+
+    @Override
+    public void deleteBooking(Integer id) {
+        bookingRepository.delete(id);
     }
 }

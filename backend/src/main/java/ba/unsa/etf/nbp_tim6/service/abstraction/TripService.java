@@ -9,4 +9,10 @@ public interface TripService {
     void createTrip(Trip trip);
 
     List<Trip> getTripsByUser(Integer userId);
+
+    Trip getTripById(Integer id);
+
+    void updateTrip(Trip trip);
+
+    void deleteTrip(Integer id);
 }
