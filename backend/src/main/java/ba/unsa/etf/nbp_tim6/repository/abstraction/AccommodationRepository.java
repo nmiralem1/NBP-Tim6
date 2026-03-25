@@ -8,6 +8,16 @@ import java.util.List;
 public interface AccommodationRepository {
 
     BigDecimal getPricePerNight(Integer accommodationId);
+
     List<Accommodation> findAll();
+
     List<Accommodation> findByCityId(Integer cityId);
+
+    Accommodation findById(Integer id);
+
+    int save(Accommodation accommodation);
+
+    int update(Accommodation accommodation);
+
+    int delete(Integer id);
 }

@@ -20,4 +20,28 @@ public class CountryController {
     public List<Country> getAllCountries() {
         return countryService.getAllCountries();
     }
+
+    @GetMapping("/{id}")
+    public Country getCountryById(@PathVariable Integer id) {
+        return countryService.getCountryById(id);
+    }
+
+    @PostMapping
+    public String createCountry(@RequestBody Country country) {
+        countryService.createCountry(country);
+        return "Country created!";
+    }
+
+    @PutMapping("/{id}")
+    public String updateCountry(@PathVariable Integer id, @RequestBody Country country) {
+        country.setId(id);
+        countryService.updateCountry(country);
+        return "Country updated!";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteCountry(@PathVariable Integer id) {
+        countryService.deleteCountry(id);
+        return "Country deleted!";
+    }
 }

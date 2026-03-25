@@ -1,11 +1,13 @@
 package ba.unsa.etf.nbp_tim6.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
 public class Accommodation {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer id;
     private Integer cityId;
     private Integer accommodationTypeId;

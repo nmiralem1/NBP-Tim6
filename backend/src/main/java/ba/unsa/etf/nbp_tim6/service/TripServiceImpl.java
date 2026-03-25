@@ -18,9 +18,8 @@ public class TripServiceImpl implements TripService {
 
     public void createTrip(Trip trip) {
 
-        // poslovna logika
         if (trip.getStartDate().isAfter(trip.getEndDate())) {
-            throw new RuntimeException("Start date mora biti prije end date!");
+            throw new RuntimeException("Start date must be before end date!");
         }
 
         tripRepository.save(trip);
@@ -28,5 +27,24 @@ public class TripServiceImpl implements TripService {
 
     public List<Trip> getTripsByUser(Integer userId) {
         return tripRepository.findByUserId(userId);
+    }
+
+    public Trip getTripById(Integer id) {
+        Trip trip = tripRepository.findById(id);
+        if (trip == null) {
+            throw new RuntimeException("Trip not found with id: " + id);
+        }
+        return trip;
+    }
+
+    public void updateTrip(Trip trip) {
+        if (trip.getStartDate().isAfter(trip.getEndDate())) {
+            throw new RuntimeException("Start date must be before end date!");
+        }
+        tripRepository.update(trip);
+    }
+
+    public void deleteTrip(Integer id) {
+        tripRepository.delete(id);
     }
 }

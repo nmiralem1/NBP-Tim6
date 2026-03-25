@@ -20,4 +20,28 @@ public class CountryServiceImpl implements CountryService {
     public List<Country> getAllCountries() {
         return countryRepository.findAll();
     }
+
+    @Override
+    public Country getCountryById(Integer id) {
+        Country country = countryRepository.findById(id);
+        if (country == null) {
+            throw new RuntimeException("Country not found!");
+        }
+        return country;
+    }
+
+    @Override
+    public void createCountry(Country country) {
+        countryRepository.save(country);
+    }
+
+    @Override
+    public void updateCountry(Country country) {
+        countryRepository.update(country);
+    }
+
+    @Override
+    public void deleteCountry(Integer id) {
+        countryRepository.delete(id);
+    }
 }

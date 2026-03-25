@@ -37,10 +37,10 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     public BigDecimal getPricePerNight(Integer accommodationId) {
 
         String sql = """
-            SELECT price_per_night
-            FROM accommodations
-            WHERE id = ?
-        """;
+                    SELECT price_per_night
+                    FROM accommodations
+                    WHERE id = ?
+                """;
 
         return jdbcTemplate.queryForObject(sql, BigDecimal.class, accommodationId);
     }
@@ -48,21 +48,81 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     @Override
     public List<Accommodation> findAll() {
         String sql = """
-            SELECT id, city_id, accommodation_type_id, name, address, description,
-                   price_per_night, max_guests, stars, phone, email
-            FROM accommodations
-        """;
+                    SELECT id, city_id, accommodation_type_id, name, address, description,
+                           price_per_night, max_guests, stars, phone, email
+                    FROM accommodations
+                """;
         return jdbcTemplate.query(sql, accommodationRowMapper);
     }
 
     @Override
     public List<Accommodation> findByCityId(Integer cityId) {
         String sql = """
-            SELECT id, city_id, accommodation_type_id, name, address, description,
-                   price_per_night, max_guests, stars, phone, email
-            FROM accommodations
-            WHERE city_id = ?
-        """;
+                    SELECT id, city_id, accommodation_type_id, name, address, description,
+                           price_per_night, max_guests, stars, phone, email
+                    FROM accommodations
+                    WHERE city_id = ?
+                """;
         return jdbcTemplate.query(sql, accommodationRowMapper, cityId);
+    }
+
+    @Override
+    public Accommodation findById(Integer id) {
+        String sql = """
+                    SELECT id, city_id, accommodation_type_id, name, address, description,
+                           price_per_night, max_guests, stars, phone, email
+                    FROM accommodations
+                    WHERE id = ?
+                """;
+        List<Accommodation> results = jdbcTemplate.query(sql, accommodationRowMapper, id);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public int save(Accommodation accommodation) {
+        String sql = """
+                    INSERT INTO accommodations
+                    (city_id, accommodation_type_id, name, address, description, price_per_night, max_guests, stars, phone, email)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+        return jdbcTemplate.update(sql,
+                accommodation.getCityId(),
+                accommodation.getAccommodationTypeId(),
+                accommodation.getName(),
+                accommodation.getAddress(),
+                accommodation.getDescription(),
+                accommodation.getPricePerNight(),
+                accommodation.getMaxGuests(),
+                accommodation.getStars(),
+                accommodation.getPhone(),
+                accommodation.getEmail());
+    }
+
+    @Override
+    public int update(Accommodation accommodation) {
+        String sql = """
+                    UPDATE accommodations
+                    SET city_id = ?, accommodation_type_id = ?, name = ?, address = ?, description = ?,
+                        price_per_night = ?, max_guests = ?, stars = ?, phone = ?, email = ?
+                    WHERE id = ?
+                """;
+        return jdbcTemplate.update(sql,
+                accommodation.getCityId(),
+                accommodation.getAccommodationTypeId(),
+                accommodation.getName(),
+                accommodation.getAddress(),
+                accommodation.getDescription(),
+                accommodation.getPricePerNight(),
+                accommodation.getMaxGuests(),
+                accommodation.getStars(),
+                accommodation.getPhone(),
+                accommodation.getEmail(),
+                accommodation.getId());
+    }
+
+    @Override
+    public int delete(Integer id) {
+        String sql = "DELETE FROM accommodations WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 }

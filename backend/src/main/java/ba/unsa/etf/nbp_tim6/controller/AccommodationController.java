@@ -25,4 +25,28 @@ public class AccommodationController {
     public List<Accommodation> getAccommodationsByCityId(@PathVariable Integer cityId) {
         return accommodationService.getAccommodationsByCityId(cityId);
     }
+
+    @GetMapping("/{id}")
+    public Accommodation getAccommodationById(@PathVariable Integer id) {
+        return accommodationService.getAccommodationById(id);
+    }
+
+    @PostMapping
+    public String createAccommodation(@RequestBody Accommodation accommodation) {
+        accommodationService.createAccommodation(accommodation);
+        return "Accommodation created!";
+    }
+
+    @PutMapping("/{id}")
+    public String updateAccommodation(@PathVariable Integer id, @RequestBody Accommodation accommodation) {
+        accommodation.setId(id);
+        accommodationService.updateAccommodation(accommodation);
+        return "Accommodation updated!";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteAccommodation(@PathVariable Integer id) {
+        accommodationService.deleteAccommodation(id);
+        return "Accommodation deleted!";
+    }
 }

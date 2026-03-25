@@ -5,4 +5,12 @@ import ba.unsa.etf.nbp_tim6.model.Booking;
 public interface BookingRepository {
 
     int save(Booking booking);
+
+    Booking findById(Integer id);
+
+    java.util.List<Booking> findByUserId(Integer userId);
+
+    int update(Booking booking);
+
+    int delete(Integer id);
 }
