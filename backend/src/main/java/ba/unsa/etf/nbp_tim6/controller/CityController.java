@@ -34,19 +34,19 @@ public class CityController {
     @PostMapping
     public String createCity(@RequestBody City city) {
         cityService.createCity(city);
-        return "Grad kreiran!";
+        return "City created!";
     }
 
     @PutMapping("/{id}")
     public String updateCity(@PathVariable Integer id, @RequestBody City city) {
         city.setId(id);
         cityService.updateCity(city);
-        return "Grad ažuriran!";
+        return "City updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteCity(@PathVariable Integer id) {
         cityService.deleteCity(id);
-        return "Grad obrisan!";
+        return "City deleted!";
     }
 }

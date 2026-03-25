@@ -19,7 +19,7 @@ public class ActivityController {
     @PostMapping
     public String createActivity(@RequestBody Activity activity) {
         activityService.createActivity(activity);
-        return "Aktivnost kreirana!";
+        return "Activity created!";
     }
 
     @GetMapping("/{id}")
@@ -36,12 +36,12 @@ public class ActivityController {
     public String updateActivity(@PathVariable Integer id, @RequestBody Activity activity) {
         activity.setId(id);
         activityService.updateActivity(activity);
-        return "Aktivnost ažurirana!";
+        return "Activity updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteActivity(@PathVariable Integer id) {
         activityService.deleteActivity(id);
-        return "Aktivnost obrisana!";
+        return "Activity deleted!";
     }
 }

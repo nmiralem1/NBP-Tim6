@@ -34,19 +34,19 @@ public class TransportController {
     @PostMapping
     public String create(@RequestBody Transport transport) {
         service.create(transport);
-        return "Transport uspješno kreiran!";
+        return "Transport successfully created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody Transport transport) {
         transport.setId(id);
         service.update(transport);
-        return "Transport ažuriran!";
+        return "Transport updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Transport obrisan!";
+        return "Transport deleted!";
     }
 }

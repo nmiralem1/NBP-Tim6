@@ -19,7 +19,7 @@ public class TripServiceImpl implements TripService {
     public void createTrip(Trip trip) {
 
         if (trip.getStartDate().isAfter(trip.getEndDate())) {
-            throw new RuntimeException("Start date mora biti prije end date!");
+            throw new RuntimeException("Start date must be before end date!");
         }
 
         tripRepository.save(trip);
@@ -39,7 +39,7 @@ public class TripServiceImpl implements TripService {
 
     public void updateTrip(Trip trip) {
         if (trip.getStartDate().isAfter(trip.getEndDate())) {
-            throw new RuntimeException("Start date mora biti prije end date!");
+            throw new RuntimeException("Start date must be before end date!");
         }
         tripRepository.update(trip);
     }

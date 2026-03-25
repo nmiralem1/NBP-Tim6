@@ -20,7 +20,7 @@ public class TripController {
     @PostMapping
     public String createTrip(@RequestBody Trip trip) {
         tripService.createTrip(trip);
-        return "Trip kreiran!";
+        return "Trip created!";
     }
 
     // GET by user
@@ -40,13 +40,13 @@ public class TripController {
     public String updateTrip(@PathVariable Integer id, @RequestBody Trip trip) {
         trip.setId(id);
         tripService.updateTrip(trip);
-        return "Trip ažuriran!";
+        return "Trip updated!";
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public String deleteTrip(@PathVariable Integer id) {
         tripService.deleteTrip(id);
-        return "Trip obrisan!";
+        return "Trip deleted!";
     }
 }

@@ -29,19 +29,19 @@ public class TransportTypeController {
     @PostMapping
     public String create(@RequestBody TransportType type) {
         service.create(type);
-        return "Tip transporta kreiran!";
+        return "Transport type created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody TransportType type) {
         type.setId(id);
         service.update(type);
-        return "Tip transporta ažuriran!";
+        return "Transport type updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Tip transporta obrisan!";
+        return "Transport type deleted!";
     }
 }

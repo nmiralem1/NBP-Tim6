@@ -29,19 +29,19 @@ public class ActivityTypeController {
     @PostMapping
     public String create(@RequestBody ActivityType type) {
         service.create(type);
-        return "Tip aktivnosti kreiran!";
+        return "Activity type created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody ActivityType type) {
         type.setId(id);
         service.update(type);
-        return "Tip aktivnosti ažuriran!";
+        return "Activity type updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Tip aktivnosti obrisan!";
+        return "Activity type deleted!";
     }
 }

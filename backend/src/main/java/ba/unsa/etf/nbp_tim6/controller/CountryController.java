@@ -29,19 +29,19 @@ public class CountryController {
     @PostMapping
     public String createCountry(@RequestBody Country country) {
         countryService.createCountry(country);
-        return "Država kreirana!";
+        return "Country created!";
     }
 
     @PutMapping("/{id}")
     public String updateCountry(@PathVariable Integer id, @RequestBody Country country) {
         country.setId(id);
         countryService.updateCountry(country);
-        return "Država ažurirana!";
+        return "Country updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteCountry(@PathVariable Integer id) {
         countryService.deleteCountry(id);
-        return "Država obrisana!";
+        return "Country deleted!";
     }
 }

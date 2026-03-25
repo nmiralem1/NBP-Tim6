@@ -39,19 +39,19 @@ public class ReviewController {
     @PostMapping
     public String create(@RequestBody Review review) {
         service.create(review);
-        return "Recenzija kreirana!";
+        return "Review created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody Review review) {
         review.setId(id);
         service.update(review);
-        return "Recenzija ažurirana!";
+        return "Review updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Recenzija obrisana!";
+        return "Review deleted!";
     }
 }

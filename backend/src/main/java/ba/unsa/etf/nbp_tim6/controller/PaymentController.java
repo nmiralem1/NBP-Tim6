@@ -39,19 +39,19 @@ public class PaymentController {
     @PostMapping
     public String create(@RequestBody Payment payment) {
         service.create(payment);
-        return "Uplata uspješno evidentirana!";
+        return "Payment successfully recorded!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody Payment payment) {
         payment.setId(id);
         service.update(payment);
-        return "Uplata ažurirana!";
+        return "Payment updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Uplata obrisana!";
+        return "Payment deleted!";
     }
 }

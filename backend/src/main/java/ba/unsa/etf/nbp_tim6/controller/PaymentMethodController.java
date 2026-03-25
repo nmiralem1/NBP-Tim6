@@ -29,19 +29,19 @@ public class PaymentMethodController {
     @PostMapping
     public String create(@RequestBody PaymentMethod method) {
         service.create(method);
-        return "Način plaćanja kreiran!";
+        return "Payment method created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody PaymentMethod method) {
         method.setId(id);
         service.update(method);
-        return "Način plaćanja ažuriran!";
+        return "Payment method updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Način plaćanja obrisan!";
+        return "Payment method deleted!";
     }
 }

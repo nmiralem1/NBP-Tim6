@@ -34,19 +34,19 @@ public class AccommodationController {
     @PostMapping
     public String createAccommodation(@RequestBody Accommodation accommodation) {
         accommodationService.createAccommodation(accommodation);
-        return "Smještaj kreiran!";
+        return "Accommodation created!";
     }
 
     @PutMapping("/{id}")
     public String updateAccommodation(@PathVariable Integer id, @RequestBody Accommodation accommodation) {
         accommodation.setId(id);
         accommodationService.updateAccommodation(accommodation);
-        return "Smještaj ažuriran!";
+        return "Accommodation updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteAccommodation(@PathVariable Integer id) {
         accommodationService.deleteAccommodation(id);
-        return "Smještaj obrisan!";
+        return "Accommodation deleted!";
     }
 }

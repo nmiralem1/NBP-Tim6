@@ -17,7 +17,7 @@ public class BookingController {
     @PostMapping
     public String createBooking(@RequestBody Booking booking) {
         bookingService.createBooking(booking);
-        return "Rezervacija kreirana!";
+        return "Booking created!";
     }
 
     @GetMapping("/{id}")
@@ -34,12 +34,12 @@ public class BookingController {
     public String updateBooking(@PathVariable Integer id, @RequestBody Booking booking) {
         booking.setId(id);
         bookingService.updateBooking(booking);
-        return "Rezervacija ažurirana!";
+        return "Booking updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteBooking(@PathVariable Integer id) {
         bookingService.deleteBooking(id);
-        return "Rezervacija obrisana!";
+        return "Booking deleted!";
     }
 }

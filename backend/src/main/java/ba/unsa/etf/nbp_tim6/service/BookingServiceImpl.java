@@ -29,7 +29,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.getCheckOut());
 
         if (days <= 0) {
-            throw new RuntimeException("Check-out mora biti nakon check-in!");
+            throw new RuntimeException("Check-out must be after check-in!");
         }
 
         // Fetch price per night

@@ -29,19 +29,19 @@ public class AddressController {
     @PostMapping
     public String createAddress(@RequestBody Address address) {
         addressService.createAddress(address);
-        return "Adresa kreirana!";
+        return "Address created!";
     }
 
     @PutMapping("/{id}")
     public String updateAddress(@PathVariable Integer id, @RequestBody Address address) {
         address.setId(id);
         addressService.updateAddress(address);
-        return "Adresa ažurirana!";
+        return "Address updated!";
     }
 
     @DeleteMapping("/{id}")
     public String deleteAddress(@PathVariable Integer id) {
         addressService.deleteAddress(id);
-        return "Adresa obrisana!";
+        return "Address deleted!";
     }
 }

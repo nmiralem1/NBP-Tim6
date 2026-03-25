@@ -34,19 +34,19 @@ public class TripCityController {
     @PostMapping
     public String create(@RequestBody TripCity tripCity) {
         service.create(tripCity);
-        return "Grad uspješno dodan u putovanje!";
+        return "City successfully added to trip!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody TripCity tripCity) {
         tripCity.setId(id);
         service.update(tripCity);
-        return "Veza grada i putovanja ažurirana!";
+        return "Trip city connection updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Grad uklonjen iz putovanja!";
+        return "City removed from trip!";
     }
 }

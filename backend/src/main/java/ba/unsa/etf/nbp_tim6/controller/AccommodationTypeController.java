@@ -29,19 +29,19 @@ public class AccommodationTypeController {
     @PostMapping
     public String create(@RequestBody AccommodationType type) {
         service.create(type);
-        return "Tip smještaja kreiran!";
+        return "Accommodation type created!";
     }
 
     @PutMapping("/{id}")
     public String update(@PathVariable Integer id, @RequestBody AccommodationType type) {
         type.setId(id);
         service.update(type);
-        return "Tip smještaja ažuriran!";
+        return "Accommodation type updated!";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         service.delete(id);
-        return "Tip smještaja obrisan!";
+        return "Accommodation type deleted!";
     }
 }
