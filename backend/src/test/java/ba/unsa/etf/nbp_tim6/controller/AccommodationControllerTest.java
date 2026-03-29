@@ -32,7 +32,7 @@ public class AccommodationControllerTest {
 
     @Test
     public void testGetAllAccommodations() throws Exception {
-        when(accommodationService.getAll()).thenReturn(Collections.emptyList());
+        when(accommodationService.getAllAccommodations()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/accommodations"))
                 .andExpect(status().isOk())
@@ -49,14 +49,14 @@ public class AccommodationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(acc)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Smještaj kreiran!"));
+                .andExpect(content().string("Accommodation created!"));
     }
 
     @Test
     public void testGetAccommodationById() throws Exception {
         Accommodation acc = new Accommodation();
         acc.setName("Target Hotel");
-        when(accommodationService.getById(1)).thenReturn(acc);
+        when(accommodationService.getAccommodationById(1)).thenReturn(acc);
 
         mockMvc.perform(get("/api/accommodations/1"))
                 .andExpect(status().isOk())

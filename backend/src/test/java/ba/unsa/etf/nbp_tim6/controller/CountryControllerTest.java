@@ -57,6 +57,6 @@ public class CountryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(country)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Država kreirana!"));
+                .andExpect(content().string("Country created!"));
     }
 }
