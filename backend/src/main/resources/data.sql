@@ -1,0 +1,1457 @@
+------------------------------------------------------------
+-- ROLES
+------------------------------------------------------------
+INSERT INTO NBP.NBP_ROLE (NAME)
+VALUES ('REGISTERED_USER');
+
+INSERT INTO NBP.NBP_ROLE (NAME)
+VALUES ('UNREGISTERED_USER');
+------------------------------------------------------------
+-- ADDRESSES
+------------------------------------------------------------
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Zmaja od Bosne 10', 'Sarajevo', '71000', 'Bosnia and Herzegovina');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Titova 22', 'Sarajevo', '71000', 'Bosnia and Herzegovina');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Mese Selimovica 15', 'Tuzla', '75000', 'Bosnia and Herzegovina');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Kralja Tomislava 8', 'Mostar', '88000', 'Bosnia and Herzegovina');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Maršala Tita 33', 'Zenica', '72000', 'Bosnia and Herzegovina');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Main Street 14', 'Paris', '75001', 'France');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Central Avenue 7', 'Rome', '00100', 'Italy');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('River Road 19', 'Vienna', '1010', 'Austria');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('King Square 4', 'Prague', '11000', 'Czech Republic');
+
+INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
+VALUES ('Garden Lane 12', 'Budapest', '1051', 'Hungary');
+
+------------------------------------------------------------
+-- USERS
+------------------------------------------------------------
+INSERT INTO NBP.NBP_USER (
+    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
+)
+VALUES (
+    'Azra',
+    'Zunic',
+    'azunic3@etf.unsa.ba',
+    'azra123',
+    'azunic3',
+    '+38761111001',
+    DATE '2001-03-14',
+    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Zmaja od Bosne 10'),
+    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
+);
+
+INSERT INTO NBP.NBP_USER (
+    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
+)
+VALUES (
+    'Nadina',
+    'Miralem',
+    'nmiralem1@etf.unsa.ba',
+    'nadina123',
+    'nmiralem1',
+    '+38761111002',
+    DATE '2000-07-21',
+    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Titova 22'),
+    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
+);
+
+INSERT INTO NBP.NBP_USER (
+    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
+)
+VALUES (
+    'Nerma',
+    'Kadric',
+    'nkadric1@etf.unsa.ba',
+    'nerma123',
+    'nkadric1',
+    '+38761111003',
+    DATE '2001-01-09',
+    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Mese Selimovica 15'),
+    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
+);
+
+INSERT INTO NBP.NBP_USER (
+    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
+)
+VALUES (
+    'Adna',
+    'Herak',
+    'aherak2@etf.unsa.ba',
+    'adna123',
+    'aherak2',
+    '+38761111004',
+    DATE '2001-11-05',
+    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Kralja Tomislava 8'),
+    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
+);
+
+INSERT INTO NBP.NBP_USER (
+    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
+)
+VALUES (
+    'Amina',
+    'Hromic',
+    'ahromic1@etf.unsa.ba',
+    'amina123',
+    'ahromic1',
+    '+38761111005',
+    DATE '2000-09-30',
+    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Maršala Tita 33'),
+    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'UNREGISTERED_USER')
+);
+
+------------------------------------------------------------
+-- COUNTRIES
+------------------------------------------------------------
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Bosnia', 'BA', 'BAM', 'Bosnian');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('France', 'FR', 'EUR', 'French');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Italy', 'IT', 'EUR', 'Italian');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Austria', 'AT', 'EUR', 'German');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Germany', 'DE', 'EUR', 'German');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Croatia', 'HR', 'EUR', 'Croatian');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Serbia', 'RS', 'RSD', 'Serbian');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Slovenia', 'SI', 'EUR', 'Slovene');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Hungary', 'HU', 'HUF', 'Hungarian');
+
+INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
+VALUES ('Czech Republic', 'CZ', 'CZK', 'Czech');
+
+
+------------------------------------------------------------
+-- CITIES
+------------------------------------------------------------
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'BA'),
+    'Sarajevo',
+    '71000',
+    'Capital city with a rich cultural and historical heritage.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'BA'),
+    'Mostar',
+    '88000',
+    'Historic city known for its iconic bridge and old town.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'FR'),
+    'Paris',
+    '75000',
+    'World famous city of art, fashion, and architecture.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'IT'),
+    'Rome',
+    '00100',
+    'Ancient capital filled with landmarks and vibrant street life.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'AT'),
+    'Vienna',
+    '1010',
+    'Elegant city known for imperial history and classical music.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'DE'),
+    'Berlin',
+    '10115',
+    'Dynamic capital city with strong culture and nightlife.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'HR'),
+    'Zagreb',
+    '10000',
+    'Croatian capital with historic squares and lively cafes.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'RS'),
+    'Belgrade',
+    '11000',
+    'Energetic riverside city with history and entertainment.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'HU'),
+    'Budapest',
+    '1051',
+    'Beautiful city divided by the Danube with famous thermal baths.'
+);
+
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+VALUES (
+    (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'CZ'),
+    'Prague',
+    '11000',
+    'Historic city with medieval charm and iconic architecture.'
+);
+
+
+------------------------------------------------------------
+-- ACCOMMODATION TYPES
+------------------------------------------------------------
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Camp');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Hostel');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Apartment');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Guest House');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Resort');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Villa');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Motel');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Boutique Hotel');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Bed and Breakfast');
+INSERT INTO NBPT6.ACCOMMODATION_TYPES (NAME) VALUES ('Cabin');
+
+
+------------------------------------------------------------
+-- ACTIVITY TYPES
+------------------------------------------------------------
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Sightseeing');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Museum Visit');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Food Tour');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Boat Ride');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Hiking');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Shopping');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Concert');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Walking Tour');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Wine Tasting');
+INSERT INTO NBPT6.ACTIVITY_TYPES (NAME) VALUES ('Adventure Park');
+
+
+------------------------------------------------------------
+-- PAYMENT METHODS
+------------------------------------------------------------
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Credit Card');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Debit Card');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Cash');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Bank Transfer');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('PayPal');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Apple Pay');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Google Pay');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Crypto Wallet');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Voucher');
+INSERT INTO NBPT6.PAYMENT_METHODS (NAME) VALUES ('Travel Credit');
+
+
+------------------------------------------------------------
+-- TRANSPORT TYPES
+------------------------------------------------------------
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Flight');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Train');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Bus');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Taxi');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Rental Car');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Ferry');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Metro');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Tram');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Private Transfer');
+INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Bike');
+
+
+------------------------------------------------------------
+-- TRIPS
+------------------------------------------------------------
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    'Paris Spring Escape',
+    'A five-day cultural trip focused on museums, cafes, and city walks.',
+    DATE '2026-05-10',
+    DATE '2026-05-15',
+    1500.00,
+    'PLANNED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    'Rome History Journey',
+    'A historic city break with landmarks, food, and evening walks.',
+    DATE '2026-06-01',
+    DATE '2026-06-06',
+    1400.00,
+    'PLANNED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    'Vienna Music Weekend',
+    'A relaxing weekend in Vienna with concerts and local cuisine.',
+    DATE '2026-04-18',
+    DATE '2026-04-21',
+    1000.00,
+    'CONFIRMED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    'Prague Old Town Discovery',
+    'A short adventure through Prague old town and riverside attractions.',
+    DATE '2026-07-03',
+    DATE '2026-07-07',
+    1100.00,
+    'PLANNED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    'Budapest Thermal Getaway',
+    'A wellness and sightseeing trip focused on baths and architecture.',
+    DATE '2026-08-10',
+    DATE '2026-08-14',
+    1250.00,
+    'PLANNED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    'Berlin Urban Explorer',
+    'A modern city trip with galleries, food markets, and landmarks.',
+    DATE '2026-09-01',
+    DATE '2026-09-06',
+    1600.00,
+    'CONFIRMED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    'Zagreb Food and Culture',
+    'A balanced trip combining local cuisine, museums, and cafes.',
+    DATE '2026-10-12',
+    DATE '2026-10-16',
+    900.00,
+    'PLANNED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    'Belgrade Weekend Energy',
+    'A city break with nightlife, walking tours, and local food.',
+    DATE '2026-05-22',
+    DATE '2026-05-25',
+    850.00,
+    'COMPLETED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    'Mostar Heritage Visit',
+    'A relaxed regional trip with heritage landmarks and traditional food.',
+    DATE '2026-04-08',
+    DATE '2026-04-10',
+    450.00,
+    'COMPLETED'
+);
+
+INSERT INTO NBPT6.TRIPS (
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    'Sarajevo Winter Lights',
+    'A winter city stay with markets, warm cuisine, and old town walks.',
+    DATE '2026-12-15',
+    DATE '2026-12-19',
+    700.00,
+    'PLANNED'
+);
+
+
+------------------------------------------------------------
+-- TRIP CITIES
+------------------------------------------------------------
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Paris'),
+    DATE '2026-05-10',
+    DATE '2026-05-15',
+    'Main destination for art and sightseeing.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Rome'),
+    DATE '2026-06-01',
+    DATE '2026-06-06',
+    'Historic center and cultural attractions.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Vienna'),
+    DATE '2026-04-18',
+    DATE '2026-04-21',
+    'Concert venues and imperial sites.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Prague'),
+    DATE '2026-07-03',
+    DATE '2026-07-07',
+    'Old town squares and castle district.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Budapest'),
+    DATE '2026-08-10',
+    DATE '2026-08-14',
+    'Thermal baths and river views.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Berlin'),
+    DATE '2026-09-01',
+    DATE '2026-09-06',
+    'Creative districts and city landmarks.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Zagreb'),
+    DATE '2026-10-12',
+    DATE '2026-10-16',
+    'Food-focused itinerary with museums.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Belgrade'),
+    DATE '2026-05-22',
+    DATE '2026-05-25',
+    'Nightlife and riverside walks.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
+    DATE '2026-04-08',
+    DATE '2026-04-10',
+    'Old bridge and traditional atmosphere.'
+);
+
+INSERT INTO NBPT6.TRIP_CITIES (TRIP_ID, CITY_ID, ARRIVAL_DATE, DEPARTURE_DATE, NOTES)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    DATE '2026-12-15',
+    DATE '2026-12-19',
+    'Winter market and old town visit.'
+);
+
+
+------------------------------------------------------------
+-- ACCOMMODATIONS
+------------------------------------------------------------
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Paris'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Boutique Hotel'),
+    'Hotel Lumiere Paris',
+    '12 Rue de Rivoli',
+    'Stylish boutique hotel in central Paris.',
+    185.00,
+    2,
+    4,
+    '+33140000001',
+    'contact@lumierparis.com'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Rome'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Apartment'),
+    'Roman Holiday Suites',
+    '8 Via Nazionale',
+    'Comfortable apartment stay near historic landmarks.',
+    130.00,
+    4,
+    4,
+    '+39060000002',
+    'stay@romanholidaysuites.com'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Vienna'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Camp'),
+    'Imperial Vienna Hotel',
+    '25 Ringstrasse',
+    'Elegant hotel with classic Viennese atmosphere.',
+    170.00,
+    2,
+    5,
+    '+43100000003',
+    'booking@imperialvienna.com'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Prague'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Guest House'),
+    'Prague Castle Inn',
+    '4 Royal Garden Street',
+    'Charming guest house close to the castle area.',
+    95.00,
+    3,
+    3,
+    '+42020000004',
+    'hello@praguecastleinn.cz'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Budapest'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Resort'),
+    'Danube Wellness Resort',
+    '17 River View Road',
+    'Resort style stay with spa and wellness facilities.',
+    160.00,
+    2,
+    4,
+    '+36130000005',
+    'info@danubewellness.hu'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Berlin'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Hostel'),
+    'Berlin City Hub Hostel',
+    '11 Alexanderplatz',
+    'Modern hostel suitable for budget city explorers.',
+    60.00,
+    1,
+    3,
+    '+49300000006',
+    'stay@berlincityhub.de'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Zagreb'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Bed and Breakfast'),
+    'Zagreb Square BnB',
+    '3 Jelacic Square',
+    'Cozy bed and breakfast in the heart of Zagreb.',
+    85.00,
+    2,
+    3,
+    '+38510000007',
+    'info@zagrebsquarebnb.hr'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Belgrade'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Villa'),
+    'Belgrade River Villa',
+    '9 Sava Riverside',
+    'Spacious villa stay with river access and modern amenities.',
+    145.00,
+    5,
+    4,
+    '+38111000008',
+    'contact@belgraderivervilla.rs'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Motel'),
+    'Mostar Bridge Motel',
+    '14 Old Bridge Road',
+    'Simple and affordable stay near the old bridge.',
+    70.00,
+    2,
+    3,
+    '+38736000009',
+    'stay@mostarbridgemotel.ba'
+);
+
+INSERT INTO NBPT6.ACCOMMODATIONS (
+    CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+)
+VALUES (
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.ACCOMMODATION_TYPES WHERE NAME = 'Cabin'),
+    'Sarajevo Mountain Cabin',
+    '21 Trebevic Road',
+    'Wooden cabin stay with scenic mountain views.',
+    90.00,
+    4,
+    4,
+    '+38733000010',
+    'book@sarajevomountaincabin.ba'
+);
+
+
+------------------------------------------------------------
+-- ACTIVITIES
+------------------------------------------------------------
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Paris'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Museum Visit'),
+    'Louvre Morning Tour',
+    'Guided visit through the main collections of the Louvre.',
+    'Louvre Museum',
+    DATE '2026-05-11',
+    TIMESTAMP '2026-05-11 09:30:00',
+    TIMESTAMP '2026-05-11 12:00:00',
+    45.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Rome'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Walking Tour'),
+    'Ancient Rome Walking Tour',
+    'Walking tour covering the Colosseum area and surrounding ruins.',
+    'Colosseum District',
+    DATE '2026-06-02',
+    TIMESTAMP '2026-06-02 10:00:00',
+    TIMESTAMP '2026-06-02 13:00:00',
+    35.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Vienna'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Concert'),
+    'Vienna Evening Concert',
+    'Classical evening concert in a historic venue.',
+    'Vienna State Hall',
+    DATE '2026-04-19',
+    TIMESTAMP '2026-04-19 19:00:00',
+    TIMESTAMP '2026-04-19 21:30:00',
+    60.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Prague'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Sightseeing'),
+    'Prague Castle Panorama',
+    'Scenic sightseeing route through castle viewpoints.',
+    'Prague Castle',
+    DATE '2026-07-04',
+    TIMESTAMP '2026-07-04 11:00:00',
+    TIMESTAMP '2026-07-04 13:00:00',
+    20.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Budapest'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Boat Ride'),
+    'Danube Sunset Cruise',
+    'Evening boat ride with panoramic city views.',
+    'Danube River Pier',
+    DATE '2026-08-11',
+    TIMESTAMP '2026-08-11 18:00:00',
+    TIMESTAMP '2026-08-11 20:00:00',
+    30.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Berlin'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Food Tour'),
+    'Berlin Market Food Walk',
+    'Local food experience through urban street markets.',
+    'Markthalle District',
+    DATE '2026-09-02',
+    TIMESTAMP '2026-09-02 12:00:00',
+    TIMESTAMP '2026-09-02 14:30:00',
+    28.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Zagreb'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Museum Visit'),
+    'Zagreb City Museum Visit',
+    'Visit to a museum focused on city history and culture.',
+    'Zagreb City Museum',
+    DATE '2026-10-13',
+    TIMESTAMP '2026-10-13 10:30:00',
+    TIMESTAMP '2026-10-13 12:00:00',
+    15.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Belgrade'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Shopping'),
+    'Belgrade Central Shopping',
+    'Free time for shopping and local brand discovery.',
+    'Knez Mihailova Street',
+    DATE '2026-05-23',
+    TIMESTAMP '2026-05-23 14:00:00',
+    TIMESTAMP '2026-05-23 17:00:00',
+    0.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Walking Tour'),
+    'Mostar Old Bridge Walk',
+    'Walking tour around the old bridge and heritage streets.',
+    'Old Bridge Area',
+    DATE '2026-04-09',
+    TIMESTAMP '2026-04-09 09:00:00',
+    TIMESTAMP '2026-04-09 11:00:00',
+    12.00
+);
+
+INSERT INTO NBPT6.ACTIVITIES (
+    TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.ACTIVITY_TYPES WHERE NAME = 'Sightseeing'),
+    'Baščaršija Winter Walk',
+    'Guided old town walk with winter market stops.',
+    'Baščaršija',
+    DATE '2026-12-16',
+    TIMESTAMP '2026-12-16 17:00:00',
+    TIMESTAMP '2026-12-16 19:00:00',
+    18.00
+);
+
+
+------------------------------------------------------------
+-- TRANSPORT
+------------------------------------------------------------
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Paris'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Flight'),
+    'Air France',
+    TIMESTAMP '2026-05-10 06:30:00',
+    TIMESTAMP '2026-05-10 09:10:00',
+    240.00,
+    '12A',
+    'TR-REF-001'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Rome'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Flight'),
+    'ITA Airways',
+    TIMESTAMP '2026-06-01 07:15:00',
+    TIMESTAMP '2026-06-01 09:00:00',
+    210.00,
+    '14C',
+    'TR-REF-002'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Vienna'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Train'),
+    'ÖBB',
+    TIMESTAMP '2026-04-18 08:00:00',
+    TIMESTAMP '2026-04-18 14:00:00',
+    75.00,
+    'B22',
+    'TR-REF-003'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Prague'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Bus'),
+    'Eurolines',
+    TIMESTAMP '2026-07-03 05:30:00',
+    TIMESTAMP '2026-07-03 15:30:00',
+    68.00,
+    '18D',
+    'TR-REF-004'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Budapest'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Train'),
+    'MAV Rail',
+    TIMESTAMP '2026-08-10 07:45:00',
+    TIMESTAMP '2026-08-10 13:30:00',
+    82.00,
+    'C11',
+    'TR-REF-005'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Berlin'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Flight'),
+    'Lufthansa',
+    TIMESTAMP '2026-09-01 09:10:00',
+    TIMESTAMP '2026-09-01 11:00:00',
+    230.00,
+    '9F',
+    'TR-REF-006'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Zagreb'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Bus'),
+    'Croatia Bus',
+    TIMESTAMP '2026-10-12 08:20:00',
+    TIMESTAMP '2026-10-12 13:10:00',
+    40.00,
+    '6A',
+    'TR-REF-007'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Belgrade'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Bus'),
+    'Balkan Express',
+    TIMESTAMP '2026-05-22 07:00:00',
+    TIMESTAMP '2026-05-22 12:30:00',
+    38.00,
+    '7B',
+    'TR-REF-008'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Train'),
+    'ŽFBiH',
+    TIMESTAMP '2026-04-08 08:15:00',
+    TIMESTAMP '2026-04-08 10:35:00',
+    15.00,
+    '2C',
+    'TR-REF-009'
+);
+
+INSERT INTO NBPT6.TRANSPORT (
+    TRIP_ID, FROM_CITY_ID, TO_CITY_ID, TRANSPORT_TYPE_ID, COMPANY_NAME,
+    DEPARTURE_TIME, ARRIVAL_TIME, TICKET_PRICE, SEAT_NUMBER, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
+    (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
+    (SELECT ID FROM NBPT6.TRANSPORT_TYPES WHERE NAME = 'Bus'),
+    'Centrotrans',
+    TIMESTAMP '2026-12-15 09:00:00',
+    TIMESTAMP '2026-12-15 11:30:00',
+    18.00,
+    '5D',
+    'TR-REF-010'
+);
+
+
+------------------------------------------------------------
+-- BOOKINGS
+------------------------------------------------------------
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Hotel Lumiere Paris'),
+    DATE '2026-05-10',
+    DATE '2026-05-15',
+    2,
+    925.00,
+    'CONFIRMED',
+    'BK-REF-001'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Roman Holiday Suites'),
+    DATE '2026-06-01',
+    DATE '2026-06-06',
+    2,
+    650.00,
+    'CONFIRMED',
+    'BK-REF-002'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Imperial Vienna Hotel'),
+    DATE '2026-04-18',
+    DATE '2026-04-21',
+    1,
+    510.00,
+    'CONFIRMED',
+    'BK-REF-003'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Prague Castle Inn'),
+    DATE '2026-07-03',
+    DATE '2026-07-07',
+    2,
+    380.00,
+    'PENDING',
+    'BK-REF-004'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Danube Wellness Resort'),
+    DATE '2026-08-10',
+    DATE '2026-08-14',
+    2,
+    640.00,
+    'CONFIRMED',
+    'BK-REF-005'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Berlin City Hub Hostel'),
+    DATE '2026-09-01',
+    DATE '2026-09-06',
+    1,
+    300.00,
+    'CONFIRMED',
+    'BK-REF-006'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Zagreb Square BnB'),
+    DATE '2026-10-12',
+    DATE '2026-10-16',
+    2,
+    340.00,
+    'PENDING',
+    'BK-REF-007'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Belgrade River Villa'),
+    DATE '2026-05-22',
+    DATE '2026-05-25',
+    3,
+    435.00,
+    'COMPLETED',
+    'BK-REF-008'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Mostar Bridge Motel'),
+    DATE '2026-04-08',
+    DATE '2026-04-10',
+    2,
+    140.00,
+    'COMPLETED',
+    'BK-REF-009'
+);
+
+INSERT INTO NBPT6.BOOKINGS (
+    TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+    GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Sarajevo Mountain Cabin'),
+    DATE '2026-12-15',
+    DATE '2026-12-19',
+    2,
+    360.00,
+    'PENDING',
+    'BK-REF-010'
+);
+
+
+------------------------------------------------------------
+-- PAYMENTS
+------------------------------------------------------------
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-001'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Credit Card'),
+    925.00,
+    TIMESTAMP '2026-05-01 14:00:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-002'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Debit Card'),
+    650.00,
+    TIMESTAMP '2026-05-20 10:30:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-003'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Bank Transfer'),
+    510.00,
+    TIMESTAMP '2026-04-10 09:00:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-004'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'PayPal'),
+    190.00,
+    TIMESTAMP '2026-06-25 17:45:00',
+    'PARTIALLY_PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-005'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Apple Pay'),
+    640.00,
+    TIMESTAMP '2026-07-30 12:10:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-006'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Google Pay'),
+    300.00,
+    TIMESTAMP '2026-08-20 11:15:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-007'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Cash'),
+    170.00,
+    TIMESTAMP '2026-10-01 08:00:00',
+    'PARTIALLY_PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-008'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Credit Card'),
+    435.00,
+    TIMESTAMP '2026-05-15 13:20:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-009'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Cash'),
+    140.00,
+    TIMESTAMP '2026-04-05 16:00:00',
+    'PAID'
+);
+
+INSERT INTO NBPT6.PAYMENTS (
+    TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS
+)
+VALUES (
+    (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
+    (SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = 'BK-REF-010'),
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.PAYMENT_METHODS WHERE NAME = 'Voucher'),
+    120.00,
+    TIMESTAMP '2026-12-01 15:15:00',
+    'PENDING'
+);
+
+
+------------------------------------------------------------
+-- REVIEWS
+------------------------------------------------------------
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Hotel Lumiere Paris'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Louvre Morning Tour'),
+    5,
+    'Excellent hotel and a perfectly organized museum tour.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Roman Holiday Suites'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Ancient Rome Walking Tour'),
+    5,
+    'Great location and a very informative walking tour.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Imperial Vienna Hotel'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Vienna Evening Concert'),
+    4,
+    'Elegant accommodation and a beautiful concert experience.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Prague Castle Inn'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Prague Castle Panorama'),
+    4,
+    'Nice guest house and enjoyable sightseeing route.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Danube Wellness Resort'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Danube Sunset Cruise'),
+    5,
+    'Relaxing resort and a memorable evening cruise.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Berlin City Hub Hostel'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Berlin Market Food Walk'),
+    4,
+    'Good value stay and excellent street food selection.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Zagreb Square BnB'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Zagreb City Museum Visit'),
+    4,
+    'Very cozy stay and a worthwhile museum visit.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Belgrade River Villa'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Belgrade Central Shopping'),
+    3,
+    'Large accommodation, but the activity was fairly average.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Mostar Bridge Motel'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Mostar Old Bridge Walk'),
+    5,
+    'Simple stay, but perfect location and a beautiful heritage walk.'
+);
+
+INSERT INTO NBPT6.REVIEWS (
+    USER_ID, ACCOMMODATION_ID, ACTIVITY_ID, RATING, NOTE
+)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
+    (SELECT ID FROM NBPT6.ACCOMMODATIONS WHERE NAME = 'Sarajevo Mountain Cabin'),
+    (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Baščaršija Winter Walk'),
+    5,
+    'Warm atmosphere, scenic cabin, and lovely winter city tour.'
+);
