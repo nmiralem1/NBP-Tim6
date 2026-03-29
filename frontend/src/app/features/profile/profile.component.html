@@ -1,0 +1,145 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p>Manage your account information</p>
+  </div>
+
+  <div class="profile-content">
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="card-header">
+        <div class="header-title">
+          <h2>Personal Information</h2>
+          <p *ngIf="!isEditing">Your account details</p>
+          <p *ngIf="isEditing" class="edit-mode">Editing mode</p>
+        </div>
+        <button
+          *ngIf="!isEditing"
+          (click)="toggleEdit()"
+          class="btn-edit"
+        >
+          ✏️ Edit
+        </button>
+      </div>
+
+      <!-- Display Mode -->
+      <div *ngIf="!isEditing" class="profile-info">
+        <div class="info-row">
+          <div class="info-item">
+            <label>First Name</label>
+            <p>{{ userProfile.firstName }}</p>
+          </div>
+          <div class="info-item">
+            <label>Last Name</label>
+            <p>{{ userProfile.lastName }}</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <label>Email Address</label>
+            <p>{{ userProfile.email }}</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <label>Phone Number</label>
+            <p>{{ userProfile.phone }}</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <label>Birth Date</label>
+            <p>{{ userProfile.birthDate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <form *ngIf="isEditing" class="profile-form">
+        <!-- First Name & Last Name -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input
+                type="text"
+                id="firstName"
+                [value]="editData.firstName"
+                (input)="editData.firstName = $any($event.target).value"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input
+                type="text"
+                id="lastName"
+                [value]="editData.lastName"
+                (input)="editData.lastName = $any($event.target).value"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input
+              type="email"
+              id="email"
+              [value]="editData.email"
+              (input)="editData.email = $any($event.target).value"
+            />
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📱</span>
+            <input
+              type="tel"
+              id="phone"
+              [value]="editData.phone"
+              (input)="editData.phone = $any($event.target).value"
+            />
+          </div>
+        </div>
+
+        <!-- Birth Date -->
+        <div class="form-group">
+          <label for="birthDate">Birth Date</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📅</span>
+            <input
+              type="date"
+              id="birthDate"
+              [value]="editData.birthDate"
+              (input)="editData.birthDate = $any($event.target).value"
+            />
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="button" (click)="toggleEdit()" class="btn-save">
+            ✓ Save Changes
+          </button>
+          <button type="button" (click)="cancel()" class="btn-cancel">
+            ✕ Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
