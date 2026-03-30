@@ -16,6 +16,11 @@ public class TripController {
         this.tripService = tripService;
     }
 
+    @GetMapping
+    public List<Trip> getAllTrips() {
+        return tripService.getAllTrips();
+    }
+
     // CREATE
     @PostMapping
     public String createTrip(@RequestBody Trip trip) {

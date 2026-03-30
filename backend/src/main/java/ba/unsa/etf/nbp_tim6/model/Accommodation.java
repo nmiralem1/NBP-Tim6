@@ -19,4 +19,5 @@ public class Accommodation {
     private Integer stars;
     private String phone;
     private String email;
+    private String imageUrl;
 }

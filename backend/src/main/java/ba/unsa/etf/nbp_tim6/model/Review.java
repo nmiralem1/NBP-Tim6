@@ -15,4 +15,6 @@ public class Review {
     private Integer rating;
     private String note;
     private LocalDateTime createdAt;
+    private String userName;
+    private String userLocation;
 }

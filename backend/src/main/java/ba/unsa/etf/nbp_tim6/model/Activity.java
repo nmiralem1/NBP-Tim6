@@ -21,4 +21,5 @@ public class Activity {
     private LocalTime startTime;
     private LocalTime endTime;
     private BigDecimal price;
+    private String imageUrl;
 }

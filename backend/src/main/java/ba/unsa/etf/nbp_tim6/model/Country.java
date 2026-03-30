@@ -12,4 +12,5 @@ public class Country {
     private String code;
     private String currency;
     private String language;
+    private String continent;
 }

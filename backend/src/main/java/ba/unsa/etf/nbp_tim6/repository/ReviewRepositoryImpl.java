@@ -19,7 +19,9 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public List<Review> findAll() {
-        String sql = "SELECT id, user_id, accommodation_id, activity_id, rating, note, created_at FROM reviews";
+        String sql = "SELECT r.id, r.user_id as userId, r.accommodation_id as accommodationId, r.activity_id as activityId, r.rating, r.note, r.created_at as createdAt, (u.first_name || ' ' || u.last_name) as userName "
+                +
+                "FROM reviews r JOIN nbp.nbp_user u ON r.user_id = u.id";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class));
     }
 

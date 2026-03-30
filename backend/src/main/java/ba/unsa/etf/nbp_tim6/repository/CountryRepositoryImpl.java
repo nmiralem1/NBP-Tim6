@@ -24,34 +24,35 @@ public class CountryRepositoryImpl implements CountryRepository {
         country.setCode(rs.getString("code"));
         country.setCurrency(rs.getString("currency"));
         country.setLanguage(rs.getString("language"));
+        country.setContinent(rs.getString("continent"));
         return country;
     };
 
     @Override
     public List<Country> findAll() {
-        String sql = "SELECT id, name, code, currency, language FROM countries";
+        String sql = "SELECT id, name, code, currency, language, continent FROM countries";
         return jdbcTemplate.query(sql, countryRowMapper);
     }
 
     @Override
     public Country findById(Integer id) {
-        String sql = "SELECT id, name, code, currency, language FROM countries WHERE id = ?";
+        String sql = "SELECT id, name, code, currency, language, continent FROM countries WHERE id = ?";
         List<Country> results = jdbcTemplate.query(sql, countryRowMapper, id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public int save(Country country) {
-        String sql = "INSERT INTO countries (name, code, currency, language) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO countries (name, code, currency, language, continent) VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, country.getName(), country.getCode(), country.getCurrency(),
-                country.getLanguage());
+                country.getLanguage(), country.getContinent());
     }
 
     @Override
     public int update(Country country) {
-        String sql = "UPDATE countries SET name = ?, code = ?, currency = ?, language = ? WHERE id = ?";
+        String sql = "UPDATE countries SET name = ?, code = ?, currency = ?, language = ?, continent = ? WHERE id = ?";
         return jdbcTemplate.update(sql, country.getName(), country.getCode(), country.getCurrency(),
-                country.getLanguage(), country.getId());
+                country.getLanguage(), country.getContinent(), country.getId());
     }
 
     @Override

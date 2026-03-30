@@ -31,6 +31,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
         accommodation.setStars(rs.getInt("stars"));
         accommodation.setPhone(rs.getString("phone"));
         accommodation.setEmail(rs.getString("email"));
+        accommodation.setImageUrl(rs.getString("image_url"));
         return accommodation;
     };
 
@@ -49,7 +50,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     public List<Accommodation> findAll() {
         String sql = """
                     SELECT id, city_id, accommodation_type_id, name, address, description,
-                           price_per_night, max_guests, stars, phone, email
+                           price_per_night, max_guests, stars, phone, email, image_url
                     FROM accommodations
                 """;
         return jdbcTemplate.query(sql, accommodationRowMapper);
@@ -59,7 +60,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     public List<Accommodation> findByCityId(Integer cityId) {
         String sql = """
                     SELECT id, city_id, accommodation_type_id, name, address, description,
-                           price_per_night, max_guests, stars, phone, email
+                           price_per_night, max_guests, stars, phone, email, image_url
                     FROM accommodations
                     WHERE city_id = ?
                 """;
@@ -70,7 +71,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     public Accommodation findById(Integer id) {
         String sql = """
                     SELECT id, city_id, accommodation_type_id, name, address, description,
-                           price_per_night, max_guests, stars, phone, email
+                           price_per_night, max_guests, stars, phone, email, image_url
                     FROM accommodations
                     WHERE id = ?
                 """;
@@ -82,8 +83,8 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
     public int save(Accommodation accommodation) {
         String sql = """
                     INSERT INTO accommodations
-                    (city_id, accommodation_type_id, name, address, description, price_per_night, max_guests, stars, phone, email)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (city_id, accommodation_type_id, name, address, description, price_per_night, max_guests, stars, phone, email, image_url)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         return jdbcTemplate.update(sql,
                 accommodation.getCityId(),
@@ -95,7 +96,8 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
                 accommodation.getMaxGuests(),
                 accommodation.getStars(),
                 accommodation.getPhone(),
-                accommodation.getEmail());
+                accommodation.getEmail(),
+                accommodation.getImageUrl());
     }
 
     @Override
@@ -103,7 +105,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
         String sql = """
                     UPDATE accommodations
                     SET city_id = ?, accommodation_type_id = ?, name = ?, address = ?, description = ?,
-                        price_per_night = ?, max_guests = ?, stars = ?, phone = ?, email = ?
+                        price_per_night = ?, max_guests = ?, stars = ?, phone = ?, email = ?, image_url = ?
                     WHERE id = ?
                 """;
         return jdbcTemplate.update(sql,
@@ -117,6 +119,7 @@ public class AccommodationRepositoryImpl implements AccommodationRepository {
                 accommodation.getStars(),
                 accommodation.getPhone(),
                 accommodation.getEmail(),
+                accommodation.getImageUrl(),
                 accommodation.getId());
     }
 

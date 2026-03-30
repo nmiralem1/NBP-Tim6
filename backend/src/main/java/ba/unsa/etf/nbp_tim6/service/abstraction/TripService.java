@@ -10,6 +10,8 @@ public interface TripService {
 
     List<Trip> getTripsByUser(Integer userId);
 
+    List<Trip> getAllTrips();
+
     Trip getTripById(Integer id);
 
     void updateTrip(Trip trip);

@@ -17,11 +17,17 @@ public class TripRepositoryImpl implements TripRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
+    public List<Trip> findAll() {
+        String sql = "SELECT id, user_id as userId, title, description, start_date as startDate, end_date as endDate, budget, status, image_url as imageUrl, created_at as createdAt FROM trips";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Trip.class));
+    }
+
     public int save(Trip trip) {
         String sql = """
                     INSERT INTO trips
-                    (user_id, title, description, start_date, end_date, budget, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    (user_id, title, description, start_date, end_date, budget, status, image_url)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         return jdbcTemplate.update(sql,
@@ -31,7 +37,8 @@ public class TripRepositoryImpl implements TripRepository {
                 trip.getStartDate(),
                 trip.getEndDate(),
                 trip.getBudget(),
-                "planned");
+                trip.getStatus() != null ? trip.getStatus() : "planned",
+                trip.getImageUrl());
     }
 
     public Trip findById(Integer id) {
@@ -46,7 +53,7 @@ public class TripRepositoryImpl implements TripRepository {
     public int update(Trip trip) {
         String sql = """
                     UPDATE trips
-                    SET title = ?, description = ?, start_date = ?, end_date = ?, budget = ?, status = ?
+                    SET title = ?, description = ?, start_date = ?, end_date = ?, budget = ?, status = ?, image_url = ?
                     WHERE id = ?
                 """;
 
@@ -57,6 +64,7 @@ public class TripRepositoryImpl implements TripRepository {
                 trip.getEndDate(),
                 trip.getBudget(),
                 trip.getStatus(),
+                trip.getImageUrl(),
                 trip.getId());
     }
 

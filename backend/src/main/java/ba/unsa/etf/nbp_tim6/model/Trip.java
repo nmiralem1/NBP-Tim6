@@ -19,5 +19,6 @@ public class Trip {
     private LocalDate endDate;
     private BigDecimal budget;
     private String status;
+    private String imageUrl;
     private LocalDateTime createdAt;
 }

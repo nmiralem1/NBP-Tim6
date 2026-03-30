@@ -19,35 +19,36 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public List<City> findAll() {
-        String sql = "SELECT id, country_id, name, postal_code, description FROM cities";
+        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
+                + "FROM cities c JOIN countries co ON c.country_id = co.id";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class));
     }
 
     @Override
     public City findById(Integer id) {
-        String sql = "SELECT id, country_id, name, postal_code, description FROM cities WHERE id = ?";
+        String sql = "SELECT id, country_id as countryId, name, postal_code as postalCode, description, image_url as imageUrl FROM cities WHERE id = ?";
         List<City> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public List<City> findByCountryId(Integer countryId) {
-        String sql = "SELECT id, country_id, name, postal_code, description FROM cities WHERE country_id = ?";
+        String sql = "SELECT id, country_id, name, postal_code, description, image_url as imageUrl FROM cities WHERE country_id = ?";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), countryId);
     }
 
     @Override
     public int save(City city) {
-        String sql = "INSERT INTO cities (country_id, name, postal_code, description) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO cities (country_id, name, postal_code, description, image_url) VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql, city.getCountryId(), city.getName(), city.getPostalCode(),
-                city.getDescription());
+                city.getDescription(), city.getImageUrl());
     }
 
     @Override
     public int update(City city) {
-        String sql = "UPDATE cities SET country_id = ?, name = ?, postal_code = ?, description = ? WHERE id = ?";
+        String sql = "UPDATE cities SET country_id = ?, name = ?, postal_code = ?, description = ?, image_url = ? WHERE id = ?";
         return jdbcTemplate.update(sql, city.getCountryId(), city.getName(), city.getPostalCode(),
-                city.getDescription(), city.getId());
+                city.getDescription(), city.getImageUrl(), city.getId());
     }
 
     @Override
