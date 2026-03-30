@@ -2,6 +2,7 @@ package ba.unsa.etf.nbp_tim6.service;
 
 import ba.unsa.etf.nbp_tim6.model.Review;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.ReviewRepository;
+import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import ba.unsa.etf.nbp_tim6.service.abstraction.ReviewService;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,11 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository repository;
+    private final UserRepository userRepository;
 
-    public ReviewServiceImpl(ReviewRepository repository) {
+    public ReviewServiceImpl(ReviewRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,6 +45,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void create(Review review) {
+        if (userRepository.findById(review.getUserId()).isEmpty()) {
+            throw new RuntimeException("User with ID " + review.getUserId() + " does not exist!");
+        }
         repository.save(review);
     }
 

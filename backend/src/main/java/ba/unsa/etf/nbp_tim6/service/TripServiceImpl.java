@@ -29,6 +29,11 @@ public class TripServiceImpl implements TripService {
         return tripRepository.findByUserId(userId);
     }
 
+    @Override
+    public List<Trip> getAllTrips() {
+        return tripRepository.findAll();
+    }
+
     public Trip getTripById(Integer id) {
         Trip trip = tripRepository.findById(id);
         if (trip == null) {

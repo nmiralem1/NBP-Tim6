@@ -35,6 +35,7 @@ public class ActivityRepositoryImpl implements ActivityRepository {
                 rs.getTimestamp("end_time") != null ? rs.getTimestamp("end_time").toLocalDateTime().toLocalTime()
                         : null);
         activity.setPrice(rs.getBigDecimal("price"));
+        activity.setImageUrl(rs.getString("image_url"));
         return activity;
     };
 
@@ -42,8 +43,8 @@ public class ActivityRepositoryImpl implements ActivityRepository {
     public int save(Activity activity) {
         String sql = """
                     INSERT INTO activities
-                    (trip_id, city_id, activity_type_id, name, description, location, activity_date, start_time, end_time, price)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (trip_id, city_id, activity_type_id, name, description, location, activity_date, start_time, end_time, price, image_url)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         return jdbcTemplate.update(sql,
                 activity.getTripId(),
@@ -55,7 +56,8 @@ public class ActivityRepositoryImpl implements ActivityRepository {
                 activity.getActivityDate(),
                 activity.getStartTime(),
                 activity.getEndTime(),
-                activity.getPrice());
+                activity.getPrice(),
+                activity.getImageUrl());
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ActivityRepositoryImpl implements ActivityRepository {
         String sql = """
                     UPDATE activities
                     SET trip_id = ?, city_id = ?, activity_type_id = ?, name = ?, description = ?,
-                        location = ?, activity_date = ?, start_time = ?, end_time = ?, price = ?
+                        location = ?, activity_date = ?, start_time = ?, end_time = ?, price = ?, image_url = ?
                     WHERE id = ?
                 """;
         return jdbcTemplate.update(sql,
@@ -90,6 +92,7 @@ public class ActivityRepositoryImpl implements ActivityRepository {
                 activity.getStartTime(),
                 activity.getEndTime(),
                 activity.getPrice(),
+                activity.getImageUrl(),
                 activity.getId());
     }
 

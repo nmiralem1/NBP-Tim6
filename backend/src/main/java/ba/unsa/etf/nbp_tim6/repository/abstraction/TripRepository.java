@@ -8,6 +8,8 @@ public interface TripRepository {
 
     int save(Trip trip);
 
+    List<Trip> findAll();
+
     List<Trip> findByUserId(Integer userId);
 
     Trip findById(Integer id);

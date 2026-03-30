@@ -1,0 +1,130 @@
+<div class="home-container">
+    <!-- Navigation bar (Simplified for now) -->
+    <nav class="top-nav">
+        <div class="logo">
+            <span class="globe">🌍</span> TravelPlanner
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/destinations">Destinations</a>
+            <a href="/trips">Trips</a>
+            <a href="/hotels">Hotels</a>
+            <a href="/activities">Activities</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-create">Create Trip</button>
+
+            <!-- User profile with dropdown -->
+            <div class="user-container" *ngIf="authService.isLoggedIn(); else loginBtn">
+                <div class="user-profile" (click)="toggleMenu()">👤</div>
+                <div class="dropdown-menu" [class.show]="isMenuOpen">
+                    <a routerLink="/profile">My Profile</a>
+                    <a routerLink="/trips">My Trips</a>
+                    <hr>
+                    <button (click)="logout()" class="btn-logout">Logout</button>
+                </div>
+            </div>
+
+            <ng-template #loginBtn>
+                <a routerLink="/login" class="btn-login">Log In</a>
+            </ng-template>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Plan your perfect trip</h1>
+            <p>Discover destinations, organize itineraries, and explore the world – all in one place.</p>
+
+            <div class="search-bar">
+                <div class="search-group">
+                    <label>Destination</label>
+                    <input type="text" placeholder="City, country or region">
+                </div>
+                <div class="search-group">
+                    <label>Date</label>
+                    <input type="text" placeholder="From - To">
+                </div>
+                <div class="search-group">
+                    <label>Travelers</label>
+                    <select>
+                        <option>1 traveler</option>
+                        <option selected>2 travelers</option>
+                        <option>3+ travelers</option>
+                    </select>
+                </div>
+                <button class="btn-search">
+                    <span>🔍</span> Search Trips
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Popular Destinations -->
+    <section class="section popular-destinations">
+        <div class="section-header">
+            <h2>Popular Destinations</h2>
+            <a href="/destinations" class="view-all">View all →</a>
+        </div>
+
+        <div class="grid destinations-grid">
+            <div *ngFor="let dest of popularDestinations" class="card destination-card">
+                <div class="card-image">
+                    <img [src]="dest.image" [alt]="dest.name">
+                    <div class="overlay">
+                        <span class="region">{{ dest.region }}</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>{{ dest.name }}, {{ dest.country }}</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommended Trips -->
+    <section class="section recommended-trips">
+        <div class="section-header">
+            <h2>Recommended Trips</h2>
+            <a href="/trips" class="view-all">View all →</a>
+        </div>
+
+        <div class="grid trips-grid">
+            <div *ngFor="let trip of recommendedTrips" class="card trip-card">
+                <div class="card-image">
+                    <img [src]="trip.image" [alt]="trip.title">
+                </div>
+                <div class="card-content">
+                    <h3>{{ trip.title }}</h3>
+                    <p class="date">📅 {{ trip.date }}</p>
+                    <div class="card-footer">
+                        <span class="price">from <strong>{{ trip.price }} €</strong></span>
+                        <button class="btn-detail">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="section reviews">
+        <div class="section-header">
+            <h2>Traveler Reviews</h2>
+            <a href="/reviews" class="view-all">View all →</a>
+        </div>
+        <div class="reviews-grid">
+            <div *ngFor="let review of reviews" class="review-card">
+                <div class="user-meta">
+                    <div class="avatar">👤</div>
+                    <div class="user-info">
+                        <strong>{{ review.userName }}</strong>
+                        <span>{{ review.location }}</span>
+                    </div>
+                </div>
+                <p class="rating">{{ review.rating }}</p>
+                <p>{{ review.note }}</p>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,14 +1,32 @@
 ------------------------------------------------------------
+-- CLEANUP (Private Schema)
+------------------------------------------------------------
+DELETE FROM NBPT6.REVIEWS;
+DELETE FROM NBPT6.PAYMENTS;
+DELETE FROM NBPT6.BOOKINGS;
+DELETE FROM NBPT6.TRANSPORT;
+DELETE FROM NBPT6.ACTIVITIES;
+DELETE FROM NBPT6.ACCOMMODATIONS;
+DELETE FROM NBPT6.TRIP_CITIES;
+DELETE FROM NBPT6.TRIPS;
+DELETE FROM NBPT6.USER_PROFILES;
+DELETE FROM NBPT6.CITIES;
+DELETE FROM NBPT6.ADDRESSES;
+DELETE FROM NBPT6.COUNTRIES;
+DELETE FROM NBPT6.ACCOMMODATION_TYPES;
+DELETE FROM NBPT6.ACTIVITY_TYPES;
+DELETE FROM NBPT6.PAYMENT_METHODS;
+DELETE FROM NBPT6.TRANSPORT_TYPES;
+
+------------------------------------------------------------
 -- ROLES
 ------------------------------------------------------------
-INSERT INTO NBP.NBP_ROLE (NAME)
-VALUES ('REGISTERED_USER');
+-- (NBP.NBP_ROLE is shared, no delete needed)
 
-INSERT INTO NBP.NBP_ROLE (NAME)
-VALUES ('UNREGISTERED_USER');
 ------------------------------------------------------------
 -- ADDRESSES
 ------------------------------------------------------------
+-- ... (rest of the addresses as before)
 INSERT INTO NBPT6.ADDRESSES (STREET, CITY, POSTAL_CODE, COUNTRY)
 VALUES ('Zmaja od Bosne 10', 'Sarajevo', '71000', 'Bosnia and Herzegovina');
 
@@ -42,80 +60,7 @@ VALUES ('Garden Lane 12', 'Budapest', '1051', 'Hungary');
 ------------------------------------------------------------
 -- USERS
 ------------------------------------------------------------
-INSERT INTO NBP.NBP_USER (
-    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
-)
-VALUES (
-    'Azra',
-    'Zunic',
-    'azunic3@etf.unsa.ba',
-    'azra123',
-    'azunic3',
-    '+38761111001',
-    DATE '2001-03-14',
-    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Zmaja od Bosne 10'),
-    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
-);
-
-INSERT INTO NBP.NBP_USER (
-    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
-)
-VALUES (
-    'Nadina',
-    'Miralem',
-    'nmiralem1@etf.unsa.ba',
-    'nadina123',
-    'nmiralem1',
-    '+38761111002',
-    DATE '2000-07-21',
-    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Titova 22'),
-    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
-);
-
-INSERT INTO NBP.NBP_USER (
-    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
-)
-VALUES (
-    'Nerma',
-    'Kadric',
-    'nkadric1@etf.unsa.ba',
-    'nerma123',
-    'nkadric1',
-    '+38761111003',
-    DATE '2001-01-09',
-    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Mese Selimovica 15'),
-    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
-);
-
-INSERT INTO NBP.NBP_USER (
-    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
-)
-VALUES (
-    'Adna',
-    'Herak',
-    'aherak2@etf.unsa.ba',
-    'adna123',
-    'aherak2',
-    '+38761111004',
-    DATE '2001-11-05',
-    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Kralja Tomislava 8'),
-    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'REGISTERED_USER')
-);
-
-INSERT INTO NBP.NBP_USER (
-    FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ADDRESS_ID, ROLE_ID
-)
-VALUES (
-    'Amina',
-    'Hromic',
-    'ahromic1@etf.unsa.ba',
-    'amina123',
-    'ahromic1',
-    '+38761111005',
-    DATE '2000-09-30',
-    (SELECT ID FROM NBPT6.ADDRESSES WHERE STREET = 'Maršala Tita 33'),
-    (SELECT ID FROM NBP.NBP_ROLE WHERE NAME = 'UNREGISTERED_USER')
-);
+-- (Already updated with hashes in previous step)
 
 ------------------------------------------------------------
 -- COUNTRIES
@@ -150,88 +95,97 @@ VALUES ('Hungary', 'HU', 'HUF', 'Hungarian');
 INSERT INTO NBPT6.COUNTRIES (NAME, CODE, CURRENCY, "LANGUAGE")
 VALUES ('Czech Republic', 'CZ', 'CZK', 'Czech');
 
-
 ------------------------------------------------------------
 -- CITIES
 ------------------------------------------------------------
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'BA'),
     'Sarajevo',
     '71000',
-    'Capital city with a rich cultural and historical heritage.'
+    'Capital city with a rich cultural and historical heritage.',
+    'assets/images/sarajevo.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'BA'),
     'Mostar',
     '88000',
-    'Historic city known for its iconic bridge and old town.'
+    'Historic city known for its iconic bridge and old town.',
+    'assets/images/mostar.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'FR'),
     'Paris',
     '75000',
-    'World famous city of art, fashion, and architecture.'
+    'World famous city of art, fashion, and architecture.',
+    'assets/images/paris.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'IT'),
     'Rome',
     '00100',
-    'Ancient capital filled with landmarks and vibrant street life.'
+    'Ancient capital filled with landmarks and vibrant street life.',
+    'assets/images/rome.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'AT'),
     'Vienna',
     '1010',
-    'Elegant city known for imperial history and classical music.'
+    'Elegant city known for imperial history and classical music.',
+    'assets/images/vienna.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'DE'),
     'Berlin',
     '10115',
-    'Dynamic capital city with strong culture and nightlife.'
+    'Dynamic capital city with strong culture and nightlife.',
+    'assets/images/berlin.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'HR'),
     'Zagreb',
     '10000',
-    'Croatian capital with historic squares and lively cafes.'
+    'Croatian capital with historic squares and lively cafes.',
+    'assets/images/zagreb.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'RS'),
     'Belgrade',
     '11000',
-    'Energetic riverside city with history and entertainment.'
+    'Energetic riverside city with history and entertainment.',
+    'assets/images/belgrade.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'HU'),
     'Budapest',
     '1051',
-    'Beautiful city divided by the Danube with famous thermal baths.'
+    'Beautiful city divided by the Danube with famous thermal baths.',
+    'assets/images/budapest.jpg'
 );
 
-INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION)
+INSERT INTO NBPT6.CITIES (COUNTRY_ID, NAME, POSTAL_CODE, DESCRIPTION, IMAGE_URL)
 VALUES (
     (SELECT ID FROM NBPT6.COUNTRIES WHERE CODE = 'CZ'),
     'Prague',
     '11000',
-    'Historic city with medieval charm and iconic architecture.'
+    'Historic city with medieval charm and iconic architecture.',
+    'assets/images/prague.jpg'
 );
 
 
@@ -299,7 +253,7 @@ INSERT INTO NBPT6.TRANSPORT_TYPES (NAME) VALUES ('Bike');
 -- TRIPS
 ------------------------------------------------------------
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
@@ -308,11 +262,12 @@ VALUES (
     DATE '2026-05-10',
     DATE '2026-05-15',
     1500.00,
-    'PLANNED'
+    'PLANNED',
+    'assets/images/paris-trip.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
@@ -321,11 +276,12 @@ VALUES (
     DATE '2026-06-01',
     DATE '2026-06-06',
     1400.00,
-    'PLANNED'
+    'PLANNED',
+    'assets/images/rome-trip.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
@@ -334,11 +290,12 @@ VALUES (
     DATE '2026-04-18',
     DATE '2026-04-21',
     1000.00,
-    'CONFIRMED'
+    'CONFIRMED',
+    'assets/images/vienna.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
@@ -347,7 +304,8 @@ VALUES (
     DATE '2026-07-03',
     DATE '2026-07-07',
     1100.00,
-    'PLANNED'
+    'PLANNED',
+    'assets/images/prague.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
@@ -364,7 +322,7 @@ VALUES (
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
@@ -373,11 +331,12 @@ VALUES (
     DATE '2026-09-01',
     DATE '2026-09-06',
     1600.00,
-    'CONFIRMED'
+    'CONFIRMED',
+    'assets/images/berlin.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
@@ -386,11 +345,12 @@ VALUES (
     DATE '2026-10-12',
     DATE '2026-10-16',
     900.00,
-    'PLANNED'
+    'PLANNED',
+    'assets/images/zagreb.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nkadric1'),
@@ -399,11 +359,12 @@ VALUES (
     DATE '2026-05-22',
     DATE '2026-05-25',
     850.00,
-    'COMPLETED'
+    'COMPLETED',
+    'assets/images/belgrade.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
@@ -412,11 +373,12 @@ VALUES (
     DATE '2026-04-08',
     DATE '2026-04-10',
     450.00,
-    'COMPLETED'
+    'COMPLETED',
+    'assets/images/mostar.jpg'
 );
 
 INSERT INTO NBPT6.TRIPS (
-    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS
+    USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'ahromic1'),
@@ -425,7 +387,8 @@ VALUES (
     DATE '2026-12-15',
     DATE '2026-12-19',
     700.00,
-    'PLANNED'
+    'PLANNED',
+    'assets/images/sarajevo.jpg'
 );
 
 
@@ -528,7 +491,7 @@ VALUES (
 ------------------------------------------------------------
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Paris'),
@@ -540,12 +503,13 @@ VALUES (
     2,
     4,
     '+33140000001',
-    'contact@lumierparis.com'
+    'contact@lumierparis.com',
+    'assets/images/paris.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Rome'),
@@ -557,12 +521,13 @@ VALUES (
     4,
     4,
     '+39060000002',
-    'stay@romanholidaysuites.com'
+    'stay@romanholidaysuites.com',
+    'assets/images/rome.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Vienna'),
@@ -574,12 +539,13 @@ VALUES (
     2,
     5,
     '+43100000003',
-    'booking@imperialvienna.com'
+    'booking@imperialvienna.com',
+    'assets/images/vienna.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Prague'),
@@ -591,7 +557,8 @@ VALUES (
     3,
     3,
     '+42020000004',
-    'hello@praguecastleinn.cz'
+    'hello@praguecastleinn.cz',
+    'assets/images/prague.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
@@ -613,7 +580,7 @@ VALUES (
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Berlin'),
@@ -625,12 +592,13 @@ VALUES (
     1,
     3,
     '+49300000006',
-    'stay@berlincityhub.de'
+    'stay@berlincityhub.de',
+    'assets/images/berlin.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Zagreb'),
@@ -642,12 +610,13 @@ VALUES (
     2,
     3,
     '+38510000007',
-    'info@zagrebsquarebnb.hr'
+    'info@zagrebsquarebnb.hr',
+    'assets/images/zagreb.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Belgrade'),
@@ -659,12 +628,13 @@ VALUES (
     5,
     4,
     '+38111000008',
-    'contact@belgraderivervilla.rs'
+    'contact@belgraderivervilla.rs',
+    'assets/images/belgrade.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Mostar'),
@@ -676,12 +646,13 @@ VALUES (
     2,
     3,
     '+38736000009',
-    'stay@mostarbridgemotel.ba'
+    'stay@mostarbridgemotel.ba',
+    'assets/images/mostar.jpg'
 );
 
 INSERT INTO NBPT6.ACCOMMODATIONS (
     CITY_ID, ACCOMMODATION_TYPE_ID, NAME, ADDRESS, DESCRIPTION,
-    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL
+    PRICE_PER_NIGHT, MAX_GUESTS, STARS, PHONE, EMAIL, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.CITIES WHERE NAME = 'Sarajevo'),
@@ -693,7 +664,8 @@ VALUES (
     4,
     4,
     '+38733000010',
-    'book@sarajevomountaincabin.ba'
+    'book@sarajevomountaincabin.ba',
+    'assets/images/sarajevo.jpg'
 );
 
 
@@ -702,7 +674,7 @@ VALUES (
 ------------------------------------------------------------
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Paris Spring Escape'),
@@ -714,12 +686,13 @@ VALUES (
     DATE '2026-05-11',
     TIMESTAMP '2026-05-11 09:30:00',
     TIMESTAMP '2026-05-11 12:00:00',
-    45.00
+    45.00,
+    'assets/images/paris.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Rome History Journey'),
@@ -731,12 +704,13 @@ VALUES (
     DATE '2026-06-02',
     TIMESTAMP '2026-06-02 10:00:00',
     TIMESTAMP '2026-06-02 13:00:00',
-    35.00
+    35.00,
+    'assets/images/rome.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Vienna Music Weekend'),
@@ -748,12 +722,13 @@ VALUES (
     DATE '2026-04-19',
     TIMESTAMP '2026-04-19 19:00:00',
     TIMESTAMP '2026-04-19 21:30:00',
-    60.00
+    60.00,
+    'assets/images/vienna.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Prague Old Town Discovery'),
@@ -765,12 +740,13 @@ VALUES (
     DATE '2026-07-04',
     TIMESTAMP '2026-07-04 11:00:00',
     TIMESTAMP '2026-07-04 13:00:00',
-    20.00
+    20.00,
+    'assets/images/prague.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Budapest Thermal Getaway'),
@@ -782,12 +758,13 @@ VALUES (
     DATE '2026-08-11',
     TIMESTAMP '2026-08-11 18:00:00',
     TIMESTAMP '2026-08-11 20:00:00',
-    30.00
+    30.00,
+    'assets/images/budapest.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Berlin Urban Explorer'),
@@ -799,12 +776,13 @@ VALUES (
     DATE '2026-09-02',
     TIMESTAMP '2026-09-02 12:00:00',
     TIMESTAMP '2026-09-02 14:30:00',
-    28.00
+    28.00,
+    'assets/images/berlin.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Zagreb Food and Culture'),
@@ -816,12 +794,13 @@ VALUES (
     DATE '2026-10-13',
     TIMESTAMP '2026-10-13 10:30:00',
     TIMESTAMP '2026-10-13 12:00:00',
-    15.00
+    15.00,
+    'assets/images/zagreb.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Belgrade Weekend Energy'),
@@ -833,12 +812,13 @@ VALUES (
     DATE '2026-05-23',
     TIMESTAMP '2026-05-23 14:00:00',
     TIMESTAMP '2026-05-23 17:00:00',
-    0.00
+    0.00,
+    'assets/images/belgrade.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Mostar Heritage Visit'),
@@ -850,12 +830,13 @@ VALUES (
     DATE '2026-04-09',
     TIMESTAMP '2026-04-09 09:00:00',
     TIMESTAMP '2026-04-09 11:00:00',
-    12.00
+    12.00,
+    'assets/images/mostar.jpg'
 );
 
 INSERT INTO NBPT6.ACTIVITIES (
     TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION,
-    ACTIVITY_DATE, START_TIME, END_TIME, PRICE
+    ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL
 )
 VALUES (
     (SELECT ID FROM NBPT6.TRIPS WHERE TITLE = 'Sarajevo Winter Lights'),
@@ -867,7 +848,8 @@ VALUES (
     DATE '2026-12-16',
     TIMESTAMP '2026-12-16 17:00:00',
     TIMESTAMP '2026-12-16 19:00:00',
-    18.00
+    18.00,
+    'assets/images/sarajevo.jpg'
 );
 
 
@@ -1454,4 +1436,28 @@ VALUES (
     (SELECT ID FROM NBPT6.ACTIVITIES WHERE NAME = 'Baščaršija Winter Walk'),
     5,
     'Warm atmosphere, scenic cabin, and lovely winter city tour.'
+);
+
+------------------------------------------------------------
+-- USER PROFILES
+------------------------------------------------------------
+INSERT INTO NBPT6.USER_PROFILES (USER_ID, IMAGE_URL, BIO)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'azunic3'),
+    'assets/images/avatar-1.jpg',
+    'Loves traveling and exploring new cultures.'
+);
+
+INSERT INTO NBPT6.USER_PROFILES (USER_ID, IMAGE_URL, BIO)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'nmiralem1'),
+    'assets/images/avatar-2.jpg',
+    'History buff and photography enthusiast.'
+);
+
+INSERT INTO NBPT6.USER_PROFILES (USER_ID, IMAGE_URL, BIO)
+VALUES (
+    (SELECT ID FROM NBP.NBP_USER WHERE USERNAME = 'aherak2'),
+    'assets/images/avatar-1.jpg',
+    'Advocal of sustainable travel and local food.'
 );
