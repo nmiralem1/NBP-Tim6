@@ -1,0 +1,126 @@
+<div class="accommodations-page">
+    <div class="content-layout">
+
+        <aside class="filters-sidebar">
+            <div class="filters-card">
+                <h2>Search</h2>
+
+                <div class="filter-group">
+                    <label for="search">Search accommodation</label>
+                    <input
+                        id="search"
+                        type="text"
+                        placeholder="Search accommodation..."
+                        [(ngModel)]="searchTerm"
+                        (input)="filterAccommodations()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="city">City</label>
+                    <select
+                        id="city"
+                        [(ngModel)]="selectedCity"
+                        (change)="filterAccommodations()"
+                    >
+                        <option value="">All cities</option>
+                        <option *ngFor="let city of cities" [value]="city">
+                            {{ city }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="type">Accommodation type</label>
+                    <select
+                        id="type"
+                        [(ngModel)]="selectedType"
+                        (change)="filterAccommodations()"
+                    >
+                        <option value="">All types</option>
+                        <option *ngFor="let type of accommodationTypes" [value]="type">
+                            {{ type }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="price">Maximum price per night</label>
+                    <input
+                        id="price"
+                        type="number"
+                        placeholder="Enter max price"
+                        [(ngModel)]="maxPrice"
+                        (input)="filterAccommodations()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="rating">Minimum rating</label>
+                    <select
+                        id="rating"
+                        [(ngModel)]="selectedRating"
+                        (change)="filterAccommodations()"
+                    >
+                        <option value="">All ratings</option>
+                        <option value="4">4+ stars</option>
+                        <option value="4.5">4.5+ stars</option>
+                        <option value="4.8">4.8+ stars</option>
+                    </select>
+                </div>
+
+                <button class="primary-btn" type="button" (click)="filterAccommodations()">
+                    Show accommodations
+                </button>
+
+                <button class="secondary-btn" type="button" (click)="resetFilters()">
+                    Reset filters
+                </button>
+            </div>
+        </aside>
+
+        <main class="accommodations-content">
+            <div class="section-header">
+                <h1>Accommodation</h1>
+            </div>
+
+            <div class="accommodations-grid">
+                <div
+                    *ngFor="let item of filteredAccommodations"
+                    class="accommodation-card"
+                    (click)="openAccommodationDetails(item.id)"
+                >
+                    <div class="image-wrapper">
+                        <img
+                            [src]="item.imageUrl || 'assets/images/placeholder.jpg'"
+                            [alt]="item.name"
+                        />
+                    </div>
+
+                    <div class="card-content">
+                        <h3>{{ item.name }}</h3>
+                        <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+                        <p class="type">{{ item.type }}</p>
+                        <p class="price">From {{ item.pricePerNight }} KM / night</p>
+                        <p class="rating">Rating: {{ item.rating }}</p>
+
+                        <div class="amenities">
+                            <span class="amenity" *ngFor="let amenity of item.amenities">
+                                {{ amenity }}
+                            </span>
+                        </div>
+
+                        <p class="availability">
+                            Available: {{ item.availableFrom }} - {{ item.availableTo }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="empty-state" *ngIf="filteredAccommodations.length === 0">
+                No accommodation matches your selected filters.
+            </p>
+        </main>
+
+    </div>
+</div>

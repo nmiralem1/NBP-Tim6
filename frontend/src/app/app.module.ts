@@ -11,7 +11,10 @@ import { RegisterComponent } from './features/register/register.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { HomeComponent } from './features/home/home.component';
 import { DestinationsComponent } from './features/destinations/destinations.component';
+import { DestinationDetailsComponent } from './features/destination-details/destination-details.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+import { AccommodationsComponent } from './features/accommodations/accommodations.component';
+import { AccommodationDetailsComponent } from './features/accommodation-details/accommodation-details.component';
 
 import { CoreModule } from './core/core.module';
 
@@ -23,7 +26,10 @@ import { CoreModule } from './core/core.module';
     RegisterComponent,
     ProfileComponent,
     HomeComponent,
-    DestinationsComponent
+    DestinationsComponent,
+    DestinationDetailsComponent,
+    AccommodationsComponent,
+    AccommodationDetailsComponent
   ],
   imports: [
     BrowserModule,
