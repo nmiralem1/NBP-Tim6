@@ -15,8 +15,12 @@ import { DestinationDetailsComponent } from './features/destination-details/dest
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { AccommodationsComponent } from './features/accommodations/accommodations.component';
 import { AccommodationDetailsComponent } from './features/accommodation-details/accommodation-details.component';
-
+import { BookComponent } from './features/book/book.component';
 import { CoreModule } from './core/core.module';
+import { ActivitiesComponent } from './features/activities/activities.component';
+import { ActivityDetailsComponent } from './features/activity-details/activity-details.component';
+import { TransportationComponent } from './features/transportation/transportation.component';
+import { TravelPlansComponent } from './features/travelplans/travelplans.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +33,12 @@ import { CoreModule } from './core/core.module';
     DestinationsComponent,
     DestinationDetailsComponent,
     AccommodationsComponent,
-    AccommodationDetailsComponent
+    AccommodationDetailsComponent,
+    BookComponent,
+    ActivitiesComponent,
+    ActivityDetailsComponent,
+    TransportationComponent,
+    TravelPlansComponent
   ],
   imports: [
     BrowserModule,

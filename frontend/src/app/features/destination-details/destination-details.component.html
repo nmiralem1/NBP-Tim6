@@ -8,7 +8,15 @@
                 </button>
 
                 <h2>Plan Your Trip</h2>
-
+                <div class="filter-group">
+                    <label for="departure">Departure</label>
+                    <input
+                        id="departure"
+                        type="text"
+                        placeholder="Enter departure city"
+                        [(ngModel)]="bookingForm.departure"
+                    />
+                </div>
                 <div class="filter-group">
                     <label for="destination">Destination</label>
                     <input
@@ -51,6 +59,10 @@
 
                 <button class="primary-btn" type="button" (click)="searchBooking()">
                     Search offers
+                </button>
+
+                <button class="secondary-btn" type="button" (click)="resetFilters()">
+                    Reset filters
                 </button>
             </div>
         </aside>
@@ -100,7 +112,9 @@
 
             <section class="content-section">
                 <div class="section-header">
-                    <h2>Activities</h2>
+                    <h2 class="clickable-title" (click)="goToActivities()">
+                        Activities
+                    </h2>
                 </div>
 
                 <div class="horizontal-scroll">
@@ -122,8 +136,10 @@
 
             <section class="content-section">
                 <div class="section-header">
-                    <h2>Transport</h2>
-                </div>
+                <h2 class="clickable-title" (click)="goToTransportation()">
+                    Transportation
+                </h2>
+            </div>
 
                 <div class="horizontal-scroll">
                     <div class="info-card" *ngFor="let item of destination.transportOptions">
@@ -142,7 +158,8 @@
 
             <section class="content-section">
                 <div class="section-header">
-                    <h2>Travel Plans</h2>
+                    <h2 class="clickable-title" (click)="goToTravelPlans()">
+Travel Plans</h2>
                 </div>
 
                 <div class="horizontal-scroll">

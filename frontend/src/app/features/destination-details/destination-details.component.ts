@@ -64,11 +64,12 @@ export class DestinationDetailsComponent implements OnInit {
     filteredAccommodations: Accommodation[] = [];
 
     bookingForm = {
-        destination: '',
-        departureDate: '',
-        returnDate: '',
-        travelers: 2
-    };
+    departure: '',
+    destination: '',
+    departureDate: '',
+    returnDate: '',
+    travelers: 2
+};
 
     dummyDestinations: DestinationDetails[] = [
         {
@@ -222,7 +223,59 @@ export class DestinationDetailsComponent implements OnInit {
     UVEZATI S BAZOM:
     this.router.navigate(['/accommodations'], { queryParams: { cityId: this.destinationId } });
     */
-}
+    }
+
+    goToActivities(): void {
+      if (!this.destination) return;
+
+      this.router.navigate(['/activities'], {
+        queryParams: {
+          city: this.destination.name,
+          country: this.destination.countryName
+        }
+      });
+    }
+
+    goToTransportation(): void {
+      if (!this.destination) return;
+
+      this.router.navigate(['/transportation'], {
+        queryParams: {
+          from: this.bookingForm.departure,
+          to: this.destination.name,
+          departureDate: this.bookingForm.departureDate,
+          returnDate: this.bookingForm.returnDate,
+          travelers: this.bookingForm.travelers
+        }
+      });
+    }
+
+    resetFilters(): void {
+      this.bookingForm.departure = '';
+      this.bookingForm.destination = this.destination?.name || '';
+      this.bookingForm.departureDate = '';
+      this.bookingForm.returnDate = '';
+      this.bookingForm.travelers = 2;
+
+      if (this.destination) {
+        this.filteredAccommodations = [...this.destination.accommodations];
+      }
+    }
+
+    goToTravelPlans(): void {
+      this.router.navigate(['/travelplans'], {
+        queryParams: {
+          city: this.destination?.name || '',
+          country: this.destination?.countryName || '',
+          date: this.bookingForm.departureDate || '',
+          returnDate: this.bookingForm.returnDate || '',
+          departure: this.bookingForm.departure || '',
+          destination: this.bookingForm.destination || this.destination?.name || '',
+          travelers: this.bookingForm.travelers || 1
+        }
+      });
+    }
+
     loadDestinationDetails(id: number): void {
         this.destination = this.dummyDestinations.find(item => item.id === id) || null;
 

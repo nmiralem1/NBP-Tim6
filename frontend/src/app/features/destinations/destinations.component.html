@@ -3,27 +3,27 @@
 
         <aside class="filters-sidebar">
             <div class="filters-card">
-                <h2>Pretraga</h2>
+                <h2>Search</h2>
 
                 <div class="filter-group">
-                    <label for="search">Pretraži destinacije</label>
+                    <label for="search">Search destinations</label>
                     <input
                         id="search"
                         type="text"
-                        placeholder="Pretraži destinacije..."
+                        placeholder="Search destinations..."
                         [(ngModel)]="searchTerm"
                         (input)="filterDestinations()"
                     />
                 </div>
 
                 <div class="filter-group">
-                    <label for="type">Država</label>
+                    <label for="type">Country</label>
                     <select
                         id="type"
                         [(ngModel)]="selectedCountry"
                         (change)="filterDestinations()"
                     >
-                        <option value="">Sve države</option>
+                        <option value="">All countries</option>
                         <option *ngFor="let country of countries" [value]="country">
                             {{ country }}
                         </option>
@@ -31,18 +31,18 @@
                 </div>
 
                 <button class="primary-btn" type="button" (click)="filterDestinations()">
-                    Prikaži destinacije
+                    Show destinations
                 </button>
 
                 <button class="secondary-btn" type="button" (click)="resetFilters()">
-                    Resetuj filtere
+                    Reset filters
                 </button>
             </div>
         </aside>
 
         <main class="destinations-content">
             <div class="section-header">
-                <h1>Popularne Destinacije</h1>
+                <h1>Popular Destinations</h1>
             </div>
 
             <div class="destinations-grid">

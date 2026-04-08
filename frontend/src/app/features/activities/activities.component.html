@@ -1,0 +1,136 @@
+<div class="activities-page">
+  <div class="content-layout">
+
+    <aside class="filters-sidebar">
+      <div class="filters-card">
+        <h2>Search</h2>
+
+        <div class="filter-group">
+          <label for="search">Search activity</label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search activity..."
+            [(ngModel)]="searchTerm"
+            (input)="filterActivities()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="city">City</label>
+          <select
+            id="city"
+            [(ngModel)]="selectedCity"
+            (change)="onCityChange()"
+          >
+            <option value="">All cities</option>
+            <option *ngFor="let city of cities" [value]="city">
+              {{ city }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="activityDate">Date</label>
+          <input
+            id="activityDate"
+            type="date"
+            [(ngModel)]="selectedDate"
+            (change)="filterActivities()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="type">Activity type</label>
+          <select
+            id="type"
+            [(ngModel)]="selectedType"
+            (change)="filterActivities()"
+          >
+            <option value="">All types</option>
+            <option *ngFor="let type of activityTypes" [value]="type">
+              {{ type }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="price">Maximum price</label>
+          <input
+            id="price"
+            type="number"
+            placeholder="Enter max price"
+            [(ngModel)]="maxPrice"
+            (input)="filterActivities()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="rating">Minimum rating</label>
+          <select
+            id="rating"
+            [(ngModel)]="selectedRating"
+            (change)="filterActivities()"
+          >
+            <option value="">All ratings</option>
+            <option value="4">4+ stars</option>
+            <option value="4.5">4.5+ stars</option>
+            <option value="4.8">4.8+ stars</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" type="button" (click)="filterActivities()">
+          Show activities
+        </button>
+
+        <button class="secondary-btn" type="button" (click)="resetFilters()">
+          Reset filters
+        </button>
+      </div>
+    </aside>
+
+    <main class="activities-content">
+      <div class="section-header">
+        <h1>Activities</h1>
+      </div>
+
+      <div class="activities-grid">
+        <div
+          *ngFor="let item of filteredActivities"
+          class="activity-card"
+          (click)="openActivityDetails(item.id)"
+        >
+          <div class="image-wrapper">
+            <img
+              [src]="item.imageUrl || 'assets/images/placeholder.jpg'"
+              [alt]="item.name"
+            />
+          </div>
+
+          <div class="card-content">
+            <h3>{{ item.name }}</h3>
+            <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+            <p class="type">{{ item.type }}</p>
+            <p class="price">From {{ item.price }} KM / person</p>
+            <p class="rating">Rating: {{ item.rating }}</p>
+
+            <div class="highlights">
+              <span class="highlight" *ngFor="let highlight of item.highlights">
+                {{ highlight }}
+              </span>
+            </div>
+
+            <p class="availability">
+              Available: {{ item.availableFrom }} - {{ item.availableTo }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="filteredActivities.length === 0">
+        No activities match your selected filters.
+      </p>
+    </main>
+
+  </div>
+</div>

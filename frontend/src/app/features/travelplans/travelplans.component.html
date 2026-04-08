@@ -1,0 +1,143 @@
+<div class="travel-plans-page">
+  <div class="content-layout">
+
+    <aside class="filters-sidebar">
+      <div class="filters-card">
+        <h2>Search</h2>
+
+        <div class="filter-group">
+          <label for="search">Search travel plan</label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search travel plan..."
+            [(ngModel)]="searchTerm"
+            (input)="filterTravelPlans()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="city">City</label>
+          <select
+            id="city"
+            [(ngModel)]="selectedCity"
+            (change)="onCityChange()"
+          >
+            <option value="">All cities</option>
+            <option *ngFor="let city of cities" [value]="city">
+              {{ city }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="country">Country</label>
+          <select
+            id="country"
+            [(ngModel)]="selectedCountry"
+            (change)="filterTravelPlans()"
+          >
+            <option value="">All countries</option>
+            <option *ngFor="let country of countries" [value]="country">
+              {{ country }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="travelDate">Date</label>
+          <input
+            id="travelDate"
+            type="date"
+            [(ngModel)]="selectedDate"
+            (change)="filterTravelPlans()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="duration">Duration</label>
+          <select
+            id="duration"
+            [(ngModel)]="selectedDuration"
+            (change)="filterTravelPlans()"
+          >
+            <option value="">All durations</option>
+            <option value="1-3">1 - 3 days</option>
+            <option value="4-7">4 - 7 days</option>
+            <option value="8+">8+ days</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="budget">Maximum budget</label>
+          <input
+            id="budget"
+            type="number"
+            placeholder="Enter max budget"
+            [(ngModel)]="maxBudget"
+            (input)="filterTravelPlans()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="rating">Minimum rating</label>
+          <select
+            id="rating"
+            [(ngModel)]="selectedRating"
+            (change)="filterTravelPlans()"
+          >
+            <option value="">All ratings</option>
+            <option value="4">4+ stars</option>
+            <option value="4.5">4.5+ stars</option>
+            <option value="4.8">4.8+ stars</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" type="button" (click)="filterTravelPlans()">
+          Show travel plans
+        </button>
+
+        <button class="secondary-btn" type="button" (click)="resetFilters()">
+          Reset filters
+        </button>
+      </div>
+    </aside>
+
+    <main class="travel-plans-content">
+      <div class="section-header">
+        <h1>Travel Plans</h1>
+      </div>
+
+      <div class="travel-plans-grid">
+        <div
+          *ngFor="let item of filteredTravelPlans"
+          class="travel-plan-card"
+          (click)="openTravelPlanDetails(item.id)"
+        >
+          <div class="card-content">
+            <h3>{{ item.name }}</h3>
+            <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+            <p class="duration">{{ item.durationDays }} days</p>
+            <p class="budget">From {{ item.price }} KM / person</p>
+            <p class="rating">Rating: {{ item.rating }}</p>
+
+            <div class="highlights">
+              <span class="highlight" *ngFor="let highlight of item.highlights">
+                {{ highlight }}
+              </span>
+            </div>
+
+            <p class="availability">
+              Available: {{ item.availableFrom }} - {{ item.availableTo }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="filteredTravelPlans.length === 0">
+        No travel plans match your selected filters.
+      </p>
+    </main>
+
+  </div>
+</div>

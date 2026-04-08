@@ -215,6 +215,11 @@ export class AccommodationDetailsComponent implements OnInit {
         this.router.navigate(['/accommodations']);
     }
 
+bookRoom(room: any): void {
+  if (!room.available || !this.accommodation) return;
+
+  this.router.navigate(['/book', this.accommodation.id, room.id]);
+}
     searchAvailability(): void {
         console.log('Availability search:', this.bookingForm);
 

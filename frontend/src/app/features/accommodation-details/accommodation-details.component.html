@@ -99,16 +99,27 @@
                 </div>
 
                 <div class="room-options">
-                    <div class="room-card" *ngFor="let room of item.roomOptions">
-                        <div class="room-content">
-                            <h3>{{ room.title }}</h3>
-                            <p>Guests: {{ room.guests }}</p>
-                            <p>From {{ room.pricePerNight }} KM / night</p>
-                            <p [class.available]="room.available" [class.unavailable]="!room.available">
-                                {{ room.available ? 'Available' : 'Currently unavailable' }}
-                            </p>
-                        </div>
-                    </div>
+                  <div class="room-card" *ngFor="let room of item.roomOptions">
+                      <div class="room-content">
+                          <h3>{{ room.title }}</h3>
+                          <p>Guests: {{ room.guests }}</p>
+                          <p>From {{ room.pricePerNight }} KM / night</p>
+
+                          <p [class.available]="room.available" [class.unavailable]="!room.available">
+                              {{ room.available ? 'Available' : 'Currently unavailable' }}
+                          </p>
+
+                          <!-- 🔥 BOOK BUTTON -->
+                          <button
+                              class="book-btn"
+                              [disabled]="!room.available"
+                              (click)="bookRoom(room)"
+                          >
+                              {{ room.available ? 'Book now' : 'Unavailable' }}
+                          </button>
+                      </div>
+</div>
+
                 </div>
             </section>
 

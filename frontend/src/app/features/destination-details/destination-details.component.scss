@@ -268,6 +268,32 @@
         transform: translateX(4px);
     }
 }
+
+  .secondary-btn {
+    width: 92%;
+    margin-top: 8px;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    background: #eef2f7;
+    color: #334155;
+
+    &:hover {
+      background: #e2e8f0;
+    }
+
+    &:disabled {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+  }
+
 @media (max-width: 768px) {
     .destination-details-page {
         padding: 20px 16px;

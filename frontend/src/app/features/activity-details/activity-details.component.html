@@ -1,0 +1,121 @@
+<div class="activity-details-page" *ngIf="activity as item">
+    <div class="details-layout">
+
+    <aside class="booking-sidebar">
+      <div class="booking-card">
+        <button class="back-btn" type="button" (click)="goBack()">
+          ← Back to activities
+        </button>
+
+        <h2>Check Availability</h2>
+
+        <div class="filter-group">
+          <label for="activityDate">Date</label>
+          <input
+            id="activityDate"
+            type="date"
+            [(ngModel)]="bookingForm.activityDate"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="participants">Participants</label>
+          <input
+            id="participants"
+            type="number"
+            min="1"
+            [(ngModel)]="bookingForm.participants"
+          />
+        </div>
+
+        <button class="primary-btn" type="button" (click)="searchAvailability()">
+          Search availability
+        </button>
+
+        <div class="quick-info">
+          <p><strong>Available:</strong> {{ item.availableFrom }} - {{ item.availableTo }}</p>
+          <p><strong>Duration:</strong> {{ item.duration }}</p>
+          <p><strong>Meeting point:</strong> {{ item.meetingPoint }}</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="details-content">
+      <section class="hero-card">
+        <div class="hero-image">
+          <img
+            [src]="item.imageUrl || 'assets/images/placeholder.jpg'"
+            [alt]="item.name"
+          />
+        </div>
+
+        <div class="hero-content">
+          <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+          <h1>{{ item.name }}</h1>
+          <p class="type">{{ item.type }}</p>
+          <p class="rating">Rating: {{ item.rating }}</p>
+          <p class="price">From {{ item.price }} KM / person</p>
+          <p class="description">{{ item.description }}</p>
+          <p class="address">{{ item.meetingPoint }}</p>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Included</h2>
+        </div>
+
+        <div class="amenities-list">
+          <span class="amenity-chip" *ngFor="let included of item.included">
+            {{ included }}
+          </span>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Activity Options</h2>
+        </div>
+
+        <div class="activity-options">
+          <div class="activity-option-card" *ngFor="let option of item.activityOptions">
+            <div class="option-content">
+              <h3>{{ option.title }}</h3>
+              <p>Duration: {{ option.duration }}</p>
+              <p>Group size: {{ option.groupSize }}</p>
+              <p>From {{ option.price }} KM / person</p>
+
+              <p [class.available]="option.available" [class.unavailable]="!option.available">
+                {{ option.available ? 'Available' : 'Currently unavailable' }}
+              </p>
+
+              <button
+                class="book-btn"
+                [disabled]="!option.available"
+                (click)="bookActivity(option)"
+              >
+                {{ option.available ? 'Book now' : 'Unavailable' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Reviews</h2>
+        </div>
+
+        <div class="reviews-list">
+          <div class="review-card" *ngFor="let review of item.reviews">
+            <h3>{{ review.author }}</h3>
+            <p class="review-rating">Rating: {{ review.rating }}</p>
+            <p class="review-comment">{{ review.comment }}</p>
+            <p class="review-date">{{ review.date }}</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+</div>

@@ -9,6 +9,11 @@ import { DestinationsComponent } from './features/destinations/destinations.comp
 import { DestinationDetailsComponent } from './features/destination-details/destination-details.component';
 import { AccommodationsComponent } from './features/accommodations/accommodations.component';
 import { AccommodationDetailsComponent } from './features/accommodation-details/accommodation-details.component';
+import { BookComponent } from './features/book/book.component';
+import { ActivitiesComponent } from './features/activities/activities.component';
+import { ActivityDetailsComponent } from './features/activity-details/activity-details.component';
+import { TransportationComponent } from './features/transportation/transportation.component';
+import { TravelPlansComponent } from './features/travelplans/travelplans.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,7 +23,12 @@ const routes: Routes = [
   { path: 'destinations', component: DestinationsComponent },
   { path: 'destinations/:id', component: DestinationDetailsComponent },
   { path: 'accommodations', component: AccommodationsComponent },
-  { path: 'accommodations/:id', component: AccommodationDetailsComponent }
+  { path: 'accommodations/:id', component: AccommodationDetailsComponent },
+  { path: 'book/:accommodationId/:roomId', component: BookComponent },
+  { path: 'activities', component: ActivitiesComponent },
+  { path: 'activities/:id', component: ActivityDetailsComponent },
+  { path: 'transportation', component: TransportationComponent },
+  { path: 'travelplans', component: TravelPlansComponent },
 ];
 
 @NgModule({

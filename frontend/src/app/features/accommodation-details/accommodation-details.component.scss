@@ -321,6 +321,31 @@
     }
 }
 
+.book-btn {
+    margin-top: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    background: #1d4ed8;
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+        background: #1e40af;
+    }
+
+    &:disabled {
+        background: #cbd5e1;
+        color: #64748b;
+        cursor: not-allowed;
+    }
+}
+
 @media (max-width: 768px) {
     .accommodation-details-page {
         padding: 20px 16px;

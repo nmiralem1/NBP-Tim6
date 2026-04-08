@@ -1,0 +1,155 @@
+<div class="transportation-page">
+  <div class="content-layout">
+
+    <aside class="filters-sidebar">
+      <div class="filters-card">
+        <h2>Search</h2>
+
+        <div class="filter-group">
+          <label for="search">Search transport</label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search provider, station, airport..."
+            [(ngModel)]="searchTerm"
+            (input)="filterTransportation()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="from">From</label>
+          <select
+            id="from"
+            [(ngModel)]="selectedFrom"
+            (change)="filterTransportation()"
+          >
+            <option value="">All departure cities</option>
+            <option *ngFor="let from of fromOptions" [value]="from">
+              {{ from }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="to">To</label>
+          <select
+            id="to"
+            [(ngModel)]="selectedTo"
+            (change)="filterTransportation()"
+          >
+            <option value="">All arrival cities</option>
+            <option *ngFor="let to of toOptions" [value]="to">
+              {{ to }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="date">Date</label>
+          <input
+            id="date"
+            type="date"
+            [(ngModel)]="selectedDate"
+            (change)="filterTransportation()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="type">Transport type</label>
+          <select
+            id="type"
+            [(ngModel)]="selectedType"
+            (change)="filterTransportation()"
+          >
+            <option value="">All types</option>
+            <option *ngFor="let type of transportationTypes" [value]="type">
+              {{ type }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="price">Maximum price</label>
+          <input
+            id="price"
+            type="number"
+            placeholder="Enter max price"
+            [(ngModel)]="maxPrice"
+            (input)="filterTransportation()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="rating">Minimum rating</label>
+          <select
+            id="rating"
+            [(ngModel)]="selectedRating"
+            (change)="filterTransportation()"
+          >
+            <option value="">All ratings</option>
+            <option value="4">4+ stars</option>
+            <option value="4.5">4.5+ stars</option>
+          </select>
+        </div>
+
+        <button class="primary-btn" type="button" (click)="filterTransportation()">
+          Show transport
+        </button>
+
+        <button class="secondary-btn" type="button" (click)="resetFilters()">
+          Reset filters
+        </button>
+      </div>
+    </aside>
+
+    <main class="transportation-content">
+      <div class="section-header">
+        <h1>Transportation</h1>
+      </div>
+
+      <div class="transportation-grid">
+        <div
+          *ngFor="let item of filteredTransportationOptions"
+          class="transportation-card"
+        >
+          <div class="card-content">
+            <div class="top-row">
+              <h3>{{ item.provider }}</h3>
+              <span class="transport-badge">{{ item.type }}</span>
+            </div>
+
+            <p class="route">{{ item.from }} → {{ item.to }}</p>
+            <p><strong>Departure:</strong> {{ item.departureLocation }}</p>
+            <p><strong>Arrival:</strong> {{ item.arrivalLocation }}</p>
+            <p><strong>Time:</strong> {{ item.departureTime }} - {{ item.arrivalTime }}</p>
+            <p><strong>Duration:</strong> {{ item.duration }}</p>
+            <p class="price">From {{ item.price }} KM</p>
+            <p class="rating">Rating: {{ item.rating }}</p>
+            <p [class.available]="item.available" [class.unavailable]="!item.available">
+              {{ item.available ? 'Available' : 'Currently unavailable' }}
+            </p>
+
+            <div class="amenities">
+              <span class="amenity" *ngFor="let amenity of item.amenities">
+                {{ amenity }}
+              </span>
+            </div>
+
+            <button
+              class="book-btn"
+              [disabled]="!item.available"
+              (click)="bookTransportation(item)"
+            >
+              {{ item.available ? 'Book now' : 'Unavailable' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="filteredTransportationOptions.length === 0">
+        No transportation options match your selected filters.
+      </p>
+    </main>
+
+  </div>
+</div>
