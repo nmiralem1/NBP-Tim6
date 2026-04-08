@@ -1,0 +1,182 @@
+<div class="bookings-page">
+  <div class="content-layout">
+
+    <aside class="profile-sidebar">
+      <div class="profile-card">
+        <h2>My profile</h2>
+
+        <div class="profile-info">
+          <div class="profile-row">
+            <span class="label">Username</span>
+            <span class="value">{{ userProfile.username }}</span>
+          </div>
+
+          <div class="profile-row">
+            <span class="label">Email</span>
+            <span class="value">{{ userProfile.email }}</span>
+          </div>
+
+          <div class="profile-row">
+            <span class="label">Phone</span>
+            <span class="value">{{ userProfile.phone }}</span>
+          </div>
+
+          <div class="profile-row">
+            <span class="label">Password</span>
+            <span class="value">{{ userProfile.password }}</span>
+          </div>
+
+          <div class="profile-row">
+            <span class="label">Member since</span>
+            <span class="value">{{ userProfile.memberSince }}</span>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h3>Search bookings</h3>
+
+          <div class="filter-group">
+            <label for="search">Search booking</label>
+            <input
+              id="search"
+              type="text"
+              placeholder="Search booking..."
+              [(ngModel)]="searchTerm"
+              (input)="filterBookings()"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label for="type">Booking type</label>
+            <select
+              id="type"
+              [(ngModel)]="selectedType"
+              (change)="filterBookings()"
+            >
+              <option value="">All types</option>
+              <option *ngFor="let type of bookingTypes" [value]="type">
+                {{ type }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="status">Status</label>
+            <select
+              id="status"
+              [(ngModel)]="selectedStatus"
+              (change)="filterBookings()"
+            >
+              <option value="">All statuses</option>
+              <option *ngFor="let status of bookingStatuses" [value]="status">
+                {{ status }}
+              </option>
+            </select>
+          </div>
+
+          <button class="primary-btn" type="button" (click)="filterBookings()">
+            Show bookings
+          </button>
+
+          <button class="secondary-btn" type="button" (click)="resetFilters()">
+            Reset filters
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="bookings-content">
+      <div class="section-header">
+        <h1>My bookings</h1>
+      </div>
+
+      <div class="bookings-list">
+        <div class="booking-card" *ngFor="let booking of filteredBookings">
+          <div class="booking-image">
+            <img
+              [src]="booking.imageUrl || 'assets/images/placeholder.jpg'"
+              [alt]="booking.title"
+            />
+          </div>
+
+          <div class="booking-info">
+            <div class="top-row">
+              <h3>{{ booking.title }}</h3>
+              <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+                {{ booking.status }}
+              </span>
+            </div>
+
+            <p class="booking-type">
+              <span class="type-badge" [ngClass]="getTypeClass(booking.type)">
+                {{ booking.type }}
+              </span>
+            </p>
+
+            <p class="location">{{ booking.location }}</p>
+            <p class="date">Booked on: {{ booking.bookingDate }}</p>
+            <p class="price">Price: {{ booking.price }} KM</p>
+
+            <div class="review-preview" *ngIf="booking.reviewText && booking.reviewRating">
+              <p class="review-label">Your review:</p>
+              <p class="review-text">{{ booking.reviewText }}</p>
+              <p class="review-rating">Rating: {{ booking.reviewRating }} / 5</p>
+            </div>
+
+            <button class="primary-btn review-btn" type="button" (click)="openReviewModal(booking)">
+              Leave review
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="filteredBookings.length === 0">
+        No bookings match your selected filters.
+      </p>
+    </main>
+
+  </div>
+
+  <div class="modal-overlay" *ngIf="isReviewModalOpen">
+    <div class="review-modal">
+      <div class="modal-header">
+        <h2>Leave a review</h2>
+        <button class="close-btn" type="button" (click)="closeReviewModal()">×</button>
+      </div>
+
+      <p class="selected-booking" *ngIf="selectedBooking">
+        {{ selectedBooking.title }}
+      </p>
+
+      <div class="stars-row">
+        <span
+          *ngFor="let star of getStarArray()"
+          class="star"
+          [class.active]="star <= selectedStars"
+          (click)="setStars(star)"
+        >
+          ★
+        </span>
+      </div>
+
+      <div class="filter-group full-width">
+        <label for="reviewText">Your review</label>
+        <textarea
+          id="reviewText"
+          rows="5"
+          placeholder="Write your experience..."
+          [(ngModel)]="reviewText"
+        ></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" (click)="closeReviewModal()">
+          Cancel
+        </button>
+        <button class="primary-btn" type="button" (click)="submitReview()">
+          Submit review
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,6 +21,8 @@ import { ActivitiesComponent } from './features/activities/activities.component'
 import { ActivityDetailsComponent } from './features/activity-details/activity-details.component';
 import { TransportationComponent } from './features/transportation/transportation.component';
 import { TravelPlansComponent } from './features/travelplans/travelplans.component';
+import { BookingsComponent } from './features/bookings/bookings.component';
+import { TravelplansDetailsComponent } from './features/travelplans-details/travelplans-details.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { TravelPlansComponent } from './features/travelplans/travelplans.compone
     ActivitiesComponent,
     ActivityDetailsComponent,
     TransportationComponent,
-    TravelPlansComponent
+    TravelPlansComponent,
+    BookingsComponent,
+    TravelplansDetailsComponent
   ],
   imports: [
     BrowserModule,
