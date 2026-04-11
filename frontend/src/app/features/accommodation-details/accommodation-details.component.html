@@ -1,0 +1,143 @@
+<div class="accommodation-details-page" *ngIf="accommodation as item">
+    <div class="details-layout">
+
+        <aside class="booking-sidebar">
+            <div class="booking-card">
+                <button class="back-btn" type="button" (click)="goBack()">
+                    ← Back to accommodations
+                </button>
+
+                <h2>Check Availability</h2>
+
+                <div class="filter-group">
+                    <label for="checkInDate">Check-in</label>
+                    <input
+                        id="checkInDate"
+                        type="date"
+                        [(ngModel)]="bookingForm.checkInDate"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="checkOutDate">Check-out</label>
+                    <input
+                        id="checkOutDate"
+                        type="date"
+                        [(ngModel)]="bookingForm.checkOutDate"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="guests">Guests</label>
+                    <input
+                        id="guests"
+                        type="number"
+                        min="1"
+                        [(ngModel)]="bookingForm.guests"
+                    />
+                </div>
+
+                <button class="primary-btn" type="button" (click)="searchAvailability()">
+                    Search rooms
+                </button>
+
+                <div class="quick-info">
+                    <p><strong>Available:</strong> {{ item.availableFrom }} - {{ item.availableTo }}</p>
+                    <p><strong>Check-in:</strong> {{ item.checkIn }}</p>
+                    <p><strong>Check-out:</strong> {{ item.checkOut }}</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="details-content">
+            <section class="hero-card">
+                <div class="hero-image">
+                    <img
+                        [src]="item.imageUrl || 'assets/images/placeholder.jpg'"
+                        [alt]="item.name"
+                    />
+                </div>
+
+                <div class="hero-content">
+                    <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+                    <h1>{{ item.name }}</h1>
+                    <p class="type">{{ item.type }}</p>
+                    <p class="rating">⭐ {{ item.rating }}</p>
+                    <p class="price">From {{ item.pricePerNight }} KM / night</p>
+                    <p class="description">{{ item.description }}</p>
+                    <p class="address">{{ item.address }}</p>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Gallery</h2>
+                </div>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item" *ngFor="let image of item.gallery">
+                        <img [src]="image" [alt]="item.name" />
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Amenities</h2>
+                </div>
+
+                <div class="amenities-list">
+                    <span class="amenity-chip" *ngFor="let amenity of item.amenities">
+                        {{ amenity }}
+                    </span>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Room Options</h2>
+                </div>
+
+                <div class="room-options">
+                  <div class="room-card" *ngFor="let room of item.roomOptions">
+                      <div class="room-content">
+                          <h3>{{ room.title }}</h3>
+                          <p>Guests: {{ room.guests }}</p>
+                          <p>From {{ room.pricePerNight }} KM / night</p>
+
+                          <p [class.available]="room.available" [class.unavailable]="!room.available">
+                              {{ room.available ? 'Available' : 'Currently unavailable' }}
+                          </p>
+
+                          <!-- 🔥 BOOK BUTTON -->
+                          <button
+                              class="book-btn"
+                              [disabled]="!room.available"
+                              (click)="bookRoom(room)"
+                          >
+                              {{ room.available ? 'Book now' : 'Unavailable' }}
+                          </button>
+                      </div>
+</div>
+
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2>Reviews</h2>
+                </div>
+
+                <div class="reviews-list">
+                    <div class="review-card" *ngFor="let review of item.reviews">
+                        <h3>{{ review.author }}</h3>
+                        <p class="review-rating">Rating: {{ review.rating }}</p>
+                        <p class="review-comment">{{ review.comment }}</p>
+                        <p class="review-date">{{ review.date }}</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+</div>

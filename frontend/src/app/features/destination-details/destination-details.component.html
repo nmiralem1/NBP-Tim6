@@ -1,0 +1,182 @@
+<div class="destination-details-page" *ngIf="destination">
+    <div class="details-layout">
+
+        <aside class="booking-sidebar">
+            <div class="booking-card">
+                <button class="back-btn" type="button" (click)="goBack()">
+                    ← Back to destinations
+                </button>
+
+                <h2>Plan Your Trip</h2>
+                <div class="filter-group">
+                    <label for="departure">Departure</label>
+                    <input
+                        id="departure"
+                        type="text"
+                        placeholder="Enter departure city"
+                        [(ngModel)]="bookingForm.departure"
+                    />
+                </div>
+                <div class="filter-group">
+                    <label for="destination">Destination</label>
+                    <input
+                        id="destination"
+                        type="text"
+                        placeholder="Enter destination"
+                        [(ngModel)]="bookingForm.destination"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="departureDate">Departure date</label>
+                    <input
+                        id="departureDate"
+                        type="date"
+                        [(ngModel)]="bookingForm.departureDate"
+                        (change)="filterAccommodationsByDate()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="returnDate">Return date</label>
+                    <input
+                        id="returnDate"
+                        type="date"
+                        [(ngModel)]="bookingForm.returnDate"
+                        (change)="filterAccommodationsByDate()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="travelers">Travelers</label>
+                    <input
+                        id="travelers"
+                        type="number"
+                        min="1"
+                        [(ngModel)]="bookingForm.travelers"
+                    />
+                </div>
+
+                <button class="primary-btn" type="button" (click)="searchBooking()">
+                    Search offers
+                </button>
+
+                <button class="secondary-btn" type="button" (click)="resetFilters()">
+                    Reset filters
+                </button>
+            </div>
+        </aside>
+
+        <main class="details-content">
+            <section class="hero-section">
+                <div class="hero-image">
+                    <img
+                        [src]="destination.imageUrl || 'assets/images/placeholder.jpg'"
+                        [alt]="destination.name"
+                    />
+                </div>
+
+                <div class="hero-content">
+                    <p class="location">{{ destination.countryName }} · {{ destination.continent }}</p>
+                    <h1>{{ destination.name }}</h1>
+                    <p class="description">{{ destination.description }}</p>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="clickable-title" (click)="goToAccommodations()">
+    Accommodation
+</h2>
+                </div>
+
+                <div class="horizontal-scroll">
+                    <div class="info-card" *ngFor="let item of filteredAccommodations">
+                        <div class="card-image">
+                            <img [src]="item.imageUrl" [alt]="item.name" />
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ item.name }}</h3>
+                            <p>{{ item.type }}</p>
+                            <p>From {{ item.pricePerNight }} KM / night</p>
+                            <p>Rating: {{ item.rating }}</p>
+                            <p>Available: {{ item.availableFrom }} - {{ item.availableTo }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="empty-state" *ngIf="filteredAccommodations.length === 0">
+                    No accommodation is available for the selected dates.
+                </p>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="clickable-title" (click)="goToActivities()">
+                        Activities
+                    </h2>
+                </div>
+
+                <div class="horizontal-scroll">
+                    <div class="info-card" *ngFor="let item of destination.activities">
+                        <div class="card-image">
+                            <img [src]="item.imageUrl" [alt]="item.title" />
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ item.title }}</h3>
+                            <p>{{ item.category }}</p>
+                            <p>{{ item.duration }}</p>
+                            <p>From {{ item.price }} KM</p>
+                            <p>From {{ item.price }} KM</p>
+                            <p class="rating">Rating: {{ item.rating }}</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                <h2 class="clickable-title" (click)="goToTransportation()">
+                    Transportation
+                </h2>
+            </div>
+
+                <div class="horizontal-scroll">
+                    <div class="info-card" *ngFor="let item of destination.transportOptions">
+                        <div class="card-image">
+                            <img [src]="item.imageUrl" [alt]="item.type" />
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ item.type }}</h3>
+                            <p>{{ item.provider }}</p>
+                            <p>{{ item.duration }}</p>
+                            <p>From {{ item.price }} KM</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="clickable-title" (click)="goToTravelPlans()">
+Travel Plans</h2>
+                </div>
+
+                <div class="horizontal-scroll">
+                    <div class="info-card large-card" *ngFor="let item of destination.travelPlans">
+                        <div class="card-image">
+                            <img [src]="item.imageUrl" [alt]="item.title" />
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ item.title }}</h3>
+                            <p>{{ item.duration }}</p>
+                            <p>{{ item.description }}</p>
+                            <p class="price">From {{ item.price }} KM</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+</div>

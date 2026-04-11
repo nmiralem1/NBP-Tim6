@@ -1,0 +1,32 @@
+<nav class="top-nav">
+    <div class="logo" routerLink="/">
+        <span class="globe">🌍</span> TravelPlanner
+    </div>
+
+    <div class="nav-links">
+        <a routerLink="/">Home</a>
+        <a routerLink="/destinations">Destinations</a>
+        <a routerLink="/trips">Trips</a>
+        <a routerLink="/hotels">Hotels</a>
+        <a routerLink="/activities">Activities</a>
+        <a routerLink="/bookings">My Bookings</a>
+    </div>
+
+    <div class="nav-actions">
+        <div class="user-container" *ngIf="authService.isLoggedIn(); else loginBtn">
+            <div class="user-profile" (click)="toggleMenu()">👤</div>
+
+            <div class="dropdown-menu" [class.show]="isMenuOpen">
+                <a routerLink="/profile" (click)="closeMenu()">My Profile</a>
+                <a routerLink="/trips" (click)="closeMenu()">My Trips</a>
+                <a routerLink="/bookings" (click)="closeMenu()">My Bookings</a>
+                <hr />
+                <button (click)="logout()" class="btn-logout" type="button">Logout</button>
+            </div>
+        </div>
+
+        <ng-template #loginBtn>
+            <a routerLink="/login" class="btn-login">Log In</a>
+        </ng-template>
+    </div>
+</nav>

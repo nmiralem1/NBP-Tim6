@@ -1,35 +1,5 @@
 <div class="home-container">
-    <!-- Navigation bar (Simplified for now) -->
-    <nav class="top-nav">
-        <div class="logo">
-            <span class="globe">🌍</span> TravelPlanner
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/destinations">Destinations</a>
-            <a href="/trips">Trips</a>
-            <a href="/hotels">Hotels</a>
-            <a href="/activities">Activities</a>
-        </div>
-        <div class="nav-actions">
-            <button class="btn-create">Create Trip</button>
 
-            <!-- User profile with dropdown -->
-            <div class="user-container" *ngIf="authService.isLoggedIn(); else loginBtn">
-                <div class="user-profile" (click)="toggleMenu()">👤</div>
-                <div class="dropdown-menu" [class.show]="isMenuOpen">
-                    <a routerLink="/profile">My Profile</a>
-                    <a routerLink="/trips">My Trips</a>
-                    <hr>
-                    <button (click)="logout()" class="btn-logout">Logout</button>
-                </div>
-            </div>
-
-            <ng-template #loginBtn>
-                <a routerLink="/login" class="btn-login">Log In</a>
-            </ng-template>
-        </div>
-    </nav>
 
     <!-- Hero Section -->
     <header class="hero">

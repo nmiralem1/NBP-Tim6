@@ -1,0 +1,68 @@
+<div class="destinations-page">
+    <div class="content-layout">
+
+        <aside class="filters-sidebar">
+            <div class="filters-card">
+                <h2>Search</h2>
+
+                <div class="filter-group">
+                    <label for="search">Search destinations</label>
+                    <input
+                        id="search"
+                        type="text"
+                        placeholder="Search destinations..."
+                        [(ngModel)]="searchTerm"
+                        (input)="filterDestinations()"
+                    />
+                </div>
+
+                <div class="filter-group">
+                    <label for="type">Country</label>
+                    <select
+                        id="type"
+                        [(ngModel)]="selectedCountry"
+                        (change)="filterDestinations()"
+                    >
+                        <option value="">All countries</option>
+                        <option *ngFor="let country of countries" [value]="country">
+                            {{ country }}
+                        </option>
+                    </select>
+                </div>
+
+                <button class="primary-btn" type="button" (click)="filterDestinations()">
+                    Show destinations
+                </button>
+
+                <button class="secondary-btn" type="button" (click)="resetFilters()">
+                    Reset filters
+                </button>
+            </div>
+        </aside>
+
+        <main class="destinations-content">
+            <div class="section-header">
+                <h1>Popular Destinations</h1>
+            </div>
+
+            <div class="destinations-grid">
+                <div *ngFor="let city of filteredDestinations" class="destination-card">
+                    <div class="image-wrapper">
+                        <img
+                            [src]="city.imageUrl || 'assets/images/placeholder.jpg'"
+                            [alt]="city.name"
+                        />
+                    </div>
+
+                    <div class="card-content">
+                        <h3>{{ city.name }}</h3>
+                        <p class="country">{{ city.countryName }}</p>
+                    </div>
+
+                    <a [routerLink]="['/destinations', city.id]" class="card-link"></a>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
