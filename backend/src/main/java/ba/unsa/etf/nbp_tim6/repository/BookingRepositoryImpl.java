@@ -16,26 +16,26 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     private final org.springframework.jdbc.core.RowMapper<Booking> bookingRowMapper = (rs, rowNum) -> {
         Booking booking = new Booking();
-        booking.setId(rs.getInt("id"));
-        booking.setTripId(rs.getInt("trip_id"));
-        booking.setUserId(rs.getInt("user_id"));
-        booking.setAccommodationId(rs.getInt("accommodation_id"));
-        booking.setCheckIn(rs.getDate("check_in").toLocalDate());
-        booking.setCheckOut(rs.getDate("check_out").toLocalDate());
-        booking.setGuestsCount(rs.getInt("guests_count"));
-        booking.setTotalPrice(rs.getBigDecimal("total_price"));
-        booking.setBookingStatus(rs.getString("booking_status"));
-        booking.setBookingReference(rs.getString("booking_reference"));
-        booking.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        booking.setId(rs.getInt("ID"));
+        booking.setTripId(rs.getInt("TRIP_ID"));
+        booking.setUserId(rs.getInt("USER_ID"));
+        booking.setAccommodationId(rs.getInt("ACCOMMODATION_ID"));
+        booking.setCheckIn(rs.getDate("CHECK_IN").toLocalDate());
+        booking.setCheckOut(rs.getDate("CHECK_OUT").toLocalDate());
+        booking.setGuestsCount(rs.getInt("GUESTS_COUNT"));
+        booking.setTotalPrice(rs.getBigDecimal("TOTAL_PRICE"));
+        booking.setBookingStatus(rs.getString("BOOKING_STATUS"));
+        booking.setBookingReference(rs.getString("BOOKING_REFERENCE"));
+        booking.setCreatedAt(rs.getTimestamp("CREATED_AT").toLocalDateTime());
         return booking;
     };
 
     public int save(Booking booking) {
 
         String sql = """
-                    INSERT INTO bookings
-                    (trip_id, user_id, accommodation_id, check_in, check_out,
-                     guests_count, total_price, booking_status, booking_reference, created_at)
+                    INSERT INTO NBPT6.BOOKINGS
+                    (TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+                     GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE, CREATED_AT)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                 """;
 
@@ -52,22 +52,22 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     public Booking findById(Integer id) {
-        String sql = "SELECT * FROM bookings WHERE id = ?";
+        String sql = "SELECT * FROM NBPT6.BOOKINGS WHERE ID = ?";
         java.util.List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     public java.util.List<Booking> findByUserId(Integer userId) {
-        String sql = "SELECT * FROM bookings WHERE user_id = ?";
+        String sql = "SELECT * FROM NBPT6.BOOKINGS WHERE USER_ID = ?";
         return jdbcTemplate.query(sql, bookingRowMapper, userId);
     }
 
     public int update(Booking booking) {
         String sql = """
-                    UPDATE bookings
-                    SET trip_id = ?, user_id = ?, accommodation_id = ?, check_in = ?, check_out = ?,
-                        guests_count = ?, total_price = ?, booking_status = ?, booking_reference = ?
-                    WHERE id = ?
+                    UPDATE NBPT6.BOOKINGS
+                    SET TRIP_ID = ?, USER_ID = ?, ACCOMMODATION_ID = ?, CHECK_IN = ?, CHECK_OUT = ?,
+                        GUESTS_COUNT = ?, TOTAL_PRICE = ?, BOOKING_STATUS = ?, BOOKING_REFERENCE = ?
+                    WHERE ID = ?
                 """;
         return jdbcTemplate.update(sql,
                 booking.getTripId(),
@@ -83,7 +83,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     public int delete(Integer id) {
-        String sql = "DELETE FROM bookings WHERE id = ?";
+        String sql = "DELETE FROM NBPT6.BOOKINGS WHERE ID = ?";
         return jdbcTemplate.update(sql, id);
     }
 }
