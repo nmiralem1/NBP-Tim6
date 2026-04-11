@@ -5,6 +5,10 @@ import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import ba.unsa.etf.nbp_tim6.security.JwtUtils;
 import ba.unsa.etf.nbp_tim6.security.RefreshTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +26,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(
+        name = "Authentication",
+        description = "Endpoints for user authentication, registration, logout, and token refresh"
+)
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -31,7 +39,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-            PasswordEncoder passwordEncoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+                          PasswordEncoder passwordEncoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -39,9 +47,17 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
+    @Operation(
+            summary = "Login user",
+            description = "Authenticates a user using username or email and password, then generates access and refresh tokens stored in cookies"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged in successfully"),
+            @ApiResponse(responseCode = "401", description = "Invalid username, email, or password")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> loginRequest,
-            HttpServletResponse response) {
+                                              HttpServletResponse response) {
         try {
             String identifier = loginRequest.get("username");
             String password = loginRequest.get("password");
@@ -69,6 +85,14 @@ public class AuthController {
         }
     }
 
+    @Operation(
+            summary = "Register user",
+            description = "Registers a new user account if the username and email are not already in use"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Username or email is already in use")
+    })
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -85,6 +109,14 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "User registered successfully!"));
     }
 
+    @Operation(
+            summary = "Refresh access token",
+            description = "Generates a new access token using the refresh token stored in cookies"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Token refreshed successfully"),
+            @ApiResponse(responseCode = "403", description = "Refresh token is missing, invalid, or expired")
+    })
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshTokenString = parseRefreshToken(request);
@@ -96,7 +128,6 @@ public class AuthController {
                         User user = userRepository.findById(token.getUserId()).orElseThrow();
                         String jwt = jwtUtils.generateToken(user.getUsername());
 
-                        // Rotate refresh token
                         refreshTokenService.deleteByToken(token.getToken());
                         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
 
@@ -109,6 +140,13 @@ public class AuthController {
         return ResponseEntity.status(403).body(Map.of("message", "Refresh Token is null!"));
     }
 
+    @Operation(
+            summary = "Logout user",
+            description = "Logs out the user by deleting authentication cookies and invalidating the refresh token"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Log out successful")
+    })
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
         String refreshTokenString = parseRefreshToken(request);
