@@ -13,4 +13,6 @@ public interface BookingService {
     void updateBooking(Booking booking);
 
     void deleteBooking(Integer id);
+
+    java.util.List<Booking> getBookingsForAuthenticatedUser(String username);
 }
