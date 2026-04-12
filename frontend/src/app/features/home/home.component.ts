@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
             next: (trips) => {
                 // Map first 3 trips as recommended
                 this.recommendedTrips = trips.slice(0, 3).map(trip => ({
+                    id: trip.id,
                     title: trip.title,
                     date: this.formatDate(trip.startDate, trip.endDate),
                     price: trip.budget,
@@ -83,6 +84,10 @@ export class HomeComponent implements OnInit {
 
     toggleMenu() {
         this.isMenuOpen = !this.isMenuOpen;
+    }
+
+    openTripDetails(tripId: number): void {
+        this.router.navigate(['/trips', tripId]);
     }
 
     logout() {

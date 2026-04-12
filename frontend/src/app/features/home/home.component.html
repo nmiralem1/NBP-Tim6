@@ -70,7 +70,7 @@
                     <p class="date">📅 {{ trip.date }}</p>
                     <div class="card-footer">
                         <span class="price">from <strong>{{ trip.price }} €</strong></span>
-                        <button class="btn-detail">View Details</button>
+                        <button class="btn-detail" type="button" (click)="openTripDetails(trip.id)">View Details</button>
                     </div>
                 </div>
             </div>

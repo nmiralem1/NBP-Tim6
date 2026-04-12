@@ -1,16 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface Accommodation {
-    id: number;
-    name: string;
-    type: string;
-    pricePerNight: number;
-    rating: number;
-    imageUrl: string;
-    availableFrom: string;
-    availableTo: string;
-}
+import { DestinationHotel, DestinationService, DestinationTrip } from '../../core/services/destination.service';
 
 interface Activity {
     id: number;
@@ -31,15 +21,6 @@ interface TransportOption {
     imageUrl: string;
 }
 
-interface TravelPlan {
-    id: number;
-    title: string;
-    duration: string;
-    price: number;
-    description: string;
-    imageUrl: string;
-}
-
 interface DestinationDetails {
     id: number;
     name: string;
@@ -47,10 +28,10 @@ interface DestinationDetails {
     continent: string;
     imageUrl: string;
     description: string;
-    accommodations: Accommodation[];
+    accommodations: DestinationHotel[];
     activities: Activity[];
     transportOptions: TransportOption[];
-    travelPlans: TravelPlan[];
+    travelPlans: DestinationTrip[];
 }
 
 @Component({
@@ -61,151 +42,20 @@ interface DestinationDetails {
 export class DestinationDetailsComponent implements OnInit {
     destinationId: number | null = null;
     destination: DestinationDetails | null = null;
-    filteredAccommodations: Accommodation[] = [];
+    filteredAccommodations: DestinationHotel[] = [];
 
     bookingForm = {
-    departure: '',
-    destination: '',
-    departureDate: '',
-    returnDate: '',
-    travelers: 2
-};
-
-    dummyDestinations: DestinationDetails[] = [
-        {
-            id: 1,
-            name: 'Paris',
-            countryName: 'France',
-            continent: 'Europe',
-            imageUrl: 'assets/images/paris.jpg',
-            description: 'Paris is the perfect destination for travelers who love art, history, fine dining, and unforgettable city views. Explore iconic landmarks, elegant streets, and a unique cultural atmosphere all year round.',
-            accommodations: [
-                {
-                    id: 1,
-                    name: 'Hotel Lumière',
-                    type: 'Hotel',
-                    pricePerNight: 280,
-                    rating: 4.8,
-                    imageUrl: 'assets/images/paris.jpg',
-                    availableFrom: '2026-04-10',
-                    availableTo: '2026-04-30'
-                                  },
-                {
-                    id: 2,
-                    name: 'Montmartre Suites',
-                    type: 'Apartment',
-                    pricePerNight: 210,
-                    rating: 4.6,
-                    imageUrl: 'assets/images/paris.jpg',
-                    availableFrom: '2026-04-18',
-                    availableTo: '2026-05-10'
-                },
-                {
-                    id: 3,
-                    name: 'Seine View Resort',
-                    type: 'Resort',
-                    pricePerNight: 340,
-                    rating: 4.9,
-                    imageUrl: 'assets/images/paris.jpg',
-                    availableFrom: '2026-05-01',
-                    availableTo: '2026-05-25'
-                }
-            ],
-            activities: [
-                {
-                    id: 1,
-                    title: 'Eiffel Tower Tour',
-                    category: 'Sightseeing',
-                    price: 60,
-                    duration: '2h',
-                    imageUrl: 'assets/images/paris.jpg',
-                    rating: 4.7
-                },
-                {
-                    id: 2,
-                    title: 'Louvre Guided Visit',
-                    category: 'Museum',
-                    price: 75,
-                    duration: '3h',
-                    imageUrl: 'assets/images/paris.jpg',
-                    rating: 4.9
-                },
-                {
-                    id: 3,
-                    title: 'Seine River Cruise',
-                    category: 'Cruise',
-                    price: 45,
-                    duration: '1.5h',
-                    imageUrl: 'assets/images/paris.jpg',
-                    rating: 4.8
-                }
-            ],
-            transportOptions: [
-                {
-                    id: 1,
-                    type: 'Plane',
-                    provider: 'Air France',
-                    price: 420,
-                    duration: '2h 20min',
-                    imageUrl: 'assets/images/paris.jpg'
-                },
-                {
-                    id: 2,
-                    type: 'Bus',
-                    provider: 'FlixBus',
-                    price: 120,
-                    duration: '18h',
-                    imageUrl: 'assets/images/paris.jpg'
-                },
-                {
-                    id: 3,
-                    type: 'Rent a Car',
-                    provider: 'Hertz',
-                    price: 190,
-                    duration: 'Flexible',
-                    imageUrl: 'assets/images/paris.jpg'
-                },
-                {
-                    id: 4,
-                    type: 'Boat',
-                    provider: 'River Connection',
-                    price: 95,
-                    duration: '4h',
-                    imageUrl: 'assets/images/paris.jpg'
-                }
-            ],
-            travelPlans: [
-                {
-                    id: 1,
-                    title: 'Romantic Paris Escape',
-                    duration: '3 days',
-                    price: 1199,
-                    description: 'A curated short getaway including accommodation, a river cruise, and the city’s most iconic attractions.',
-                    imageUrl: 'assets/images/paris.jpg'
-                },
-                {
-                    id: 2,
-                    title: 'Paris Art & Culture',
-                    duration: '5 days',
-                    price: 1549,
-                    description: 'A richer itinerary focused on museums, galleries, architecture, and authentic city experiences.',
-                    imageUrl: 'assets/images/paris.jpg'
-                },
-                {
-                    id: 3,
-                    title: 'Paris Budget Explorer',
-                    duration: '4 days',
-                    price: 899,
-                    description: 'A more affordable travel plan with balanced accommodation, activities, and essential sightseeing.',
-                    imageUrl: 'assets/images/paris.jpg'
-                }
-            ]
-        }
-    ];
+        departure: '',
+        destination: '',
+        departureDate: '',
+        returnDate: '',
+        travelers: 2
+    };
 
     constructor(
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private destinationService: DestinationService
     ) {}
 
     ngOnInit(): void {
@@ -217,84 +67,90 @@ export class DestinationDetailsComponent implements OnInit {
     }
 
     goToAccommodations(): void {
-    this.router.navigate(['/accommodations']);
-
-    /*
-    UVEZATI S BAZOM:
-    this.router.navigate(['/accommodations'], { queryParams: { cityId: this.destinationId } });
-    */
+        this.router.navigate(['/accommodations'], {
+            queryParams: { cityId: this.destinationId }
+        });
     }
 
     goToActivities(): void {
-      if (!this.destination) return;
+        if (!this.destination) return;
 
-      this.router.navigate(['/activities'], {
-        queryParams: {
-          city: this.destination.name,
-          country: this.destination.countryName
-        }
-      });
+        this.router.navigate(['/activities'], {
+            queryParams: {
+                city: this.destination.name,
+                country: this.destination.countryName
+            }
+        });
     }
 
     goToTransportation(): void {
-      if (!this.destination) return;
+        if (!this.destination) return;
 
-      this.router.navigate(['/transportation'], {
-        queryParams: {
-          from: this.bookingForm.departure,
-          to: this.destination.name,
-          departureDate: this.bookingForm.departureDate,
-          returnDate: this.bookingForm.returnDate,
-          travelers: this.bookingForm.travelers
-        }
-      });
+        this.router.navigate(['/transportation'], {
+            queryParams: {
+                from: this.bookingForm.departure,
+                to: this.destination.name,
+                departureDate: this.bookingForm.departureDate,
+                returnDate: this.bookingForm.returnDate,
+                travelers: this.bookingForm.travelers
+            }
+        });
     }
 
     resetFilters(): void {
-      this.bookingForm.departure = '';
-      this.bookingForm.destination = this.destination?.name || '';
-      this.bookingForm.departureDate = '';
-      this.bookingForm.returnDate = '';
-      this.bookingForm.travelers = 2;
+        this.bookingForm.departure = '';
+        this.bookingForm.destination = this.destination?.name || '';
+        this.bookingForm.departureDate = '';
+        this.bookingForm.returnDate = '';
+        this.bookingForm.travelers = 2;
 
-      if (this.destination) {
-        this.filteredAccommodations = [...this.destination.accommodations];
-      }
+        if (this.destination) {
+            this.filteredAccommodations = [...this.destination.accommodations];
+        }
     }
 
     goToTravelPlans(): void {
-      this.router.navigate(['/trips'], {
-        queryParams: {
-          city: this.destination?.name || '',
-          country: this.destination?.countryName || '',
-          date: this.bookingForm.departureDate || '',
-          returnDate: this.bookingForm.returnDate || '',
-          departure: this.bookingForm.departure || '',
-          destination: this.bookingForm.destination || this.destination?.name || '',
-          travelers: this.bookingForm.travelers || 1
-        }
-      });
+        this.router.navigate(['/trips'], {
+            queryParams: {
+                city: this.destination?.name || '',
+                country: this.destination?.countryName || '',
+                date: this.bookingForm.departureDate || '',
+                returnDate: this.bookingForm.returnDate || '',
+                departure: this.bookingForm.departure || '',
+                destination: this.bookingForm.destination || this.destination?.name || '',
+                travelers: this.bookingForm.travelers || 1
+            }
+        });
     }
 
     loadDestinationDetails(id: number): void {
-        this.destination = this.dummyDestinations.find(item => item.id === id) || null;
+        this.destinationService.getDestinationDetails(id).subscribe({
+            next: ({ city, hotels, trips }) => {
+                if (!city) {
+                    this.router.navigate(['/destinations']);
+                    return;
+                }
 
-        if (!this.destination) {
-            this.router.navigate(['/destinations']);
-            return;
-        }
+                this.destination = {
+                    id: city.id,
+                    name: city.name,
+                    countryName: city.countryName || 'Unknown country',
+                    continent: city.continent || 'Unknown continent',
+                    imageUrl: city.imageUrl || 'assets/images/placeholder.jpg',
+                    description: city.longDescription || city.description || 'No description available.',
+                    accommodations: hotels,
+                    activities: [],
+                    transportOptions: [],
+                    travelPlans: trips
+                };
 
-        this.bookingForm.destination = this.destination.name;
-        this.filteredAccommodations = [...this.destination.accommodations];
-
-        /*
-        UVEZATI S BAZOM:
-        - GET /api/cities/{id}
-        - GET /api/cities/{id}/accommodations
-        - GET /api/cities/{id}/activities
-        - GET /api/cities/{id}/transport-options
-        - GET /api/cities/{id}/travel-plans
-        */
+                this.bookingForm.destination = this.destination.name;
+                this.filteredAccommodations = [...this.destination.accommodations];
+            },
+            error: () => {
+                this.router.navigate(['/destinations']);
+            }
+        });
     }
 
     goBack(): void {
@@ -312,22 +168,15 @@ export class DestinationDetailsComponent implements OnInit {
         }
 
         this.filteredAccommodations = this.destination.accommodations.filter(item => {
+            if (!item.availableFrom || !item.availableTo || item.availableFrom === 'Flexible' || item.availableTo === 'Flexible') {
+                return true;
+            }
+
             return departureDate >= item.availableFrom && returnDate <= item.availableTo;
         });
     }
 
     searchBooking(): void {
         this.filterAccommodationsByDate();
-
-        console.log('Booking search:', this.bookingForm);
-
-        /*
-        UVEZATI S BAZOM:
-        Pretraga ponuda po:
-        - destination
-        - departureDate
-        - returnDate
-        - travelers
-        */
     }
 }

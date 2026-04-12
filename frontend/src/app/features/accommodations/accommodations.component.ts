@@ -1,19 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
-interface Accommodation {
-    id: number;
-    name: string;
-    cityName: string;
-    countryName: string;
-    type: string;
-    pricePerNight: number;
-    rating: number;
-    imageUrl: string;
-    amenities: string[];
-    availableFrom: string;
-    availableTo: string;
-}
+import { ActivatedRoute, Router } from '@angular/router';
+import { AccommodationListItem, AccommodationService } from '../../core/services/accommodation.service';
 
 @Component({
     selector: 'app-accommodations',
@@ -21,8 +8,8 @@ interface Accommodation {
     styleUrls: ['./accommodations.component.scss']
 })
 export class AccommodationsComponent implements OnInit {
-    accommodations: Accommodation[] = [];
-    filteredAccommodations: Accommodation[] = [];
+    accommodations: AccommodationListItem[] = [];
+    filteredAccommodations: AccommodationListItem[] = [];
 
     searchTerm: string = '';
     selectedCity: string = '';
@@ -30,103 +17,36 @@ export class AccommodationsComponent implements OnInit {
     maxPrice: number | null = null;
     selectedRating: string = '';
 
-    cities: string[] = ['Paris', 'Rome', 'Barcelona'];
-    accommodationTypes: string[] = ['Hotel', 'Apartment', 'Resort', 'Hostel'];
+    cities: string[] = [];
+    accommodationTypes: string[] = [];
 
-    dummyAccommodations: Accommodation[] = [
-        {
-            id: 1,
-            name: 'Hotel Lumière',
-            cityName: 'Paris',
-            countryName: 'France',
-            type: 'Hotel',
-            pricePerNight: 280,
-            rating: 4.8,
-            imageUrl: 'assets/images/paris.jpg',
-            amenities: ['Wi-Fi', 'Breakfast', 'City View'],
-            availableFrom: '2026-04-10',
-            availableTo: '2026-04-30'
-        },
-        {
-            id: 2,
-            name: 'Montmartre Suites',
-            cityName: 'Paris',
-            countryName: 'France',
-            type: 'Apartment',
-            pricePerNight: 210,
-            rating: 4.6,
-            imageUrl: 'assets/images/paris.jpg',
-            amenities: ['Wi-Fi', 'Kitchen', 'Balcony'],
-            availableFrom: '2026-04-18',
-            availableTo: '2026-05-10'
-        },
-        {
-            id: 3,
-            name: 'Seine View Resort',
-            cityName: 'Paris',
-            countryName: 'France',
-            type: 'Resort',
-            pricePerNight: 340,
-            rating: 4.9,
-            imageUrl: 'assets/images/paris.jpg',
-            amenities: ['Pool', 'Spa', 'Breakfast'],
-            availableFrom: '2026-05-01',
-            availableTo: '2026-05-25'
-        },
-        {
-            id: 4,
-            name: 'Roma Central Stay',
-            cityName: 'Rome',
-            countryName: 'Italy',
-            type: 'Hotel',
-            pricePerNight: 240,
-            rating: 4.5,
-            imageUrl: 'assets/images/rome.jpg',
-            amenities: ['Wi-Fi', 'Breakfast', 'Airport Transfer'],
-            availableFrom: '2026-04-12',
-            availableTo: '2026-05-18'
-        },
-        {
-            id: 5,
-            name: 'Barcelona Beach Apartment',
-            cityName: 'Barcelona',
-            countryName: 'Spain',
-            type: 'Apartment',
-            pricePerNight: 190,
-            rating: 4.7,
-            imageUrl: 'assets/images/barcelona.jpg',
-            amenities: ['Wi-Fi', 'Kitchen', 'Near Beach'],
-            availableFrom: '2026-04-15',
-            availableTo: '2026-05-22'
-        }
-    ];
-
-    constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private accommodationService: AccommodationService
+    ) {}
 
     ngOnInit(): void {
         this.loadAccommodations();
     }
 
     loadAccommodations(): void {
-        this.accommodations = this.dummyAccommodations;
-        this.filteredAccommodations = this.dummyAccommodations;
+        this.accommodationService.getAllAccommodations().subscribe({
+            next: data => {
+                this.accommodations = data;
+                this.cities = [...new Set(data.map(item => item.cityName).filter(Boolean))].sort();
+                this.accommodationTypes = [...new Set(data.map(item => item.type).filter(Boolean))].sort();
 
-        /*
-        UVEZATI S BAZOM:
-        Ovdje kasnije ide servis, npr:
-        this.accommodationService.getAllAccommodations().subscribe(...)
+                const cityId = Number(this.route.snapshot.queryParamMap.get('cityId'));
+                if (cityId) {
+                    const selectedAccommodation = data.find(item => item.cityId === cityId);
+                    this.selectedCity = selectedAccommodation?.cityName || '';
+                }
 
-        Potrebne backend rute:
-        - GET /api/accommodations
-        - GET /api/accommodations/{id}
-
-        Tabele:
-        - accommodations
-        - cities
-        - countries
-        - accommodation_amenities
-        - accommodation_images
-        */
+                this.filterAccommodations();
+            },
+            error: err => console.error('Error loading accommodations:', err)
+        });
     }
 
     filterAccommodations(): void {
@@ -138,7 +58,7 @@ export class AccommodationsComponent implements OnInit {
                 item.name.toLowerCase().includes(term) ||
                 item.cityName.toLowerCase().includes(term) ||
                 item.countryName.toLowerCase().includes(term) ||
-                item.amenities.some(a => a.toLowerCase().includes(term));
+                item.amenities.some(amenity => amenity.toLowerCase().includes(term));
 
             const matchesCity =
                 !this.selectedCity || item.cityName === this.selectedCity;
@@ -167,12 +87,5 @@ export class AccommodationsComponent implements OnInit {
 
     openAccommodationDetails(id: number): void {
         this.router.navigate(['/accommodations', id]);
-
-        /*
-        UVEZATI S BAZOM:
-        Ovo vodi na accommodation details screen.
-        Ruta koju kasnije dodaješ:
-        /accommodations/:id
-        */
     }
 }
