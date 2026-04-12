@@ -3,38 +3,7 @@
 
     <aside class="profile-sidebar">
       <div class="profile-card">
-        <h2>My profile</h2>
-
-        <div class="profile-info">
-          <div class="profile-row">
-            <span class="label">Username</span>
-            <span class="value">{{ userProfile.username }}</span>
-          </div>
-
-          <div class="profile-row">
-            <span class="label">Email</span>
-            <span class="value">{{ userProfile.email }}</span>
-          </div>
-
-          <div class="profile-row">
-            <span class="label">Phone</span>
-            <span class="value">{{ userProfile.phone }}</span>
-          </div>
-
-          <div class="profile-row">
-            <span class="label">Password</span>
-            <span class="value">{{ userProfile.password }}</span>
-          </div>
-
-          <div class="profile-row">
-            <span class="label">Member since</span>
-            <span class="value">{{ userProfile.memberSince }}</span>
-          </div>
-        </div>
-
         <div class="filter-section">
-          <h3>Search bookings</h3>
-
           <div class="filter-group">
             <label for="search">Search booking</label>
             <input
@@ -90,6 +59,14 @@
         <h1>My bookings</h1>
       </div>
 
+      <div *ngIf="isLoading" class="empty-state">
+        Loading bookings...
+      </div>
+
+      <div *ngIf="errorMessage" class="empty-state">
+        {{ errorMessage }}
+      </div>
+
       <div class="bookings-list">
         <div class="booking-card" *ngFor="let booking of filteredBookings">
           <div class="booking-image">
@@ -116,6 +93,10 @@
             <p class="location">{{ booking.location }}</p>
             <p class="date">Booked on: {{ booking.bookingDate }}</p>
             <p class="price">Price: {{ booking.price }} KM</p>
+            <p class="date">Reference: {{ booking.bookingReference }}</p>
+            <p class="date">Check-in: {{ booking.checkIn }}</p>
+            <p class="date">Check-out: {{ booking.checkOut }}</p>
+            <p class="date">Guests: {{ booking.guestsCount }}</p>
 
             <div class="review-preview" *ngIf="booking.reviewText && booking.reviewRating">
               <p class="review-label">Your review:</p>
@@ -130,9 +111,12 @@
         </div>
       </div>
 
-      <p class="empty-state" *ngIf="filteredBookings.length === 0">
-        No bookings match your selected filters.
-      </p>
+    <p class="empty-state" *ngIf="!isLoading && bookings.length === 0">
+      You do not have any bookings yet.
+    </p>
+    <p class="empty-state" *ngIf="!isLoading && bookings.length > 0 && filteredBookings.length === 0">
+      No bookings match your selected filters.
+    </p>
     </main>
 
   </div>

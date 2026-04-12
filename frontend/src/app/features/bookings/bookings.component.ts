@@ -1,24 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { BookingDto, BookingService } from '../../core/services/booking.service';
 
 interface UserProfile {
   username: string;
   email: string;
-  phone: string;
-  password: string;
-  memberSince: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
 }
 
-interface Booking {
+interface BookingView {
   id: number;
   title: string;
-  type: 'Activity' | 'Accommodation' | 'Transportation' | 'Travel Plan';
+  type: 'Accommodation';
   bookingDate: string;
-  status: 'Confirmed' | 'Pending' | 'Completed';
+  status: string;
   location: string;
   price: number;
   imageUrl?: string;
   reviewText?: string;
   reviewRating?: number;
+  checkIn: string;
+  checkOut: string;
+  guestsCount: number;
+  bookingReference: string;
 }
 
 @Component({
@@ -27,108 +35,92 @@ interface Booking {
   styleUrls: ['./bookings.component.scss']
 })
 export class BookingsComponent implements OnInit {
-  userProfile: UserProfile = {
-    username: 'enna_user',
-    email: 'enna@example.com',
-    phone: '+387 61 123 456',
-    password: '********',
-    memberSince: '2025-09-12'
-  };
+  userProfile: UserProfile | null = null;
 
-  bookings: Booking[] = [];
-  filteredBookings: Booking[] = [];
+  bookings: BookingView[] = [];
+  filteredBookings: BookingView[] = [];
 
-  searchTerm: string = '';
-  selectedType: string = '';
-  selectedStatus: string = '';
+  searchTerm = '';
+  selectedType = '';
+  selectedStatus = '';
 
-  bookingTypes: string[] = ['Activity', 'Accommodation', 'Transportation', 'Travel Plan'];
-  bookingStatuses: string[] = ['Confirmed', 'Pending', 'Completed'];
+  bookingTypes: string[] = ['Accommodation'];
+  bookingStatuses: string[] = ['confirmed', 'pending', 'cancelled'];
 
-  isReviewModalOpen: boolean = false;
-  selectedBooking: Booking | null = null;
-  reviewText: string = '';
-  selectedStars: number = 0;
+  isReviewModalOpen = false;
+  selectedBooking: BookingView | null = null;
+  reviewText = '';
+  selectedStars = 0;
 
-  dummyBookings: Booking[] = [
-    {
-      id: 1,
-      title: 'Paris City Walking Tour',
-      type: 'Activity',
-      bookingDate: '2026-04-03',
-      status: 'Confirmed',
-      location: 'Paris, France',
-      price: 45,
-      imageUrl: 'assets/images/paris.jpg'
-    },
-    {
-      id: 2,
-      title: 'Hotel Lumiere Deluxe Room',
-      type: 'Accommodation',
-      bookingDate: '2026-04-01',
-      status: 'Completed',
-      location: 'Paris, France',
-      price: 220,
-      imageUrl: 'assets/images/paris.jpg',
-      reviewText: 'Beautiful room and great service.',
-      reviewRating: 5
-    },
-    {
-      id: 3,
-      title: 'Rome Airport Shuttle',
-      type: 'Transportation',
-      bookingDate: '2026-03-29',
-      status: 'Pending',
-      location: 'Rome, Italy',
-      price: 30,
-      imageUrl: 'assets/images/rome.jpg'
-    },
-    {
-      id: 4,
-      title: 'Barcelona Weekend Escape',
-      type: 'Travel Plan',
-      bookingDate: '2026-03-25',
-      status: 'Confirmed',
-      location: 'Barcelona, Spain',
-      price: 480,
-      imageUrl: 'assets/images/barcelona.jpg'
-    },
-    {
-      id: 5,
-      title: 'Sunset Cruise Barcelona',
-      type: 'Activity',
-      bookingDate: '2026-03-20',
-      status: 'Completed',
-      location: 'Barcelona, Spain',
-      price: 70,
-      imageUrl: 'assets/images/barcelona.jpg'
-    }
-  ];
+  isLoading = false;
+  errorMessage = '';
+
+  constructor(
+    public authService: AuthService,
+    private bookingService: BookingService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (!currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.userProfile = JSON.parse(currentUser);
     this.loadBookings();
   }
 
   loadBookings(): void {
-    this.bookings = this.dummyBookings;
-    this.filteredBookings = this.dummyBookings;
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.bookingService.getMyBookings().subscribe({
+      next: (data: BookingDto[]) => {
+        this.bookings = data.map(item => this.mapBooking(item));
+        this.filteredBookings = [...this.bookings];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = 'Error loading bookings.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  mapBooking(item: BookingDto): BookingView {
+    return {
+      id: item.id,
+      title: `Booking #${item.bookingReference || item.id}`,
+      type: 'Accommodation',
+      bookingDate: item.createdAt ? item.createdAt.split('T')[0] : '',
+      status: item.bookingStatus || '',
+      location: `Accommodation ID: ${item.accommodationId}`,
+      price: item.totalPrice || 0,
+      checkIn: item.checkIn,
+      checkOut: item.checkOut,
+      guestsCount: item.guestsCount,
+      bookingReference: item.bookingReference || ''
+    };
   }
 
   filterBookings(): void {
     const term = this.searchTerm.toLowerCase().trim();
 
-    this.filteredBookings = this.bookings.filter(item => {
+    this.filteredBookings = this.bookings.filter(booking => {
       const matchesSearch =
         !term ||
-        item.title.toLowerCase().includes(term) ||
-        item.location.toLowerCase().includes(term) ||
-        item.type.toLowerCase().includes(term);
+        booking.title.toLowerCase().includes(term) ||
+        booking.location.toLowerCase().includes(term) ||
+        booking.bookingReference.toLowerCase().includes(term);
 
       const matchesType =
-        !this.selectedType || item.type === this.selectedType;
+        !this.selectedType || booking.type === this.selectedType;
 
       const matchesStatus =
-        !this.selectedStatus || item.status === this.selectedStatus;
+        !this.selectedStatus || booking.status === this.selectedStatus;
 
       return matchesSearch && matchesType && matchesStatus;
     });
@@ -138,10 +130,10 @@ export class BookingsComponent implements OnInit {
     this.searchTerm = '';
     this.selectedType = '';
     this.selectedStatus = '';
-    this.filteredBookings = this.bookings;
+    this.filteredBookings = [...this.bookings];
   }
 
-  openReviewModal(booking: Booking): void {
+  openReviewModal(booking: BookingView): void {
     this.selectedBooking = booking;
     this.reviewText = booking.reviewText || '';
     this.selectedStars = booking.reviewRating || 0;
@@ -175,14 +167,8 @@ export class BookingsComponent implements OnInit {
 
   getTypeClass(type: string): string {
     switch (type) {
-      case 'Activity':
-        return 'type-activity';
       case 'Accommodation':
         return 'type-accommodation';
-      case 'Transportation':
-        return 'type-transportation';
-      case 'Travel Plan':
-        return 'type-travel-plan';
       default:
         return '';
     }
@@ -190,12 +176,12 @@ export class BookingsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Confirmed':
+      case 'confirmed':
         return 'status-confirmed';
-      case 'Pending':
+      case 'pending':
         return 'status-pending';
-      case 'Completed':
-        return 'status-completed';
+      case 'cancelled':
+        return 'status-cancelled';
       default:
         return '';
     }
