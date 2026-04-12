@@ -6,11 +6,11 @@
         <h2>Search</h2>
 
         <div class="filter-group">
-          <label for="search">Search travel plan</label>
+          <label for="search">Search trip</label>
           <input
             id="search"
             type="text"
-            placeholder="Search travel plan..."
+            placeholder="Search by title, city or description..."
             [(ngModel)]="searchTerm"
             (input)="filterTravelPlans()"
           />
@@ -80,21 +80,21 @@
         </div>
 
         <div class="filter-group">
-          <label for="rating">Minimum rating</label>
+          <label for="status">Status</label>
           <select
-            id="rating"
-            [(ngModel)]="selectedRating"
+            id="status"
+            [(ngModel)]="selectedStatus"
             (change)="filterTravelPlans()"
           >
-            <option value="">All ratings</option>
-            <option value="4">4+ stars</option>
-            <option value="4.5">4.5+ stars</option>
-            <option value="4.8">4.8+ stars</option>
+            <option value="">All statuses</option>
+            <option *ngFor="let status of statuses" [value]="status">
+              {{ status }}
+            </option>
           </select>
         </div>
 
         <button class="primary-btn" type="button" (click)="filterTravelPlans()">
-          Show travel plans
+          Show trips
         </button>
 
         <button class="secondary-btn" type="button" (click)="resetFilters()">
@@ -105,8 +105,11 @@
 
     <main class="travel-plans-content">
       <div class="section-header">
-        <h1>Travel Plans</h1>
+        <h1>Trips</h1>
       </div>
+
+      <p class="empty-state" *ngIf="isLoading">Loading trips...</p>
+      <p class="empty-state error-state" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</p>
 
       <div class="travel-plans-grid">
         <div
@@ -114,12 +117,23 @@
           class="travel-plan-card"
           (click)="openTravelPlanDetails(item.id)"
         >
+          <div class="card-image">
+            <img
+              [src]="item.displayImageUrl"
+              [alt]="item.title"
+            />
+          </div>
+
           <div class="card-content">
-            <h3>{{ item.name }}</h3>
-            <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
+            <div class="card-top-row">
+              <h3>{{ item.title }}</h3>
+              <span class="status-chip">{{ item.statusLabel }}</span>
+            </div>
+
+            <p class="location">{{ item.locationLabel }}</p>
             <p class="duration">{{ item.durationDays }} days</p>
-            <p class="budget">From {{ item.price }} KM / person</p>
-            <p class="rating">Rating: {{ item.rating }}</p>
+            <p class="budget">Budget {{ item.budget }} KM</p>
+            <p class="description">{{ item.shortDescription }}</p>
 
             <div class="highlights">
               <span class="highlight" *ngFor="let highlight of item.highlights">
@@ -128,14 +142,14 @@
             </div>
 
             <p class="availability">
-              Available: {{ item.availableFrom }} - {{ item.availableTo }}
+              Travel dates: {{ item.startDate }} - {{ item.endDate }}
             </p>
           </div>
         </div>
       </div>
 
-      <p class="empty-state" *ngIf="filteredTravelPlans.length === 0">
-        No travel plans match your selected filters.
+      <p class="empty-state" *ngIf="!isLoading && !errorMessage && filteredTravelPlans.length === 0">
+        No trips match your selected filters.
       </p>
     </main>
 

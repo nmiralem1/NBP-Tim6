@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/cities", "/api/cities/**",
                                 "/api/trips", "/api/trips/**",
+                                "/api/trip-cities", "/api/trip-cities/**",
                                 "/api/accommodations", "/api/accommodations/**",
                                 "/api/activities", "/api/activities/**",
                                 "/api/reviews", "/api/reviews/**")

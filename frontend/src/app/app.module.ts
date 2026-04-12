@@ -20,9 +20,9 @@ import { CoreModule } from './core/core.module';
 import { ActivitiesComponent } from './features/activities/activities.component';
 import { ActivityDetailsComponent } from './features/activity-details/activity-details.component';
 import { TransportationComponent } from './features/transportation/transportation.component';
-import { TravelPlansComponent } from './features/travelplans/travelplans.component';
+import { TripsComponent } from './features/trips/trips.component';
 import { BookingsComponent } from './features/bookings/bookings.component';
-import { TravelplansDetailsComponent } from './features/travelplans-details/travelplans-details.component';
+import { TripDetailsComponent } from './features/trip-details/trip-details.component';
 
 @NgModule({
   declarations: [
@@ -40,9 +40,9 @@ import { TravelplansDetailsComponent } from './features/travelplans-details/trav
     ActivitiesComponent,
     ActivityDetailsComponent,
     TransportationComponent,
-    TravelPlansComponent,
+    TripsComponent,
     BookingsComponent,
-    TravelplansDetailsComponent
+    TripDetailsComponent
   ],
   imports: [
     BrowserModule,

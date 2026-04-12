@@ -263,7 +263,7 @@ export class DestinationDetailsComponent implements OnInit {
     }
 
     goToTravelPlans(): void {
-      this.router.navigate(['/travelplans'], {
+      this.router.navigate(['/trips'], {
         queryParams: {
           city: this.destination?.name || '',
           country: this.destination?.countryName || '',
