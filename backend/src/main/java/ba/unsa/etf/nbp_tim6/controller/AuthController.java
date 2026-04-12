@@ -79,7 +79,10 @@ public class AuthController {
                     "message", "User logged in successfully!",
                     "username", user.getUsername(),
                     "email", user.getEmail(),
-                    "role", user.getRole()));
+                    "role", user.getRole(),
+                    "firstName", user.getFirstName(),
+                    "lastName", user.getLastName(),
+                    "phone", user.getPhone()));
         } catch (org.springframework.security.core.AuthenticationException e) {
             return ResponseEntity.status(401).body(Map.of("message", "Error: " + e.getMessage()));
         }
@@ -155,9 +158,20 @@ public class AuthController {
         }
 
         ResponseCookie deleteAccessToken = ResponseCookie.from("accessToken", "")
-                .httpOnly(true).secure(true).path("/").maxAge(0).sameSite("Strict").build();
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
         ResponseCookie deleteRefreshToken = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true).secure(true).path("/").maxAge(0).sameSite("Strict").build();
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, deleteAccessToken.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, deleteRefreshToken.toString());
