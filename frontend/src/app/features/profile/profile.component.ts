@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm, NgModel } from '@angular/forms';
 import { UserService } from '../../core/services/user.service';
 
 @Component({
@@ -8,6 +9,9 @@ import { UserService } from '../../core/services/user.service';
 })
 export class ProfileComponent implements OnInit {
   isEditing = false;
+  submitted = false;
+  errorMessage = '';
+  successMessage = '';
 
   userProfile = {
     firstName: '',
@@ -24,6 +28,13 @@ export class ProfileComponent implements OnInit {
     username: '',
     email: '',
     phone: ''
+  };
+
+  readonly validationPatterns = {
+    name: "^[A-Za-zÀ-ž' -]{2,50}$",
+    username: '^[a-zA-Z0-9._-]{3,20}$',
+    email: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$',
+    phone: '^\\+?[0-9 ]{8,15}$'
   };
 
   constructor(private userService: UserService) {}
@@ -51,6 +62,9 @@ export class ProfileComponent implements OnInit {
   }
 
   toggleEdit(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.submitted = false;
     this.editData = {
       firstName: this.userProfile.firstName || '',
       lastName: this.userProfile.lastName || '',
@@ -61,14 +75,37 @@ export class ProfileComponent implements OnInit {
     this.isEditing = true;
   }
 
-  saveChanges(): void {
-    this.userService.updateMyProfile(this.editData).subscribe({
+  isFieldInvalid(field: NgModel | null): boolean {
+    return !!field && Boolean(field.invalid) && (field.touched || this.submitted);
+  }
+
+  saveChanges(form: NgForm): void {
+    this.submitted = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => control.markAsTouched());
+      return;
+    }
+
+    const payload = {
+      firstName: this.editData.firstName.trim(),
+      lastName: this.editData.lastName.trim(),
+      username: this.editData.username.trim(),
+      email: this.editData.email.trim().toLowerCase(),
+      phone: this.editData.phone.trim()
+    };
+
+    this.userService.updateMyProfile(payload).subscribe({
       next: (updatedUser) => {
         this.userProfile = updatedUser;
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        this.successMessage = 'Profile updated successfully.';
         this.isEditing = false;
       },
       error: (err) => {
+        this.errorMessage = err.error?.message || 'Error updating profile.';
         console.error('Error updating profile:', err);
       }
     });
@@ -76,5 +113,7 @@ export class ProfileComponent implements OnInit {
 
   cancel(): void {
     this.isEditing = false;
+    this.submitted = false;
+    this.errorMessage = '';
   }
 }

@@ -23,7 +23,7 @@
         <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
       </div>
 
-      <form class="register-form" (submit)="onSubmit()">
+      <form class="register-form" #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" novalidate>
         <!-- First Name input -->
         <div class="form-row">
           <div class="form-group">
@@ -31,8 +31,12 @@
             <div class="input-wrapper">
               <span class="input-icon">👤</span>
               <input type="text" id="firstName" name="firstName" placeholder="Enter first name"
-                [(ngModel)]="registerData.firstName" required />
+                [(ngModel)]="registerData.firstName" #firstName="ngModel" required minlength="2" maxlength="50"
+                [pattern]="validationPatterns.name" [class.invalid]="isFieldInvalid(firstName)" />
             </div>
+            <p *ngIf="isFieldInvalid(firstName)" class="field-error">
+              {{ firstName.errors?.['required'] ? 'First name is required.' : 'Use 2-50 letters only.' }}
+            </p>
           </div>
 
           <!-- Last Name input -->
@@ -41,8 +45,12 @@
             <div class="input-wrapper">
               <span class="input-icon">👤</span>
               <input type="text" id="lastName" name="lastName" placeholder="Enter last name"
-                [(ngModel)]="registerData.lastName" required />
+                [(ngModel)]="registerData.lastName" #lastName="ngModel" required minlength="2" maxlength="50"
+                [pattern]="validationPatterns.name" [class.invalid]="isFieldInvalid(lastName)" />
             </div>
+            <p *ngIf="isFieldInvalid(lastName)" class="field-error">
+              {{ lastName.errors?.['required'] ? 'Last name is required.' : 'Use 2-50 letters only.' }}
+            </p>
           </div>
         </div>
 
@@ -52,8 +60,11 @@
           <div class="input-wrapper">
             <span class="input-icon">📧</span>
             <input type="email" id="email" name="email" placeholder="Enter your email" [(ngModel)]="registerData.email"
-              required />
+              #email="ngModel" required [pattern]="validationPatterns.email" [class.invalid]="isFieldInvalid(email)" />
           </div>
+          <p *ngIf="isFieldInvalid(email)" class="field-error">
+            {{ email.errors?.['required'] ? 'Email address is required.' : 'Enter a valid email address, for example name@example.com.' }}
+          </p>
         </div>
 
         <!-- Phone input -->
@@ -62,8 +73,12 @@
           <div class="input-wrapper">
             <span class="input-icon">📱</span>
             <input type="tel" id="phone" name="phone" placeholder="Enter your phone number"
-              [(ngModel)]="registerData.phone" required />
+              [(ngModel)]="registerData.phone" #phone="ngModel" required [pattern]="validationPatterns.phone"
+              [class.invalid]="isFieldInvalid(phone)" />
           </div>
+          <p *ngIf="isFieldInvalid(phone)" class="field-error">
+            {{ phone.errors?.['required'] ? 'Phone number is required.' : 'Use 8-15 digits, optional leading +.' }}
+          </p>
         </div>
 
         <!-- Username input -->
@@ -72,8 +87,12 @@
           <div class="input-wrapper">
             <span class="input-icon">👤</span>
             <input type="text" id="username" name="username" placeholder="Enter your username"
-              [(ngModel)]="registerData.username" required />
+              [(ngModel)]="registerData.username" #username="ngModel" required minlength="3" maxlength="20"
+              [pattern]="validationPatterns.username" [class.invalid]="isFieldInvalid(username)" />
           </div>
+          <p *ngIf="isFieldInvalid(username)" class="field-error">
+            {{ username.errors?.['required'] ? 'Username is required.' : 'Use 3-20 letters, numbers, dot, dash or underscore.' }}
+          </p>
         </div>
 
         <!-- Password input -->
@@ -82,20 +101,49 @@
           <div class="input-wrapper">
             <span class="input-icon">🔒</span>
             <input type="password" id="password" name="password" placeholder="Create a strong password"
-              [(ngModel)]="registerData.passwordHash" required />
+              [(ngModel)]="registerData.passwordHash" #password="ngModel" required minlength="8"
+              [pattern]="validationPatterns.password" [class.invalid]="isFieldInvalid(password)" />
           </div>
+          <p class="helper-text">At least 8 characters, one uppercase letter, one lowercase letter and one number.</p>
+          <p *ngIf="isFieldInvalid(password)" class="field-error">
+            {{
+              password.errors?.['required']
+                ? 'Password is required.'
+                : password.errors?.['minlength']
+                  ? 'Password must have at least 8 characters.'
+                  : 'Password must include at least one uppercase letter, one lowercase letter and one number.'
+            }}
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat your password"
+              [(ngModel)]="confirmPassword" #confirmPasswordModel="ngModel" required
+              [class.invalid]="isFieldInvalid(confirmPasswordModel) || passwordsDoNotMatch" />
+          </div>
+          <p *ngIf="isFieldInvalid(confirmPasswordModel)" class="field-error">Password confirmation is required.</p>
+          <p *ngIf="!confirmPasswordModel.errors?.['required'] && passwordsDoNotMatch" class="field-error">
+            Passwords do not match.
+          </p>
         </div>
 
         <!-- Terms and conditions -->
         <div class="form-options">
           <label class="terms-checkbox">
-            <input type="checkbox" />
+            <input type="checkbox" name="acceptedTerms" [(ngModel)]="acceptedTerms" />
             <span>I agree to the <a href="#">Terms & Conditions</a></span>
           </label>
         </div>
+        <p *ngIf="submitted && !acceptedTerms" class="field-error">You must accept the terms and conditions.</p>
 
         <!-- Register button -->
-        <button type="submit" class="btn-register">Create Account</button>
+        <button type="submit" class="btn-register"
+          [disabled]="registerForm.invalid || passwordsDoNotMatch || !acceptedTerms || isSubmitting">
+          {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
+        </button>
       </form>
 
       <!-- Login link -->

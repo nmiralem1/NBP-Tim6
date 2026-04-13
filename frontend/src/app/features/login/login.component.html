@@ -22,10 +22,10 @@
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
 
-      <form class="login-form" (submit)="onSubmit()">
-        <!-- Email input -->
+      <form class="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
+        <!-- Username input -->
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="username">Username</label>
           <div class="input-wrapper">
             <span class="input-icon">📧</span>
             <input
@@ -34,9 +34,16 @@
               name="username"
               placeholder="Enter your username"
               [(ngModel)]="loginData.username"
+              #username="ngModel"
               required
+              minlength="3"
+              maxlength="20"
+              [class.invalid]="isFieldInvalid(username)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(username)" class="field-error">
+            {{ username.errors?.['required'] ? 'Username is required.' : 'Username must have 3-20 characters.' }}
+          </p>
         </div>
 
         <!-- Password input -->
@@ -50,9 +57,15 @@
               name="password"
               placeholder="Enter your password"
               [(ngModel)]="loginData.password"
+              #password="ngModel"
               required
+              minlength="8"
+              [class.invalid]="isFieldInvalid(password)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(password)" class="field-error">
+            {{ password.errors?.['required'] ? 'Password is required.' : 'Password must have at least 8 characters.' }}
+          </p>
         </div>
 
         <!-- Remember me & Forgot password -->
@@ -65,7 +78,9 @@
         </div>
 
         <!-- Login button -->
-        <button type="submit" class="btn-login">Sign In</button>
+        <button type="submit" class="btn-login" [disabled]="loginForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+        </button>
       </form>
 
       <!-- Register link -->

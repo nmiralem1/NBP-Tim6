@@ -11,6 +11,8 @@
           <h2>Personal Information</h2>
           <p *ngIf="!isEditing">Your account details</p>
           <p *ngIf="isEditing" class="edit-mode">Editing mode</p>
+          <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+          <p *ngIf="successMessage && !isEditing" class="success-message">{{ successMessage }}</p>
         </div>
 
         <button
@@ -58,7 +60,7 @@
         </div>
       </div>
 
-      <form *ngIf="isEditing" class="profile-form">
+      <form *ngIf="isEditing" class="profile-form" #profileForm="ngForm" novalidate>
         <div class="form-row">
           <div class="form-group">
             <label for="firstName">
@@ -68,10 +70,19 @@
                 <input
                   type="text"
                   id="firstName"
-                  [value]="editData.firstName"
-                  (input)="editData.firstName = $any($event.target).value"
+                  name="firstName"
+                  [(ngModel)]="editData.firstName"
+                  #firstName="ngModel"
+                  required
+                  minlength="2"
+                  maxlength="50"
+                  [pattern]="validationPatterns.name"
+                  [class.invalid]="isFieldInvalid(firstName)"
                 />
               </div>
+              <p *ngIf="isFieldInvalid(firstName)" class="field-error">
+                {{ firstName.errors?.['required'] ? 'First name is required.' : 'Use 2-50 letters only.' }}
+              </p>
           </div>
 
           <div class="form-group">
@@ -81,10 +92,19 @@
               <input
                 type="text"
                 id="lastName"
-                [value]="editData.lastName"
-                (input)="editData.lastName = $any($event.target).value"
+                name="lastName"
+                [(ngModel)]="editData.lastName"
+                #lastName="ngModel"
+                required
+                minlength="2"
+                maxlength="50"
+                [pattern]="validationPatterns.name"
+                [class.invalid]="isFieldInvalid(lastName)"
               />
             </div>
+            <p *ngIf="isFieldInvalid(lastName)" class="field-error">
+              {{ lastName.errors?.['required'] ? 'Last name is required.' : 'Use 2-50 letters only.' }}
+            </p>
           </div>
         </div>
 
@@ -95,10 +115,19 @@
             <input
               type="text"
               id="username"
-              [value]="editData.username"
-              (input)="editData.username = $any($event.target).value"
+              name="username"
+              [(ngModel)]="editData.username"
+              #username="ngModel"
+              required
+              minlength="3"
+              maxlength="20"
+              [pattern]="validationPatterns.username"
+              [class.invalid]="isFieldInvalid(username)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(username)" class="field-error">
+            {{ username.errors?.['required'] ? 'Username is required.' : 'Use 3-20 letters, numbers, dot, dash or underscore.' }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -108,10 +137,17 @@
             <input
               type="email"
               id="email"
-              [value]="editData.email"
-              (input)="editData.email = $any($event.target).value"
+              name="email"
+              [(ngModel)]="editData.email"
+              #email="ngModel"
+              required
+              [pattern]="validationPatterns.email"
+              [class.invalid]="isFieldInvalid(email)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(email)" class="field-error">
+            {{ email.errors?.['required'] ? 'Email address is required.' : 'Enter a valid email address, for example name@example.com.' }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -121,14 +157,21 @@
             <input
               type="tel"
               id="phone"
-              [value]="editData.phone"
-              (input)="editData.phone = $any($event.target).value"
+              name="phone"
+              [(ngModel)]="editData.phone"
+              #phone="ngModel"
+              required
+              [pattern]="validationPatterns.phone"
+              [class.invalid]="isFieldInvalid(phone)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(phone)" class="field-error">
+            {{ phone.errors?.['required'] ? 'Phone number is required.' : 'Use 8-15 digits, optional leading +.' }}
+          </p>
         </div>
 
         <div class="form-actions">
-          <button type="button" (click)="saveChanges()" class="btn-save">
+          <button type="button" (click)="saveChanges(profileForm)" class="btn-save" [disabled]="profileForm.invalid">
             ✓ Save Changes
           </button>
           <button type="button" (click)="cancel()" class="btn-cancel">
