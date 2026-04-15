@@ -26,14 +26,18 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public City findById(Integer id) {
-        String sql = "SELECT id, country_id as countryId, name, postal_code as postalCode, description, image_url as imageUrl FROM cities WHERE id = ?";
+        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, "
+                + "c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
+                + "FROM cities c JOIN countries co ON c.country_id = co.id WHERE c.id = ?";
         List<City> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public List<City> findByCountryId(Integer countryId) {
-        String sql = "SELECT id, country_id, name, postal_code, description, image_url as imageUrl FROM cities WHERE country_id = ?";
+        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, "
+                + "c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
+                + "FROM cities c JOIN countries co ON c.country_id = co.id WHERE c.country_id = ?";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), countryId);
     }
 

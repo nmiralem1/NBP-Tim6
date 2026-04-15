@@ -85,4 +85,15 @@ public class UserRepositoryImpl implements UserRepository {
             return user;
         }
     }
+
+    @Override
+    public User updateProfile(Integer id, String firstName, String lastName, String username, String email, String phone) {
+        String sql = "UPDATE nbp.nbp_user " +
+                "SET first_name = ?, last_name = ?, username = ?, email = ?, phone_number = ? " +
+                "WHERE id = ?";
+
+        jdbcTemplate.update(sql, firstName, lastName, username, email, phone, id);
+
+        return findById(id).orElseThrow();
+    }
 }

@@ -86,4 +86,32 @@ public class BookingRepositoryImpl implements BookingRepository {
         String sql = "DELETE FROM NBPT6.BOOKINGS WHERE ID = ?";
         return jdbcTemplate.update(sql, id);
     }
+
+    public Integer saveAndReturnId(Booking booking) {
+        String sql = """
+                    INSERT INTO NBPT6.BOOKINGS
+                    (TRIP_ID, USER_ID, ACCOMMODATION_ID, CHECK_IN, CHECK_OUT,
+                     GUESTS_COUNT, TOTAL_PRICE, BOOKING_STATUS, BOOKING_REFERENCE, CREATED_AT)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                """;
+
+        jdbcTemplate.update(sql,
+                booking.getTripId(),
+                booking.getUserId(),
+                booking.getAccommodationId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getGuestsCount(),
+                booking.getTotalPrice(),
+                booking.getBookingStatus(),
+                booking.getBookingReference());
+
+        String fetchSql = "SELECT ID FROM NBPT6.BOOKINGS WHERE BOOKING_REFERENCE = ?";
+        return jdbcTemplate.queryForObject(fetchSql, Integer.class, booking.getBookingReference());
+    }
+
+    public int updateStatus(Integer id, String status) {
+        String sql = "UPDATE NBPT6.BOOKINGS SET BOOKING_STATUS = ? WHERE ID = ?";
+        return jdbcTemplate.update(sql, status, id);
+    }
 }

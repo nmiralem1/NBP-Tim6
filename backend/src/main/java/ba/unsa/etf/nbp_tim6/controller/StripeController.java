@@ -3,6 +3,7 @@ package ba.unsa.etf.nbp_tim6.controller;
 import ba.unsa.etf.nbp_tim6.dto.StripePaymentRequest;
 import ba.unsa.etf.nbp_tim6.dto.StripePaymentResponse;
 import ba.unsa.etf.nbp_tim6.service.abstraction.StripeService;
+import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
@@ -54,6 +56,25 @@ public class StripeController {
             return ResponseEntity.status(500).body(Map.of(
                     "message", "Stripe error: " + e.getMessage()
             ));
+        }
+    }
+
+    @Operation(
+            summary = "Stripe Webhook",
+            description = "Handles Stripe webhook events to confirm payments and update booking status"
+    )
+    @PostMapping("/webhook")
+    public ResponseEntity<String> handleWebhook(
+            @RequestBody byte[] payload,
+            @RequestHeader(value = "Stripe-Signature", required = false) String sigHeader) {
+        try {
+            String payloadStr = new String(payload, StandardCharsets.UTF_8);
+            stripeService.handleWebhookEvent(payloadStr, sigHeader);
+            return ResponseEntity.ok("Webhook processed");
+        } catch (SignatureVerificationException e) {
+            return ResponseEntity.status(400).body("Invalid signature");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Webhook error: " + e.getMessage());
         }
     }
 }

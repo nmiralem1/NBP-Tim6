@@ -41,6 +41,11 @@
         }
     }
 }
+.nav-links a.active {
+  font-weight: 700;
+  color: #1a73e8;
+  position: relative;
+}
 
 .nav-actions {
     display: flex;

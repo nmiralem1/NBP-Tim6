@@ -41,10 +41,9 @@
                     Search rooms
                 </button>
 
-                <div class="quick-info">
-                    <p><strong>Available:</strong> {{ item.availableFrom }} - {{ item.availableTo }}</p>
-                    <p><strong>Check-in:</strong> {{ item.checkIn }}</p>
-                    <p><strong>Check-out:</strong> {{ item.checkOut }}</p>
+                <div class="quick-info" *ngIf="item.checkIn || item.checkOut">
+                    <p *ngIf="item.checkIn"><strong>Check-in:</strong> {{ item.checkIn }}</p>
+                    <p *ngIf="item.checkOut"><strong>Check-out:</strong> {{ item.checkOut }}</p>
                 </div>
             </div>
         </aside>
@@ -66,10 +65,11 @@
                     <p class="price">From {{ item.pricePerNight }} KM / night</p>
                     <p class="description">{{ item.description }}</p>
                     <p class="address">{{ item.address }}</p>
+                    <button class="book-btn" (click)="bookRoom({available: true, id: 0})">Book now</button>
                 </div>
             </section>
 
-            <section class="content-section">
+            <section class="content-section" *ngIf="item.gallery.length > 0">
                 <div class="section-header">
                     <h2>Gallery</h2>
                 </div>
@@ -81,7 +81,7 @@
                 </div>
             </section>
 
-            <section class="content-section">
+            <section class="content-section" *ngIf="item.amenities.length > 0">
                 <div class="section-header">
                     <h2>Amenities</h2>
                 </div>
@@ -93,7 +93,7 @@
                 </div>
             </section>
 
-            <section class="content-section">
+            <section class="content-section" *ngIf="item.roomOptions.length > 0">
                 <div class="section-header">
                     <h2>Room Options</h2>
                 </div>
@@ -123,7 +123,7 @@
                 </div>
             </section>
 
-            <section class="content-section">
+            <section class="content-section" *ngIf="item.reviews.length > 0">
                 <div class="section-header">
                     <h2>Reviews</h2>
                 </div>

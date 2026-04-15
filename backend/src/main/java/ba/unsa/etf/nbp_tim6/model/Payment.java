@@ -17,7 +17,6 @@ public class Payment {
     @Schema(description = "Unique identifier of the payment", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
-    @NotNull(message = "Trip ID is required")
     @Schema(description = "ID of the related trip", example = "5")
     private Integer tripId;
 

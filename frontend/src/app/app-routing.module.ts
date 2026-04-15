@@ -13,9 +13,9 @@ import { BookComponent } from './features/book/book.component';
 import { ActivitiesComponent } from './features/activities/activities.component';
 import { ActivityDetailsComponent } from './features/activity-details/activity-details.component';
 import { TransportationComponent } from './features/transportation/transportation.component';
-import { TravelPlansComponent } from './features/travelplans/travelplans.component';
+import { TripsComponent } from './features/trips/trips.component';
 import { BookingsComponent } from './features/bookings/bookings.component';
-import { TravelplansDetailsComponent } from './features/travelplans-details/travelplans-details.component';
+import { TripDetailsComponent } from './features/trip-details/trip-details.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,9 +30,11 @@ const routes: Routes = [
   { path: 'activities', component: ActivitiesComponent },
   { path: 'activities/:id', component: ActivityDetailsComponent },
   { path: 'transportation', component: TransportationComponent },
-  { path: 'travelplans', component: TravelPlansComponent },
+  { path: 'trips', component: TripsComponent },
   { path: 'bookings', component: BookingsComponent },
-  { path: 'travelplans/:id', component: TravelplansDetailsComponent },
+  { path: 'trips/:id', component: TripDetailsComponent },
+  { path: 'travelplans', redirectTo: 'trips', pathMatch: 'full' },
+  { path: 'travelplans/:id', redirectTo: 'trips/:id', pathMatch: 'full' },
 ];
 
 @NgModule({

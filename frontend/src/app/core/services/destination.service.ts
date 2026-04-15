@@ -1,40 +1,6 @@
-/*import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-
-export interface City {
-    id: number;
-    name: string;
-    countryId: number;
-    description?: string;
-    imageUrl?: string;
-    countryName?: string;
-    continent?: string;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class DestinationService {
-    private apiUrl = `${environment.apiUrl}/cities`;
-
-    constructor(private http: HttpClient) { }
-
-    getAllCities(): Observable<City[]> {
-        return this.http.get<City[]>(this.apiUrl);
-    }
-
-    getCityById(id: number): Observable<City> {
-        return this.http.get<City>(`${this.apiUrl}/${id}`);
-    }
-}  */
-
-
-    //DUMMY ZASAD
-    import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface City {
@@ -59,6 +25,7 @@ export interface DestinationTrip {
     imageUrl: string;
     duration: string;
     price: number;
+    description?: string;
 }
 
 export interface DestinationHotel {
@@ -69,198 +36,219 @@ export interface DestinationHotel {
     pricePerNight: number;
     rating: number;
     location: string;
+    type?: string;
+    availableFrom?: string;
+    availableTo?: string;
+}
+
+interface Trip {
+    id: number;
+    title: string;
+    description?: string;
+    startDate: string;
+    endDate: string;
+    budget?: number;
+    imageUrl?: string;
+}
+
+interface TripCity {
+    id: number;
+    tripId: number;
+    cityId: number;
+    arrivalDate: string;
+    departureDate: string;
+}
+
+interface AccommodationApi {
+    id: number;
+    cityId: number;
+    accommodationTypeId: number;
+    name: string;
+    address?: string;
+    description?: string;
+    pricePerNight: number;
+    stars?: number;
+    imageUrl?: string;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class DestinationService {
-    private apiUrl = `${environment.apiUrl}/cities`;
+    private readonly citiesApiUrl = `${environment.apiUrl}/cities`;
+    private readonly accommodationsApiUrl = `${environment.apiUrl}/accommodations`;
+    private readonly tripsApiUrl = `${environment.apiUrl}/trips`;
+    private readonly tripCitiesApiUrl = `${environment.apiUrl}/trip-cities`;
 
     constructor(private http: HttpClient) { }
 
-    private dummyCities: City[] = [
-        {
-            id: 1,
-            name: 'Paris',
-            countryId: 1,
-            countryName: 'France',
-            continent: 'Europe',
-            description: 'City of lights, romance and iconic landmarks.',
-            longDescription: 'Paris is one of the most famous destinations in the world, known for the Eiffel Tower, museums, charming streets and exceptional cuisine.',
-            imageUrl: 'assets/images/paris.jpg',
-            rating: 4.8,
-            reviewCount: 124,
-            priceFrom: 220,
-            tags: ['Romantic', 'Culture', 'City Break']
-        },
-        {
-            id: 2,
-            name: 'Rome',
-            countryId: 2,
-            countryName: 'Italy',
-            continent: 'Europe',
-            description: 'Ancient history, architecture and food.',
-            longDescription: 'Rome combines historical monuments, vibrant streets and a rich culinary scene, making it perfect for both short and longer stays.',
-            imageUrl: 'assets/images/rome.jpg',
-            rating: 4.7,
-            reviewCount: 98,
-            priceFrom: 180,
-            tags: ['History', 'Food', 'Architecture']
-        },
-        {
-            id: 3,
-            name: 'Istanbul',
-            countryId: 3,
-            countryName: 'Turkey',
-            continent: 'Europe / Asia',
-            description: 'A vibrant blend of East and West.',
-            longDescription: 'Istanbul offers grand mosques, bazaars, Bosphorus views and a unique cultural fusion across two continents.',
-            imageUrl: 'assets/images/istanbul.jpg',
-            rating: 4.6,
-            reviewCount: 87,
-            priceFrom: 160,
-            tags: ['Culture', 'Food', 'Shopping']
-        },
-        {
-            id: 4,
-            name: 'Santorini',
-            countryId: 4,
-            countryName: 'Greece',
-            continent: 'Europe',
-            description: 'White houses, sunsets and sea views.',
-            longDescription: 'Santorini is known for its breathtaking sunsets, blue domes, cliffside villages and relaxing island atmosphere.',
-            imageUrl: 'assets/images/istanbul.jpg',
-            rating: 4.9,
-            reviewCount: 141,
-            priceFrom: 320,
-            tags: ['Beach', 'Luxury', 'Romantic']
-        }
-    ];
-
-    private dummyTrips: DestinationTrip[] = [
-        {
-            id: 1,
-            destinationId: 1,
-            title: 'Weekend in Paris',
-            imageUrl: 'assets/images/trip-paris.jpg',
-            duration: '3 days',
-            price: 450
-        },
-        {
-            id: 2,
-            destinationId: 1,
-            title: 'Paris Art & Culture Tour',
-            imageUrl: 'assets/images/trip-paris-2.jpg',
-            duration: '5 days',
-            price: 690
-        },
-        {
-            id: 3,
-            destinationId: 2,
-            title: 'Roman Adventure',
-            imageUrl: 'assets/images/trip-rome.jpg',
-            duration: '4 days',
-            price: 520
-        },
-        {
-            id: 4,
-            destinationId: 4,
-            title: 'Santorini Escape',
-            imageUrl: 'assets/images/trip-santorini.jpg',
-            duration: '5 days',
-            price: 890
-        }
-    ];
-
-    private dummyHotels: DestinationHotel[] = [
-        {
-            id: 1,
-            destinationId: 1,
-            name: 'Grand Paris Hotel',
-            imageUrl: 'assets/images/hotel-paris.jpg',
-            pricePerNight: 160,
-            rating: 4.7,
-            location: 'Central Paris'
-        },
-        {
-            id: 2,
-            destinationId: 1,
-            name: 'River View Suites',
-            imageUrl: 'assets/images/hotel-paris-2.jpg',
-            pricePerNight: 210,
-            rating: 4.8,
-            location: 'Near Seine'
-        },
-        {
-            id: 3,
-            destinationId: 2,
-            name: 'Roma Palace',
-            imageUrl: 'assets/images/hotel-rome.jpg',
-            pricePerNight: 145,
-            rating: 4.5,
-            location: 'Historic Center'
-        },
-        {
-            id: 4,
-            destinationId: 4,
-            name: 'Sunset Caldera Resort',
-            imageUrl: 'assets/images/hotel-santorini.jpg',
-            pricePerNight: 280,
-            rating: 4.9,
-            location: 'Oia'
-        }
-    ];
-
     getAllCities(): Observable<City[]> {
-        // PRIVREMENO: dummy podaci za statički frontend
-        return of(this.dummyCities);
-
-        // UVEZATI S BAZOM
-        // Tabele: cities, countries
-        // Ruta: GET /api/cities
-        // return this.http.get<City[]>(this.apiUrl);
+        return forkJoin({
+            cities: this.http.get<City[]>(this.citiesApiUrl),
+            accommodations: this.http.get<AccommodationApi[]>(this.accommodationsApiUrl)
+        }).pipe(
+            map(({ cities, accommodations }) =>
+                cities.map(city => this.enrichCity(city, accommodations))
+            )
+        );
     }
 
     getCityById(id: number): Observable<City | undefined> {
-        // PRIVREMENO: dummy podaci za statički frontend
-        return of(this.dummyCities.find(city => city.id === id));
-
-        // UVEZATI S BAZOM
-        // Tabele: cities, countries
-        // Ruta: GET /api/cities/:id
-        // return this.http.get<City>(`${this.apiUrl}/${id}`);
+        return forkJoin({
+            city: this.http.get<City>(`${this.citiesApiUrl}/${id}`),
+            accommodations: this.http.get<AccommodationApi[]>(`${this.accommodationsApiUrl}/city/${id}`)
+        }).pipe(
+            map(({ city, accommodations }) => this.enrichCity(city, accommodations))
+        );
     }
 
     getTripsByCityId(cityId: number): Observable<DestinationTrip[]> {
-        // PRIVREMENO: dummy podaci za statički frontend
-        return of(this.dummyTrips.filter(trip => trip.destinationId === cityId));
+        return forkJoin({
+            tripCities: this.http.get<TripCity[]>(this.tripCitiesApiUrl),
+            trips: this.http.get<Trip[]>(this.tripsApiUrl)
+        }).pipe(
+            map(({ tripCities, trips }) => {
+                const tripIds = new Set(
+                    tripCities
+                        .filter(tripCity => tripCity.cityId === cityId)
+                        .map(tripCity => tripCity.tripId)
+                );
 
-        // UVEZATI S BAZOM
-        // Tabele: trips, trip_dates, cities
-        // Ruta: GET /api/cities/:id/trips
-        // return this.http.get<DestinationTrip[]>(`${this.apiUrl}/${cityId}/trips`);
+                return trips
+                    .filter(trip => tripIds.has(trip.id))
+                    .map(trip => ({
+                        id: trip.id,
+                        destinationId: cityId,
+                        title: trip.title,
+                        imageUrl: trip.imageUrl || 'assets/images/placeholder.jpg',
+                        duration: this.formatTripDuration(trip.startDate, trip.endDate),
+                        price: Number(trip.budget || 0),
+                        description: trip.description || 'No description available.'
+                    }));
+            })
+        );
     }
 
     getHotelsByCityId(cityId: number): Observable<DestinationHotel[]> {
-        // PRIVREMENO: dummy podaci za statički frontend
-        return of(this.dummyHotels.filter(hotel => hotel.destinationId === cityId));
-
-        // UVEZATI S BAZOM
-        // Tabele: accommodations, accommodation_types, cities
-        // Ruta: GET /api/cities/:id/hotels
-        // return this.http.get<DestinationHotel[]>(`${this.apiUrl}/${cityId}/hotels`);
+        return this.http.get<AccommodationApi[]>(`${this.accommodationsApiUrl}/city/${cityId}`).pipe(
+            map(accommodations =>
+                accommodations.map(accommodation => ({
+                    id: accommodation.id,
+                    destinationId: cityId,
+                    name: accommodation.name,
+                    imageUrl: accommodation.imageUrl || 'assets/images/placeholder.jpg',
+                    pricePerNight: Number(accommodation.pricePerNight || 0),
+                    rating: accommodation.stars || 0,
+                    location: accommodation.address || 'City center',
+                    type: this.mapAccommodationType(accommodation.accommodationTypeId),
+                    availableFrom: 'Flexible',
+                    availableTo: 'Flexible'
+                }))
+            )
+        );
     }
 
-     getAllCountries(): Observable<string[]> {
-        const countries = [...new Set(
-            this.dummyCities
-                .map(city => city.countryName)
-                .filter((country): country is string => !!country)
-        )].sort();
-
-        return of(countries);
+    getAllCountries(): Observable<string[]> {
+        return this.getAllCities().pipe(
+            map(cities =>
+                [...new Set(
+                    cities
+                        .map(city => city.countryName)
+                        .filter((country): country is string => !!country)
+                )].sort()
+            )
+        );
     }
 
+    getDestinationDetails(cityId: number): Observable<{
+        city: City | undefined;
+        hotels: DestinationHotel[];
+        trips: DestinationTrip[];
+    }> {
+        return this.getCityById(cityId).pipe(
+            switchMap(city => {
+                if (!city) {
+                    return of({
+                        city: undefined,
+                        hotels: [],
+                        trips: []
+                    });
+                }
+
+                return forkJoin({
+                    hotels: this.getHotelsByCityId(cityId),
+                    trips: this.getTripsByCityId(cityId)
+                }).pipe(
+                    map(({ hotels, trips }) => ({
+                        city,
+                        hotels,
+                        trips
+                    }))
+                );
+            })
+        );
+    }
+
+    private enrichCity(city: City, accommodations: AccommodationApi[]): City {
+        const cityAccommodations = accommodations.filter(accommodation => accommodation.cityId === city.id);
+        const averageRating = cityAccommodations.length
+            ? cityAccommodations.reduce((sum, accommodation) => sum + (accommodation.stars || 0), 0) / cityAccommodations.length
+            : undefined;
+        const lowestPrice = cityAccommodations.length
+            ? Math.min(...cityAccommodations.map(accommodation => Number(accommodation.pricePerNight || 0)))
+            : undefined;
+
+        return {
+            ...city,
+            imageUrl: city.imageUrl || 'assets/images/placeholder.jpg',
+            longDescription: city.description,
+            rating: averageRating ? Number(averageRating.toFixed(1)) : undefined,
+            reviewCount: cityAccommodations.length || undefined,
+            priceFrom: lowestPrice,
+            tags: this.buildTags(city)
+        };
+    }
+
+    private buildTags(city: City): string[] {
+        const tags = [city.continent, city.countryName].filter((value): value is string => !!value);
+
+        if (city.description) {
+            if (/beach|sea|coast|island/i.test(city.description)) {
+                tags.push('Beach');
+            }
+            if (/history|historic|culture|museum/i.test(city.description)) {
+                tags.push('Culture');
+            }
+            if (/food|cuisine|restaurant/i.test(city.description)) {
+                tags.push('Food');
+            }
+        }
+
+        return [...new Set(tags)];
+    }
+
+    private formatTripDuration(startDate?: string, endDate?: string): string {
+        if (!startDate || !endDate) {
+            return 'Dates TBD';
+        }
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffMs = end.getTime() - start.getTime();
+        const days = Math.max(1, Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1);
+
+        return `${days} day${days === 1 ? '' : 's'}`;
+    }
+
+    private mapAccommodationType(typeId: number): string {
+        const accommodationTypes: Record<number, string> = {
+            1: 'Hotel',
+            2: 'Apartment',
+            3: 'Hostel',
+            4: 'Resort',
+            5: 'Villa'
+        };
+
+        return accommodationTypes[typeId] || 'Accommodation';
+    }
 }
-

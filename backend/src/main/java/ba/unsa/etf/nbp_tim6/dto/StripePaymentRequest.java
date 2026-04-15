@@ -18,4 +18,5 @@ public class StripePaymentRequest {
     private Integer bookingId;
     private Integer tripId;
     private Integer userId;
+    private Integer paymentMethodId;
 }

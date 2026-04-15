@@ -104,15 +104,11 @@
                         <p class="price">From {{ item.pricePerNight }} KM / night</p>
                         <p class="rating">Rating: {{ item.rating }}</p>
 
-                        <div class="amenities">
+                        <div class="amenities" *ngIf="item.amenities.length > 0">
                             <span class="amenity" *ngFor="let amenity of item.amenities">
                                 {{ amenity }}
                             </span>
                         </div>
-
-                        <p class="availability">
-                            Available: {{ item.availableFrom }} - {{ item.availableTo }}
-                        </p>
                     </div>
                 </div>
             </div>

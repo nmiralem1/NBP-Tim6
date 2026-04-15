@@ -2,34 +2,59 @@
 
 
     <!-- Hero Section -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1>Plan your perfect trip</h1>
-            <p>Discover destinations, organize itineraries, and explore the world – all in one place.</p>
+<header class="hero">
+  <div class="hero-content">
+    <h1>Plan your perfect trip</h1>
+    <p>Discover destinations, organize itineraries, and explore the world – all in one place.</p>
 
-            <div class="search-bar">
-                <div class="search-group">
-                    <label>Destination</label>
-                    <input type="text" placeholder="City, country or region">
-                </div>
-                <div class="search-group">
-                    <label>Date</label>
-                    <input type="text" placeholder="From - To">
-                </div>
-                <div class="search-group">
-                    <label>Travelers</label>
-                    <select>
-                        <option>1 traveler</option>
-                        <option selected>2 travelers</option>
-                        <option>3+ travelers</option>
-                    </select>
-                </div>
-                <button class="btn-search">
-                    <span>🔍</span> Search Trips
-                </button>
-            </div>
-        </div>
-    </header>
+    <div class="search-bar">
+      <div class="search-group">
+        <label for="destination">Destination</label>
+        <input
+          id="destination"
+          type="text"
+          placeholder="City, country or region"
+          [(ngModel)]="destination"
+        />
+      </div>
+
+      <div class="search-group">
+        <label for="startDate">From</label>
+        <input
+          id="startDate"
+          type="date"
+          [(ngModel)]="startDate"
+        />
+      </div>
+
+      <div class="search-group">
+        <label for="endDate">To</label>
+        <input
+          id="endDate"
+          type="date"
+          [(ngModel)]="endDate"
+        />
+      </div>
+
+      <div class="search-group">
+        <label for="travelers">Travelers</label>
+        <select
+          id="travelers"
+          [(ngModel)]="travelers"
+        >
+          <option value="1">1 traveler</option>
+          <option value="2">2 travelers</option>
+          <option value="3">3 travelers</option>
+          <option value="4">4+ travelers</option>
+        </select>
+      </div>
+
+        <button class="btn-icon" type="button" (click)="searchTrips()">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/search--v1.png" />
+        </button>
+    </div>
+  </div>
+</header>
 
     <!-- Popular Destinations -->
     <section class="section popular-destinations">
@@ -70,7 +95,7 @@
                     <p class="date">📅 {{ trip.date }}</p>
                     <div class="card-footer">
                         <span class="price">from <strong>{{ trip.price }} €</strong></span>
-                        <button class="btn-detail">View Details</button>
+                        <button class="btn-detail" type="button" (click)="openTripDetails(trip.id)">View Details</button>
                     </div>
                 </div>
             </div>

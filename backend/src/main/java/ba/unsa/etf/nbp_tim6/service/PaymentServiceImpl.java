@@ -1,6 +1,7 @@
 package ba.unsa.etf.nbp_tim6.service;
 
 import ba.unsa.etf.nbp_tim6.model.Payment;
+import ba.unsa.etf.nbp_tim6.repository.abstraction.BookingRepository;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.PaymentRepository;
 import ba.unsa.etf.nbp_tim6.service.abstraction.PaymentService;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,11 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository repository;
+    private final BookingRepository bookingRepository;
 
-    public PaymentServiceImpl(PaymentRepository repository) {
+    public PaymentServiceImpl(PaymentRepository repository, BookingRepository bookingRepository) {
         this.repository = repository;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
@@ -43,6 +46,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void create(Payment payment) {
         repository.save(payment);
+        if (payment.getBookingId() != null) {
+            bookingRepository.updateStatus(payment.getBookingId(), "confirmed");
+        }
     }
 
     @Override

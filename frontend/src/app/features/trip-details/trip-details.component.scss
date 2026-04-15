@@ -89,24 +89,6 @@
   }
 }
 
-.primary-btn {
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-  background: #1d4ed8;
-  color: #ffffff;
-  margin-top: 10px;
-
-  &:hover {
-    background: #1e40af;
-  }
-}
-
 .price-value {
   color: #1d4ed8 !important;
   font-weight: 700 !important;
@@ -299,6 +281,17 @@
     font-size: 15px;
     color: #475569;
   }
+}
+
+.state-message {
+  max-width: 1400px;
+  margin: 0 auto;
+  color: #475569;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #b91c1c;
 }
 
 @media (max-width: 1024px) {

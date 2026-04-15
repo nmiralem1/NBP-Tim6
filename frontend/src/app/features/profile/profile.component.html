@@ -5,134 +5,173 @@
   </div>
 
   <div class="profile-content">
-    <!-- Profile Card -->
     <div class="profile-card">
       <div class="card-header">
         <div class="header-title">
           <h2>Personal Information</h2>
           <p *ngIf="!isEditing">Your account details</p>
           <p *ngIf="isEditing" class="edit-mode">Editing mode</p>
+          <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+          <p *ngIf="successMessage && !isEditing" class="success-message">{{ successMessage }}</p>
         </div>
+
         <button
           *ngIf="!isEditing"
           (click)="toggleEdit()"
           class="btn-edit"
+          type="button"
         >
-          ✏️ Edit
+        Edit
         </button>
       </div>
 
-      <!-- Display Mode -->
       <div *ngIf="!isEditing" class="profile-info">
         <div class="info-row">
           <div class="info-item">
-            <label>First Name</label>
-            <p>{{ userProfile.firstName }}</p>
+            <label> First Name</label>
+            <p>{{ userProfile.firstName || 'Not provided' }}</p>
           </div>
+
           <div class="info-item">
             <label>Last Name</label>
-            <p>{{ userProfile.lastName }}</p>
+            <p>{{ userProfile.lastName || 'Not provided' }}</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <label>Username</label>
+            <p>{{ userProfile.username || 'Not provided' }}</p>
           </div>
         </div>
 
         <div class="info-row">
           <div class="info-item">
             <label>Email Address</label>
-            <p>{{ userProfile.email }}</p>
+            <p>{{ userProfile.email || 'Not provided' }}</p>
           </div>
         </div>
 
         <div class="info-row">
           <div class="info-item">
             <label>Phone Number</label>
-            <p>{{ userProfile.phone }}</p>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="info-item">
-            <label>Birth Date</label>
-            <p>{{ userProfile.birthDate }}</p>
+            <p>{{ userProfile.phone || 'Not provided' }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Edit Mode -->
-      <form *ngIf="isEditing" class="profile-form">
-        <!-- First Name & Last Name -->
+      <form *ngIf="isEditing" class="profile-form" #profileForm="ngForm" novalidate>
         <div class="form-row">
           <div class="form-group">
-            <label for="firstName">First Name</label>
-            <div class="input-wrapper">
-              <span class="input-icon">👤</span>
-              <input
-                type="text"
-                id="firstName"
-                [value]="editData.firstName"
-                (input)="editData.firstName = $any($event.target).value"
-              />
-            </div>
+            <label for="firstName">
+              First Name</label>
+              <div class="input-wrapper">
+                <img class="input-icon" src="https://img.icons8.com/ios/20/user--v1.png" alt="User icon" />
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  [(ngModel)]="editData.firstName"
+                  #firstName="ngModel"
+                  required
+                  minlength="2"
+                  maxlength="50"
+                  [pattern]="validationPatterns.name"
+                  [class.invalid]="isFieldInvalid(firstName)"
+                />
+              </div>
+              <p *ngIf="isFieldInvalid(firstName)" class="field-error">
+                {{ firstName.errors?.['required'] ? 'First name is required.' : 'Use 2-50 letters only.' }}
+              </p>
           </div>
 
           <div class="form-group">
             <label for="lastName">Last Name</label>
             <div class="input-wrapper">
-              <span class="input-icon">👤</span>
+              <img class="input-icon" src="https://img.icons8.com/ios/20/user--v1.png" alt="User icon" />
               <input
                 type="text"
                 id="lastName"
-                [value]="editData.lastName"
-                (input)="editData.lastName = $any($event.target).value"
+                name="lastName"
+                [(ngModel)]="editData.lastName"
+                #lastName="ngModel"
+                required
+                minlength="2"
+                maxlength="50"
+                [pattern]="validationPatterns.name"
+                [class.invalid]="isFieldInvalid(lastName)"
               />
             </div>
+            <p *ngIf="isFieldInvalid(lastName)" class="field-error">
+              {{ lastName.errors?.['required'] ? 'Last name is required.' : 'Use 2-50 letters only.' }}
+            </p>
           </div>
         </div>
 
-        <!-- Email -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <div class="input-wrapper">
+              <img class="input-icon" src="https://img.icons8.com/ios/20/id-verified.png" alt="User icon" />
+            <input
+              type="text"
+              id="username"
+              name="username"
+              [(ngModel)]="editData.username"
+              #username="ngModel"
+              required
+              minlength="3"
+              maxlength="20"
+              [pattern]="validationPatterns.username"
+              [class.invalid]="isFieldInvalid(username)"
+            />
+          </div>
+          <p *ngIf="isFieldInvalid(username)" class="field-error">
+            {{ username.errors?.['required'] ? 'Username is required.' : 'Use 3-20 letters, numbers, dot, dash or underscore.' }}
+          </p>
+        </div>
+
         <div class="form-group">
           <label for="email">Email Address</label>
-          <div class="input-wrapper">
-            <span class="input-icon">📧</span>
+          <div class="input-wrapper">                
+            <img class="input-icon" src="https://img.icons8.com/ios/20/new-post.png" alt="User icon" />
             <input
               type="email"
               id="email"
-              [value]="editData.email"
-              (input)="editData.email = $any($event.target).value"
+              name="email"
+              [(ngModel)]="editData.email"
+              #email="ngModel"
+              required
+              [pattern]="validationPatterns.email"
+              [class.invalid]="isFieldInvalid(email)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(email)" class="field-error">
+            {{ email.errors?.['required'] ? 'Email address is required.' : 'Enter a valid email address, for example name@example.com.' }}
+          </p>
         </div>
 
-        <!-- Phone -->
         <div class="form-group">
           <label for="phone">Phone Number</label>
           <div class="input-wrapper">
-            <span class="input-icon">📱</span>
+            <img class="input-icon" src="https://img.icons8.com/ios/20/phone.png" alt="User icon" />
             <input
               type="tel"
               id="phone"
-              [value]="editData.phone"
-              (input)="editData.phone = $any($event.target).value"
+              name="phone"
+              [(ngModel)]="editData.phone"
+              #phone="ngModel"
+              required
+              [pattern]="validationPatterns.phone"
+              [class.invalid]="isFieldInvalid(phone)"
             />
           </div>
+          <p *ngIf="isFieldInvalid(phone)" class="field-error">
+            {{ phone.errors?.['required'] ? 'Phone number is required.' : 'Use 8-15 digits, optional leading +.' }}
+          </p>
         </div>
 
-        <!-- Birth Date -->
-        <div class="form-group">
-          <label for="birthDate">Birth Date</label>
-          <div class="input-wrapper">
-            <span class="input-icon">📅</span>
-            <input
-              type="date"
-              id="birthDate"
-              [value]="editData.birthDate"
-              (input)="editData.birthDate = $any($event.target).value"
-            />
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
         <div class="form-actions">
-          <button type="button" (click)="toggleEdit()" class="btn-save">
+          <button type="button" (click)="saveChanges(profileForm)" class="btn-save" [disabled]="profileForm.invalid">
             ✓ Save Changes
           </button>
           <button type="button" (click)="cancel()" class="btn-cancel">

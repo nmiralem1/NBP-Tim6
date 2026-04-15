@@ -1,0 +1,170 @@
+<div class="travelplan-details-page" *ngIf="travelPlan">
+  <div class="details-layout">
+
+    <aside class="booking-sidebar">
+      <div class="booking-card">
+        <button class="back-btn" type="button" (click)="goBack()">
+          ← Back to trips
+        </button>
+
+        <h2>Trip Overview</h2>
+
+        <div class="filter-group">
+          <label>Departure</label>
+          <p>{{ bookingInfo.departure || 'Not specified' }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Destination</label>
+          <p>{{ bookingInfo.destination || travelPlan.locationLabel }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Departure date</label>
+          <p>{{ travelPlan.startDate }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Return date</label>
+          <p>{{ travelPlan.endDate }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Travelers</label>
+          <p>{{ bookingInfo.travelers }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Status</label>
+          <p>{{ travelPlan.statusLabel }}</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Duration</label>
+          <p>{{ travelPlan.durationDays }} days</p>
+        </div>
+
+        <div class="filter-group">
+          <label>Budget</label>
+          <p class="price-value">{{ travelPlan.budget }} KM</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="details-content">
+      <section class="hero-section">
+        <div class="hero-image">
+          <img
+            [src]="travelPlan.displayImageUrl"
+            [alt]="travelPlan.title"
+          />
+        </div>
+
+        <div class="hero-content">
+          <p class="location">{{ travelPlan.locationLabel }}</p>
+          <h1>{{ travelPlan.title }}</h1>
+          <p class="description">{{ travelPlan.shortDescription }}</p>
+
+          <div class="quick-info">
+            <span class="info-chip">{{ travelPlan.durationDays }} days</span>
+            <span class="info-chip">{{ travelPlan.statusLabel }}</span>
+            <span class="info-chip">{{ travelPlan.budget }} KM budget</span>
+            <span class="info-chip">{{ travelPlan.stops.length || 1 }} {{ travelPlan.stops.length === 1 ? 'city' : 'cities' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Highlights</h2>
+        </div>
+
+        <div class="included-list">
+          <span class="included-item" *ngFor="let item of travelPlan.highlights">
+            {{ item }}
+          </span>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Cities on this trip</h2>
+        </div>
+
+        <div class="agenda-list">
+          <div class="agenda-card" *ngFor="let stop of travelPlan.stops; let index = index">
+            <div class="agenda-day">
+              City {{ index + 1 }}
+            </div>
+
+            <div class="agenda-content">
+              <h3>{{ stop.cityName }}, {{ stop.countryName }}</h3>
+              <p class="agenda-description">
+                {{ stop.notes || 'Planned stay in this destination.' }}
+              </p>
+
+              <div class="agenda-activities">
+                <span class="activity-chip">
+                  Arrival {{ stop.arrivalDate }}
+                </span>
+                <span class="activity-chip">
+                  Departure {{ stop.departureDate }}
+                </span>
+                <span class="activity-chip" *ngIf="stop.cityName">
+                  {{ stop.cityName }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Travel Information</h2>
+        </div>
+
+        <div class="travel-info-grid">
+          <div class="info-box">
+            <h3>Departure</h3>
+            <p>{{ bookingInfo.departure || 'Not specified' }}</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Destination</h3>
+            <p>{{ travelPlan.locationLabel }}</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Travel period</h3>
+            <p>{{ travelPlan.startDate }} - {{ travelPlan.endDate }}</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Status</h3>
+            <p>{{ travelPlan.statusLabel }}</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Budget</h3>
+            <p>{{ travelPlan.budget }} KM</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Created</h3>
+            <p>{{ travelPlan.createdAt ? (travelPlan.createdAt | date:'yyyy-MM-dd') : 'Not available' }}</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+</div>
+
+<div class="travelplan-details-page" *ngIf="isLoading && !travelPlan">
+  <p class="state-message">Loading trip details...</p>
+</div>
+
+<div class="travelplan-details-page" *ngIf="!isLoading && errorMessage && !travelPlan">
+  <p class="state-message error-message">{{ errorMessage }}</p>
+</div>
