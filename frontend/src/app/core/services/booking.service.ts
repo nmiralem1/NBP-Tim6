@@ -16,6 +16,22 @@ export interface BookingDto {
   createdAt: string;
 }
 
+export interface CreateBookingRequest {
+  tripId?: number;
+  userId: number;
+  accommodationId: number;
+  checkIn: string;
+  checkOut: string;
+  guestsCount: number;
+}
+
+export interface BookingCreatedResponse {
+  bookingId: number;
+  totalPrice: number;
+  bookingReference: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,6 +42,18 @@ export class BookingService {
 
   getMyBookings(): Observable<BookingDto[]> {
     return this.http.get<BookingDto[]>(`${this.apiUrl}/me`, {
+      withCredentials: true
+    });
+  }
+
+  createBooking(request: CreateBookingRequest): Observable<BookingCreatedResponse> {
+    return this.http.post<BookingCreatedResponse>(this.apiUrl, request, {
+      withCredentials: true
+    });
+  }
+
+  getBookingsByTripId(tripId: number): Observable<BookingDto[]> {
+    return this.http.get<BookingDto[]>(`${this.apiUrl}/trip/${tripId}`, {
       withCredentials: true
     });
   }

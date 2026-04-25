@@ -1,5 +1,6 @@
 package ba.unsa.etf.nbp_tim6.controller;
 
+import ba.unsa.etf.nbp_tim6.dto.BookingCreatedDto;
 import ba.unsa.etf.nbp_tim6.model.Booking;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.service.abstraction.BookingService;
@@ -38,9 +39,9 @@ public class BookingController {
             @ApiResponse(responseCode = "400", description = "Invalid booking data")
     })
     @PostMapping
-    public String createBooking(@Valid @RequestBody Booking booking) {
-        bookingService.createBooking(booking);
-        return "Booking created!";
+    public ResponseEntity<BookingCreatedDto> createBooking(@Valid @RequestBody Booking booking) {
+        BookingCreatedDto result = bookingService.createBooking(booking);
+        return ResponseEntity.ok(result);
     }
 
     @Operation(
@@ -119,5 +120,11 @@ public class BookingController {
     @GetMapping("/me")
     public List<Booking> getMyBookings(Authentication authentication) {
         return bookingService.getBookingsForAuthenticatedUser(authentication.getName());
+    }
+
+    @Operation(summary = "Get bookings by trip ID", description = "Returns all bookings for a specific trip")
+    @GetMapping("/trip/{tripId}")
+    public List<Booking> getBookingsByTripId(@PathVariable Integer tripId) {
+        return bookingService.getBookingsByTripId(tripId);
     }
 }

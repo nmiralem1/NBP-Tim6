@@ -19,14 +19,14 @@ public class TripRepositoryImpl implements TripRepository {
 
     @Override
     public List<Trip> findAll() {
-        String sql = "SELECT id, user_id as userId, title, description, start_date as startDate, end_date as endDate, budget, status, image_url as imageUrl, created_at as createdAt FROM trips";
+        String sql = "SELECT ID, USER_ID as userId, TITLE, DESCRIPTION, START_DATE as startDate, END_DATE as endDate, BUDGET, STATUS, IMAGE_URL as imageUrl, CREATED_AT as createdAt FROM NBPT6.TRIPS";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Trip.class));
     }
 
     public int save(Trip trip) {
         String sql = """
-                    INSERT INTO trips
-                    (user_id, title, description, start_date, end_date, budget, status, image_url)
+                    INSERT INTO NBPT6.TRIPS
+                    (USER_ID, TITLE, DESCRIPTION, START_DATE, END_DATE, BUDGET, STATUS, IMAGE_URL)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
@@ -42,7 +42,7 @@ public class TripRepositoryImpl implements TripRepository {
     }
 
     public Trip findById(Integer id) {
-        String sql = "SELECT * FROM trips WHERE id = ?";
+        String sql = "SELECT * FROM NBPT6.TRIPS WHERE ID = ?";
         List<Trip> trips = jdbcTemplate.query(
                 sql,
                 new BeanPropertyRowMapper<>(Trip.class),
@@ -52,9 +52,9 @@ public class TripRepositoryImpl implements TripRepository {
 
     public int update(Trip trip) {
         String sql = """
-                    UPDATE trips
-                    SET title = ?, description = ?, start_date = ?, end_date = ?, budget = ?, status = ?, image_url = ?
-                    WHERE id = ?
+                    UPDATE NBPT6.TRIPS
+                    SET TITLE = ?, DESCRIPTION = ?, START_DATE = ?, END_DATE = ?, BUDGET = ?, STATUS = ?, IMAGE_URL = ?
+                    WHERE ID = ?
                 """;
 
         return jdbcTemplate.update(sql,
@@ -69,12 +69,12 @@ public class TripRepositoryImpl implements TripRepository {
     }
 
     public int delete(Integer id) {
-        String sql = "DELETE FROM trips WHERE id = ?";
+        String sql = "DELETE FROM NBPT6.TRIPS WHERE ID = ?";
         return jdbcTemplate.update(sql, id);
     }
 
     public List<Trip> findByUserId(Integer userId) {
-        String sql = "SELECT * FROM trips WHERE user_id = ?";
+        String sql = "SELECT * FROM NBPT6.TRIPS WHERE USER_ID = ?";
 
         return jdbcTemplate.query(
                 sql,

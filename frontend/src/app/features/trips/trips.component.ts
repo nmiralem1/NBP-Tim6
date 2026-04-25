@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EnrichedTrip, TripService } from '../../core/services/trip.service';
+import { EnrichedTrip, Trip, TripService } from '../../core/services/trip.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-trips',
@@ -10,6 +11,7 @@ import { EnrichedTrip, TripService } from '../../core/services/trip.service';
 export class TripsComponent implements OnInit {
   travelPlans: EnrichedTrip[] = [];
   filteredTravelPlans: EnrichedTrip[] = [];
+  myTrips: Trip[] = [];
 
   searchTerm = '';
   selectedCity = '';
@@ -31,14 +33,20 @@ export class TripsComponent implements OnInit {
   isLoading = true;
   errorMessage = '';
 
+  showCreateForm = false;
+  isCreating = false;
+  createForm = { title: '', startDate: '', endDate: '', budget: 0, description: '' };
+  createError = '';
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private tripService: TripService
+    private tripService: TripService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadTravelPlans();
+    this.loadMyTrips(() => this.loadTravelPlans());
 
     this.route.queryParams.subscribe(params => {
       this.selectedCity = params['city'] || '';
@@ -48,8 +56,24 @@ export class TripsComponent implements OnInit {
       this.destination = params['destination'] || '';
       this.returnDate = params['returnDate'] || '';
       this.travelers = Number(params['travelers']) || 1;
-
       this.filterTravelPlans();
+    });
+  }
+
+  get currentUserId(): number | null {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user)?.id ?? null : null;
+  }
+
+  loadMyTrips(callback?: () => void): void {
+    const userId = this.currentUserId;
+    if (!userId || !this.authService.isLoggedIn()) {
+      callback?.();
+      return;
+    }
+    this.tripService.getTripsByUserId(userId).subscribe({
+      next: trips => { this.myTrips = trips; callback?.(); },
+      error: () => { callback?.(); }
     });
   }
 
@@ -59,8 +83,10 @@ export class TripsComponent implements OnInit {
 
     this.tripService.getAllTrips().subscribe({
       next: (trips) => {
-        this.travelPlans = trips;
-        this.filteredTravelPlans = trips;
+        const myIds = new Set(this.myTrips.map(t => t.id));
+        const browseable = trips.filter(t => !myIds.has(t.id));
+        this.travelPlans = browseable;
+        this.filteredTravelPlans = browseable;
         this.cities = [...new Set(trips.map(trip => trip.primaryCityName).filter(Boolean))].sort();
         this.countries = [...new Set(trips.map(trip => trip.primaryCountryName).filter(Boolean))].sort();
         this.statuses = [...new Set(trips.map(trip => trip.statusLabel).filter(Boolean))].sort();
@@ -72,6 +98,29 @@ export class TripsComponent implements OnInit {
         this.travelPlans = [];
         this.filteredTravelPlans = [];
         this.isLoading = false;
+      }
+    });
+  }
+
+  submitCreateTrip(): void {
+    const userId = this.currentUserId;
+    if (!userId) { this.createError = 'You must be logged in.'; return; }
+    if (!this.createForm.title || !this.createForm.startDate || !this.createForm.endDate) {
+      this.createError = 'Title, start date and end date are required.';
+      return;
+    }
+    this.isCreating = true;
+    this.createError = '';
+    this.tripService.createTrip({ ...this.createForm, userId }).subscribe({
+      next: () => {
+        this.isCreating = false;
+        this.showCreateForm = false;
+        this.createForm = { title: '', startDate: '', endDate: '', budget: 0, description: '' };
+        this.loadMyTrips();
+      },
+      error: () => {
+        this.isCreating = false;
+        this.createError = 'Failed to create trip. Please try again.';
       }
     });
   }
@@ -88,45 +137,23 @@ export class TripsComponent implements OnInit {
         item.primaryCountryName.toLowerCase().includes(term) ||
         item.highlights.some(highlight => highlight.toLowerCase().includes(term));
 
-      const matchesCity =
-        !this.selectedCity || item.primaryCityName === this.selectedCity;
-
-      const matchesCountry =
-        !this.selectedCountry || item.primaryCountryName === this.selectedCountry;
-
-      const matchesDate =
-        !this.selectedDate ||
-        (item.startDate <= this.selectedDate && item.endDate >= this.selectedDate);
-
+      const matchesCity = !this.selectedCity || item.primaryCityName === this.selectedCity;
+      const matchesCountry = !this.selectedCountry || item.primaryCountryName === this.selectedCountry;
+      const matchesDate = !this.selectedDate || (item.startDate <= this.selectedDate && item.endDate >= this.selectedDate);
       const matchesDuration =
         !this.selectedDuration ||
         (this.selectedDuration === '1-3' && item.durationDays >= 1 && item.durationDays <= 3) ||
         (this.selectedDuration === '4-7' && item.durationDays >= 4 && item.durationDays <= 7) ||
         (this.selectedDuration === '8+' && item.durationDays >= 8);
+      const matchesBudget = this.maxBudget === null || item.budget <= this.maxBudget;
+      const matchesStatus = !this.selectedStatus || item.statusLabel === this.selectedStatus;
 
-      const matchesBudget =
-        this.maxBudget === null || item.budget <= this.maxBudget;
-
-      const matchesStatus =
-        !this.selectedStatus || item.statusLabel === this.selectedStatus;
-
-      return (
-        matchesSearch &&
-        matchesCity &&
-        matchesCountry &&
-        matchesDate &&
-        matchesDuration &&
-        matchesBudget &&
-        matchesStatus
-      );
+      return matchesSearch && matchesCity && matchesCountry && matchesDate && matchesDuration && matchesBudget && matchesStatus;
     });
   }
 
   onCityChange(): void {
-    if (!this.selectedCity) {
-      this.selectedCountry = '';
-    }
-
+    if (!this.selectedCity) this.selectedCountry = '';
     this.filterTravelPlans();
   }
 

@@ -7,7 +7,7 @@
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
         <a routerLink="/destinations" routerLinkActive="active">Destinations</a>
         <a routerLink="/trips" routerLinkActive="active">Trips</a>
-        <a routerLink="/hotels" routerLinkActive="active">Hotels</a>
+        <a routerLink="/accommodations" routerLinkActive="active">Accommodations</a>
         <a routerLink="/activities" routerLinkActive="active">Activities</a>
         <a *ngIf="authService.isLoggedIn()" routerLink="/bookings" routerLinkActive="active">My Bookings</a>
     </div>
@@ -19,7 +19,6 @@
             <div class="dropdown-menu" [class.show]="isMenuOpen">
                 <a routerLink="/profile" (click)="closeMenu()">My Profile</a>
                 <a routerLink="/trips" (click)="closeMenu()">My Trips</a>
-                <a routerLink="/bookings" (click)="closeMenu()">My Bookings</a>
                 <hr />
                 <button (click)="logout()" class="btn-logout" type="button">Logout</button>
             </div>

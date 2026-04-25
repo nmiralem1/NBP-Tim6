@@ -1,17 +1,19 @@
 package ba.unsa.etf.nbp_tim6.controller;
 
+import ba.unsa.etf.nbp_tim6.dto.LoginRequest;
 import ba.unsa.etf.nbp_tim6.model.RefreshToken;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import ba.unsa.etf.nbp_tim6.security.JwtUtils;
 import ba.unsa.etf.nbp_tim6.security.RefreshTokenService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +28,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(
-        name = "Authentication",
-        description = "Endpoints for user authentication, registration, logout, and token refresh"
-)
+@Tag(name = "Authentication", description = "Endpoints for user authentication and session management")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -47,20 +46,17 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @Operation(
-            summary = "Login user",
-            description = "Authenticates a user using username or email and password, then generates access and refresh tokens stored in cookies"
-    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User logged in successfully"),
             @ApiResponse(responseCode = "401", description = "Invalid username, email, or password")
     })
+    @Operation(summary = "Login user", description = "Authenticates a user and returns JWT tokens in cookies.", security = @SecurityRequirement(name = ""))
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> loginRequest,
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest,
                                               HttpServletResponse response) {
         try {
-            String identifier = loginRequest.get("username");
-            String password = loginRequest.get("password");
+            String identifier = loginRequest.getUsername();
+            String password = loginRequest.getPassword();
 
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(identifier, password));
@@ -77,21 +73,20 @@ public class AuthController {
 
             return ResponseEntity.ok(Map.of(
                     "message", "User logged in successfully!",
+                    "accessToken", jwt,
+                    "id", user.getId(),
                     "username", user.getUsername(),
                     "email", user.getEmail(),
                     "role", user.getRole(),
-                    "firstName", user.getFirstName(),
-                    "lastName", user.getLastName(),
-                    "phone", user.getPhone()));
+                    "firstName", user.getFirstName() != null ? user.getFirstName() : "",
+                    "lastName", user.getLastName() != null ? user.getLastName() : "",
+                    "phone", user.getPhone() != null ? user.getPhone() : ""));
         } catch (org.springframework.security.core.AuthenticationException e) {
             return ResponseEntity.status(401).body(Map.of("message", "Error: " + e.getMessage()));
         }
     }
 
-    @Operation(
-            summary = "Register user",
-            description = "Registers a new user account if the username and email are not already in use"
-    )
+    @Operation(summary = "Register user", description = "Creates a new user account.", security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User registered successfully"),
             @ApiResponse(responseCode = "400", description = "Username or email is already in use")
@@ -112,10 +107,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "User registered successfully!"));
     }
 
-    @Operation(
-            summary = "Refresh access token",
-            description = "Generates a new access token using the refresh token stored in cookies"
-    )
+    @Operation(summary = "Refresh token", description = "Rotates the refresh token and returns a new access token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Token refreshed successfully"),
             @ApiResponse(responseCode = "403", description = "Refresh token is missing, invalid, or expired")
@@ -143,10 +135,7 @@ public class AuthController {
         return ResponseEntity.status(403).body(Map.of("message", "Refresh Token is null!"));
     }
 
-    @Operation(
-            summary = "Logout user",
-            description = "Logs out the user by deleting authentication cookies and invalidating the refresh token"
-    )
+    @Operation(summary = "Logout user", description = "Invalidates the user's session and clears cookies.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Log out successful")
     })

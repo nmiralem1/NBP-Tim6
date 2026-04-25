@@ -1,3 +1,151 @@
 <div class="book-page">
-  <h1>To do: add Stripe</h1>
+
+  <!-- STEP: BOOKING FORM -->
+  <div class="book-container" *ngIf="currentStep === 'booking'">
+    <div class="page-header">
+      <button class="back-btn" (click)="goBack()">← Back</button>
+      <h1>Book your stay</h1>
+    </div>
+
+    <div class="book-layout">
+      <!-- Accommodation summary -->
+      <div class="accommodation-card" *ngIf="accommodation">
+        <img [src]="accommodation.imageUrl" [alt]="accommodation.name" class="acc-image" />
+        <div class="acc-info">
+          <h2>{{ accommodation.name }}</h2>
+          <p class="acc-location">{{ accommodation.cityName }}, {{ accommodation.countryName }}</p>
+          <p class="acc-type">{{ accommodation.type }}</p>
+          <p class="acc-price"><strong>{{ accommodation.pricePerNight }} KM</strong> / night</p>
+        </div>
+      </div>
+
+      <!-- Booking form -->
+      <div class="booking-form-card">
+        <h2>Booking details</h2>
+
+        <div class="error-box" *ngIf="bookingError">{{ bookingError }}</div>
+
+        <div class="form-group">
+          <label for="checkIn">Check-in date</label>
+          <input id="checkIn" type="date" [(ngModel)]="checkIn" [min]="getTodayDate()" />
+        </div>
+
+        <div class="form-group">
+          <label for="checkOut">Check-out date</label>
+          <input id="checkOut" type="date" [(ngModel)]="checkOut" [min]="checkIn || getTodayDate()" />
+        </div>
+
+        <div class="form-group">
+          <label for="guests">Number of guests</label>
+          <input id="guests" type="number" [(ngModel)]="guests" min="1" max="20" />
+        </div>
+
+        <div class="price-summary" *ngIf="totalNights > 0 && accommodation">
+          <div class="price-row">
+            <span>{{ accommodation.pricePerNight }} KM × {{ totalNights }} night{{ totalNights !== 1 ? 's' : '' }}</span>
+            <span>{{ estimatedPrice | number:'1.2-2' }} KM</span>
+          </div>
+          <div class="price-row total">
+            <span>Total</span>
+            <span>{{ estimatedPrice | number:'1.2-2' }} KM</span>
+          </div>
+        </div>
+
+        <button
+          class="primary-btn"
+          (click)="submitBooking()"
+          [disabled]="isLoadingBooking">
+          {{ isLoadingBooking ? 'Creating booking...' : 'Continue to payment' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP: PAYMENT -->
+  <div class="book-container" *ngIf="currentStep === 'payment'">
+    <div class="page-header">
+      <h1>Payment</h1>
+    </div>
+
+    <div class="book-layout">
+      <!-- Booking summary -->
+      <div class="summary-card" *ngIf="createdBooking">
+        <h2>Booking summary</h2>
+        <div class="summary-row">
+          <span>Reference</span>
+          <span class="ref">{{ createdBooking.bookingReference }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Check-in</span>
+          <span>{{ checkIn }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Check-out</span>
+          <span>{{ checkOut }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Guests</span>
+          <span>{{ guests }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>{{ createdBooking.totalPrice | number:'1.2-2' }} KM</span>
+        </div>
+      </div>
+
+      <!-- Payment form -->
+      <div class="payment-form-card">
+        <h2>Select payment method</h2>
+
+        <div class="error-box" *ngIf="paymentError">{{ paymentError }}</div>
+
+        <div class="payment-methods">
+          <div
+            class="method-option"
+            *ngFor="let method of paymentMethods"
+            [class.selected]="selectedPaymentMethodId === method.id"
+            (click)="selectPaymentMethod(method.id)">
+            <span class="method-icon">{{ getMethodIcon(method.name) }}</span>
+            <span class="method-name">{{ method.name }}</span>
+            <span class="method-check" *ngIf="selectedPaymentMethodId === method.id">✓</span>
+          </div>
+        </div>
+
+        <!-- Stripe card element -->
+        <div class="stripe-card-wrapper" *ngIf="selectedPaymentMethodId && isCardMethod(selectedPaymentMethodId)">
+          <label>Card details</label>
+          <div id="card-element" class="stripe-card-element"></div>
+          <p class="stripe-note">Secured by Stripe</p>
+        </div>
+
+        <!-- Non-card confirmation -->
+        <div class="method-confirm" *ngIf="selectedPaymentMethodId && !isCardMethod(selectedPaymentMethodId)">
+          <p>You selected: <strong>{{ selectedMethodName }}</strong></p>
+          <p class="method-hint">Click "Pay now" to complete your booking.</p>
+        </div>
+
+        <button
+          class="primary-btn pay-btn"
+          (click)="processPayment()"
+          [disabled]="isProcessingPayment || !selectedPaymentMethodId">
+          {{ isProcessingPayment ? 'Processing...' : 'Pay ' + (createdBooking?.totalPrice | number:'1.2-2') + ' KM' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP: SUCCESS -->
+  <div class="success-container" *ngIf="currentStep === 'success'">
+    <div class="success-card">
+      <div class="success-icon">✓</div>
+      <h1>Booking confirmed!</h1>
+      <p>Your payment was successful and your booking is confirmed.</p>
+      <div class="success-ref" *ngIf="createdBooking">
+        <span>Booking reference:</span>
+        <strong>{{ createdBooking.bookingReference }}</strong>
+      </div>
+      <button class="primary-btn" (click)="goToBookings()">View my bookings</button>
+    </div>
+  </div>
+
 </div>

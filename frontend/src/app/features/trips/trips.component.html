@@ -104,7 +104,67 @@
     </aside>
 
     <main class="travel-plans-content">
-      <div class="section-header">
+
+      <!-- My Trips section -->
+      <div *ngIf="authService.isLoggedIn()">
+        <div class="section-header" style="display:flex; align-items:center; justify-content:space-between;">
+          <h2>My Trips</h2>
+          <button class="primary-btn" type="button" (click)="showCreateForm = !showCreateForm">
+            {{ showCreateForm ? 'Cancel' : '+ Create trip' }}
+          </button>
+        </div>
+
+        <div class="create-trip-form" *ngIf="showCreateForm">
+          <p *ngIf="createError" class="error-msg">{{ createError }}</p>
+          <div class="form-row">
+            <div class="filter-group">
+              <label>Title</label>
+              <input type="text" placeholder="e.g. Summer in Paris" [(ngModel)]="createForm.title" />
+            </div>
+            <div class="filter-group">
+              <label>Budget (KM)</label>
+              <input type="number" min="0" [(ngModel)]="createForm.budget" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="filter-group">
+              <label>Start date</label>
+              <input type="date" [(ngModel)]="createForm.startDate" />
+            </div>
+            <div class="filter-group">
+              <label>End date</label>
+              <input type="date" [(ngModel)]="createForm.endDate" />
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Description (optional)</label>
+            <input type="text" placeholder="Short description..." [(ngModel)]="createForm.description" />
+          </div>
+          <button class="primary-btn" type="button" (click)="submitCreateTrip()" [disabled]="isCreating">
+            {{ isCreating ? 'Creating...' : 'Create trip' }}
+          </button>
+        </div>
+
+        <div class="my-trips-grid" *ngIf="myTrips.length > 0">
+          <div class="my-trip-card" *ngFor="let trip of myTrips" (click)="openTravelPlanDetails(trip.id)">
+            <div class="my-trip-info">
+              <h3>{{ trip.title }}</h3>
+              <p>{{ trip.startDate }} — {{ trip.endDate }}</p>
+              <p class="budget">{{ trip.budget }} KM budget</p>
+              <span class="status-chip">{{ trip.status }}</span>
+            </div>
+          </div>
+        </div>
+        <p class="empty-state" *ngIf="myTrips.length === 0 && !showCreateForm">
+          You haven't created any trips yet.
+        </p>
+
+        <div class="section-header" style="margin-top: 2rem;">
+          <h2>Browse Trips</h2>
+        </div>
+      </div>
+
+      <div class="section-header" *ngIf="!authService.isLoggedIn()">
         <h1>Trips</h1>
       </div>
 
