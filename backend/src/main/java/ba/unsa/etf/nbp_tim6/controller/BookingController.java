@@ -2,6 +2,7 @@ package ba.unsa.etf.nbp_tim6.controller;
 
 import ba.unsa.etf.nbp_tim6.dto.BookingCreatedDto;
 import ba.unsa.etf.nbp_tim6.model.Booking;
+import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.service.abstraction.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -119,5 +120,11 @@ public class BookingController {
     @GetMapping("/me")
     public List<Booking> getMyBookings(Authentication authentication) {
         return bookingService.getBookingsForAuthenticatedUser(authentication.getName());
+    }
+
+    @Operation(summary = "Get bookings by trip ID", description = "Returns all bookings for a specific trip")
+    @GetMapping("/trip/{tripId}")
+    public List<Booking> getBookingsByTripId(@PathVariable Integer tripId) {
+        return bookingService.getBookingsByTripId(tripId);
     }
 }

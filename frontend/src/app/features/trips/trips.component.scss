@@ -277,3 +277,49 @@
     font-size: 28px;
   }
 }
+
+.create-trip-form {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .error-msg {
+    color: #ef4444;
+    font-size: 14px;
+  }
+}
+
+.my-trips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.my-trip-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    border-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+  }
+
+  h3 { margin: 0 0 0.5rem; font-size: 16px; }
+  p { margin: 0.2rem 0; font-size: 14px; color: #6b7280; }
+  .budget { color: #1a1a2e; font-weight: 600; }
+}

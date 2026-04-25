@@ -65,9 +65,61 @@
                     <p class="price">From {{ item.pricePerNight }} KM / night</p>
                     <p class="description">{{ item.description }}</p>
                     <p class="address">{{ item.address }}</p>
-                    <button class="book-btn" (click)="bookRoom({available: true, id: 0})">Book now</button>
+                    <p class="success-msg" *ngIf="addToTripSuccess">{{ addToTripSuccess }}</p>
+                    <div class="hero-actions">
+                        <button class="book-btn" (click)="bookRoom({available: true, id: 0})">Book now</button>
+                        <button class="trip-btn" (click)="openTripModal()" *ngIf="authService.isLoggedIn()">Add to my trip</button>
+                    </div>
                 </div>
             </section>
+
+            <!-- Trip selection modal -->
+            <div class="modal-overlay" *ngIf="showTripModal" (click)="showTripModal = false">
+                <div class="trip-modal" (click)="$event.stopPropagation()">
+                    <div class="modal-header">
+                        <h2>Add to my trip</h2>
+                        <button class="close-btn" type="button" (click)="showTripModal = false">×</button>
+                    </div>
+
+                    <div *ngIf="myTrips.length === 0" class="empty-trips">
+                        <p>You have no trips yet.</p>
+                        <a routerLink="/trips" (click)="showTripModal = false">Create one first</a>
+                    </div>
+
+                    <div *ngIf="myTrips.length > 0">
+                        <p *ngIf="addToTripError" class="error-msg">{{ addToTripError }}</p>
+
+                        <div class="filter-group">
+                            <label>Select trip</label>
+                            <select [(ngModel)]="tripModalForm.tripId">
+                                <option [ngValue]="null" disabled>Choose a trip...</option>
+                                <option *ngFor="let trip of myTrips" [ngValue]="trip.id">
+                                    {{ trip.title }} ({{ trip.startDate }} — {{ trip.endDate }})
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Check-in</label>
+                            <input type="date" [(ngModel)]="tripModalForm.checkIn" />
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Check-out</label>
+                            <input type="date" [(ngModel)]="tripModalForm.checkOut" />
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Guests</label>
+                            <input type="number" min="1" [(ngModel)]="tripModalForm.guests" />
+                        </div>
+
+                        <button class="primary-btn" type="button" (click)="confirmAddToTrip()" [disabled]="isAddingToTrip">
+                            {{ isAddingToTrip ? 'Adding...' : 'Add to trip' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <section class="content-section" *ngIf="item.gallery.length > 0">
                 <div class="section-header">

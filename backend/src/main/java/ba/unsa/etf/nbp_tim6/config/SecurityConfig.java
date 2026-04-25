@@ -43,7 +43,9 @@ public class SecurityConfig {
                                 "/api/accommodations", "/api/accommodations/**",
                                 "/api/activities", "/api/activities/**",
                                 "/api/reviews", "/api/reviews/**",
-                                "/api/payment-methods", "/api/payment-methods/**")
+                                "/api/payment-methods", "/api/payment-methods/**",
+                                "/api/bookings/trip/**",
+                                "/api/trip-activities/trip/**")
                         .permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/error").permitAll()
                         .anyRequest().authenticated());

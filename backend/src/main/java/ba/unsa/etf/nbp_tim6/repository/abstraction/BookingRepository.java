@@ -14,6 +14,8 @@ public interface BookingRepository {
 
     java.util.List<Booking> findByUserId(Integer userId);
 
+    java.util.List<Booking> findByTripId(Integer tripId);
+
     int update(Booking booking);
 
     int delete(Integer id);

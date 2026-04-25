@@ -119,6 +119,49 @@
         </div>
       </section>
 
+      <section class="content-section" *ngIf="tripBookings.length > 0">
+        <div class="section-header">
+          <h2>Hotels in this trip</h2>
+        </div>
+        <div class="trip-bookings-list">
+          <div class="trip-booking-card" *ngFor="let b of tripBookings">
+            <div class="trip-booking-info">
+              <p class="booking-ref">Ref: {{ b.bookingReference }}</p>
+              <p>Check-in: {{ b.checkIn }} &nbsp;→&nbsp; Check-out: {{ b.checkOut }}</p>
+              <p>Guests: {{ b.guestsCount }} &nbsp;·&nbsp; Total: {{ b.totalPrice }} KM</p>
+              <span class="status-chip" [ngClass]="b.bookingStatus">{{ b.bookingStatus }}</span>
+            </div>
+            <button
+              class="pay-btn"
+              *ngIf="b.bookingStatus === 'pending'"
+              (click)="payBooking(b)">
+              Pay now
+            </button>
+            <span class="paid-badge" *ngIf="b.bookingStatus === 'confirmed'">Paid</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" *ngIf="tripActivities.length > 0">
+        <div class="section-header">
+          <h2>Activities in this trip</h2>
+        </div>
+        <div class="trip-bookings-list">
+          <div class="trip-booking-card" *ngFor="let ta of tripActivities">
+            <div class="trip-booking-info">
+              <ng-container *ngIf="getActivity(ta.activityId) as act">
+                <p><strong>{{ act.name }}</strong></p>
+                <p>{{ act.location }}</p>
+                <p *ngIf="act.activityDate">Date: {{ act.activityDate }}</p>
+                <p>{{ act.price }} KM / person</p>
+              </ng-container>
+              <p *ngIf="!getActivity(ta.activityId)">Activity #{{ ta.activityId }}</p>
+            </div>
+            <button class="pay-btn" type="button" (click)="removeActivity(ta.id)">Remove</button>
+          </div>
+        </div>
+      </section>
+
       <section class="content-section">
         <div class="section-header">
           <h2>Travel Information</h2>

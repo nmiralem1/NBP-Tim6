@@ -31,6 +31,7 @@ export interface BookingCreatedResponse {
   bookingReference: string;
 }
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,6 +48,12 @@ export class BookingService {
 
   createBooking(request: CreateBookingRequest): Observable<BookingCreatedResponse> {
     return this.http.post<BookingCreatedResponse>(this.apiUrl, request, {
+      withCredentials: true
+    });
+  }
+
+  getBookingsByTripId(tripId: number): Observable<BookingDto[]> {
+    return this.http.get<BookingDto[]>(`${this.apiUrl}/trip/${tripId}`, {
       withCredentials: true
     });
   }

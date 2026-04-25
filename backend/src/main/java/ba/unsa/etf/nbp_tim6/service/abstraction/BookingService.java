@@ -18,4 +18,6 @@ public interface BookingService {
     java.util.List<Booking> getBookingsForAuthenticatedUser(String username);
 
     void updateBookingStatus(Integer bookingId, String status);
+
+    java.util.List<Booking> getBookingsByTripId(Integer tripId);
 }

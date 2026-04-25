@@ -19,31 +19,31 @@ public class ActivityRepositoryImpl implements ActivityRepository {
 
     private final RowMapper<Activity> activityRowMapper = (rs, rowNum) -> {
         Activity activity = new Activity();
-        activity.setId(rs.getInt("id"));
-        activity.setTripId(rs.getInt("trip_id"));
-        activity.setCityId(rs.getInt("city_id"));
-        activity.setActivityTypeId(rs.getInt("activity_type_id"));
-        activity.setName(rs.getString("name"));
-        activity.setDescription(rs.getString("description"));
-        activity.setLocation(rs.getString("location"));
+        activity.setId(rs.getInt("ID"));
+        activity.setTripId(rs.getInt("TRIP_ID"));
+        activity.setCityId(rs.getInt("CITY_ID"));
+        activity.setActivityTypeId(rs.getInt("ACTIVITY_TYPE_ID"));
+        activity.setName(rs.getString("NAME"));
+        activity.setDescription(rs.getString("DESCRIPTION"));
+        activity.setLocation(rs.getString("LOCATION"));
         activity.setActivityDate(
-                rs.getDate("activity_date") != null ? rs.getDate("activity_date").toLocalDate() : null);
+                rs.getDate("ACTIVITY_DATE") != null ? rs.getDate("ACTIVITY_DATE").toLocalDate() : null);
         activity.setStartTime(
-                rs.getTimestamp("start_time") != null ? rs.getTimestamp("start_time").toLocalDateTime().toLocalTime()
+                rs.getTimestamp("START_TIME") != null ? rs.getTimestamp("START_TIME").toLocalDateTime().toLocalTime()
                         : null);
         activity.setEndTime(
-                rs.getTimestamp("end_time") != null ? rs.getTimestamp("end_time").toLocalDateTime().toLocalTime()
+                rs.getTimestamp("END_TIME") != null ? rs.getTimestamp("END_TIME").toLocalDateTime().toLocalTime()
                         : null);
-        activity.setPrice(rs.getBigDecimal("price"));
-        activity.setImageUrl(rs.getString("image_url"));
+        activity.setPrice(rs.getBigDecimal("PRICE"));
+        activity.setImageUrl(rs.getString("IMAGE_URL"));
         return activity;
     };
 
     @Override
     public int save(Activity activity) {
         String sql = """
-                    INSERT INTO activities
-                    (trip_id, city_id, activity_type_id, name, description, location, activity_date, start_time, end_time, price, image_url)
+                    INSERT INTO NBPT6.ACTIVITIES
+                    (TRIP_ID, CITY_ID, ACTIVITY_TYPE_ID, NAME, DESCRIPTION, LOCATION, ACTIVITY_DATE, START_TIME, END_TIME, PRICE, IMAGE_URL)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         return jdbcTemplate.update(sql,
@@ -62,24 +62,30 @@ public class ActivityRepositoryImpl implements ActivityRepository {
 
     @Override
     public Activity findById(Integer id) {
-        String sql = "SELECT * FROM activities WHERE id = ?";
+        String sql = "SELECT * FROM NBPT6.ACTIVITIES WHERE ID = ?";
         List<Activity> results = jdbcTemplate.query(sql, activityRowMapper, id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
+    public List<Activity> findAll() {
+        String sql = "SELECT * FROM NBPT6.ACTIVITIES ORDER BY ID";
+        return jdbcTemplate.query(sql, activityRowMapper);
+    }
+
+    @Override
     public List<Activity> findByTripId(Integer tripId) {
-        String sql = "SELECT * FROM activities WHERE trip_id = ?";
+        String sql = "SELECT * FROM NBPT6.ACTIVITIES WHERE TRIP_ID = ?";
         return jdbcTemplate.query(sql, activityRowMapper, tripId);
     }
 
     @Override
     public int update(Activity activity) {
         String sql = """
-                    UPDATE activities
-                    SET trip_id = ?, city_id = ?, activity_type_id = ?, name = ?, description = ?,
-                        location = ?, activity_date = ?, start_time = ?, end_time = ?, price = ?, image_url = ?
-                    WHERE id = ?
+                    UPDATE NBPT6.ACTIVITIES
+                    SET TRIP_ID = ?, CITY_ID = ?, ACTIVITY_TYPE_ID = ?, NAME = ?, DESCRIPTION = ?,
+                        LOCATION = ?, ACTIVITY_DATE = ?, START_TIME = ?, END_TIME = ?, PRICE = ?, IMAGE_URL = ?
+                    WHERE ID = ?
                 """;
         return jdbcTemplate.update(sql,
                 activity.getTripId(),
@@ -98,7 +104,7 @@ public class ActivityRepositoryImpl implements ActivityRepository {
 
     @Override
     public int delete(Integer id) {
-        String sql = "DELETE FROM activities WHERE id = ?";
+        String sql = "DELETE FROM NBPT6.ACTIVITIES WHERE ID = ?";
         return jdbcTemplate.update(sql, id);
     }
 }

@@ -56,10 +56,28 @@ export class BookComponent implements OnInit {
     private userService: UserService
   ) {}
 
+  tripId: number | null = null;
+
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.accommodationId = Number(params.get('accommodationId'));
       this.loadAccommodation();
+    });
+
+    this.route.queryParamMap.subscribe(qp => {
+      const t = qp.get('tripId');
+      this.tripId = t ? Number(t) : null;
+
+      const bookingId = qp.get('bookingId');
+      const totalPrice = qp.get('totalPrice');
+      if (bookingId && totalPrice) {
+        this.createdBooking = {
+          bookingId: Number(bookingId),
+          totalPrice: Number(totalPrice),
+          bookingReference: ''
+        };
+        this.currentStep = 'payment';
+      }
     });
 
     this.loadPaymentMethods();
@@ -127,7 +145,8 @@ export class BookComponent implements OnInit {
       accommodationId: this.accommodationId,
       checkIn: this.checkIn,
       checkOut: this.checkOut,
-      guestsCount: this.guests
+      guestsCount: this.guests,
+      ...(this.tripId ? { tripId: this.tripId } : {})
     }).subscribe({
       next: result => {
         this.createdBooking = result;

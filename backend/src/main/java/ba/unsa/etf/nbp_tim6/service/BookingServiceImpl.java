@@ -92,4 +92,9 @@ public class BookingServiceImpl implements BookingService {
     public void updateBookingStatus(Integer bookingId, String status) {
         bookingRepository.updateStatus(bookingId, status);
     }
+
+    @Override
+    public java.util.List<Booking> getBookingsByTripId(Integer tripId) {
+        return bookingRepository.findByTripId(tripId);
+    }
 }

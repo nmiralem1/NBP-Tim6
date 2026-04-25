@@ -34,6 +34,11 @@ public class ActivityController {
             @ApiResponse(responseCode = "200", description = "Activity created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid activity data")
     })
+    @GetMapping
+    public List<Activity> getAllActivities() {
+        return activityService.getAllActivities();
+    }
+
     @PostMapping
     public String createActivity(@Valid @RequestBody Activity activity) {
         activityService.createActivity(activity);

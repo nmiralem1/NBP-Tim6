@@ -114,4 +114,9 @@ public class BookingRepositoryImpl implements BookingRepository {
         String sql = "UPDATE NBPT6.BOOKINGS SET BOOKING_STATUS = ? WHERE ID = ?";
         return jdbcTemplate.update(sql, status, id);
     }
+
+    public java.util.List<Booking> findByTripId(Integer tripId) {
+        String sql = "SELECT * FROM NBPT6.BOOKINGS WHERE TRIP_ID = ?";
+        return jdbcTemplate.query(sql, bookingRowMapper, tripId);
+    }
 }

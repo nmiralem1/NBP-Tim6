@@ -4,6 +4,13 @@ import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
+export interface TripActivity {
+    id: number;
+    tripId: number;
+    activityId: number;
+    addedAt: string;
+}
+
 export interface Trip {
     id: number;
     userId: number;
@@ -69,6 +76,26 @@ export class TripService {
     private citiesUrl = `${environment.apiUrl}/cities`;
 
     constructor(private http: HttpClient) { }
+
+    createTrip(data: { userId: number; title: string; startDate: string; endDate: string; budget: number; description?: string }): Observable<any> {
+        return this.http.post(this.tripsUrl, { ...data, status: 'planned' }, { withCredentials: true, responseType: 'text' });
+    }
+
+    getTripsByUserId(userId: number): Observable<Trip[]> {
+        return this.http.get<Trip[]>(`${this.tripsUrl}/user/${userId}`, { withCredentials: true });
+    }
+
+    addActivityToTrip(tripId: number, activityId: number): Observable<any> {
+        return this.http.post(`${environment.apiUrl}/trip-activities`, { tripId, activityId }, { withCredentials: true, responseType: 'text' });
+    }
+
+    getTripActivities(tripId: number): Observable<TripActivity[]> {
+        return this.http.get<TripActivity[]>(`${environment.apiUrl}/trip-activities/trip/${tripId}`, { withCredentials: true });
+    }
+
+    removeActivityFromTrip(id: number): Observable<any> {
+        return this.http.delete(`${environment.apiUrl}/trip-activities/${id}`, { withCredentials: true, responseType: 'text' });
+    }
 
     getAllTrips(): Observable<EnrichedTrip[]> {
         return forkJoin({
