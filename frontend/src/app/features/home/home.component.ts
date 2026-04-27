@@ -14,12 +14,16 @@ export class HomeComponent implements OnInit {
   popularDestinations: any[] = [];
   recommendedTrips: any[] = [];
   reviews: any[] = [];
+  cityOptions: any[] = [];
+  filteredCityOptions: any[] = [];
+  showCitySuggestions = false;
   isMenuOpen = false;
 
   destination = '';
   startDate = '';
   endDate = '';
   travelers = '2';
+  searchError = '';
 
   constructor(
     public authService: AuthService,
@@ -38,6 +42,13 @@ export class HomeComponent implements OnInit {
   loadDestinations(): void {
     this.destinationService.getAllCities().subscribe({
       next: (cities) => {
+        this.cityOptions = cities
+          .filter(city => !!city.name)
+          .map(city => ({
+            name: city.name,
+            countryName: city.countryName || 'Destination'
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
         this.popularDestinations = cities.slice(0, 4).map(city => ({
           name: city.name,
           image: city.imageUrl || 'assets/images/placeholder.jpg',
@@ -47,6 +58,36 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => console.error('Error loading cities:', err)
     });
+  }
+
+  filterCitySuggestions(): void {
+    const term = this.destination.trim().toLowerCase();
+
+    if (!term) {
+      this.filteredCityOptions = [];
+      this.showCitySuggestions = false;
+      return;
+    }
+
+    this.filteredCityOptions = this.cityOptions
+      .filter(city =>
+        city.name.toLowerCase().includes(term) ||
+        city.countryName.toLowerCase().includes(term)
+      )
+      .slice(0, 6);
+    this.showCitySuggestions = this.filteredCityOptions.length > 0;
+  }
+
+  selectCitySuggestion(city: any): void {
+    this.destination = city.name;
+    this.filteredCityOptions = [];
+    this.showCitySuggestions = false;
+  }
+
+  hideCitySuggestions(): void {
+    setTimeout(() => {
+      this.showCitySuggestions = false;
+    }, 150);
   }
 
   loadTrips(): void {
@@ -87,9 +128,18 @@ export class HomeComponent implements OnInit {
 
   searchTrips(): void {
     const queryParams: any = {};
+    const destination = this.destination.trim();
 
-    if (this.destination.trim()) {
-      queryParams.destination = this.destination.trim();
+    this.searchError = '';
+
+    if (this.startDate && this.endDate && this.endDate < this.startDate) {
+      this.searchError = 'End date must be after start date.';
+      return;
+    }
+
+    if (destination) {
+      queryParams.destination = destination;
+      queryParams.q = destination;
     }
 
     if (this.startDate) {
@@ -112,6 +162,9 @@ export class HomeComponent implements OnInit {
     this.startDate = '';
     this.endDate = '';
     this.travelers = '2';
+    this.searchError = '';
+    this.filteredCityOptions = [];
+    this.showCitySuggestions = false;
   }
 
   toggleMenu(): void {
