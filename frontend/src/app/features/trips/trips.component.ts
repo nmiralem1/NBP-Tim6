@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EnrichedTrip, Trip, TripService } from '../../core/services/trip.service';
 import { AuthService } from '../../core/services/auth.service';
+import { DestinationService } from '../../core/services/destination.service';
 
 @Component({
   selector: 'app-trips',
@@ -42,19 +43,24 @@ export class TripsComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private tripService: TripService,
+    private destinationService: DestinationService,
     public authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.loadCityOptions();
     this.loadMyTrips(() => this.loadTravelPlans());
 
     this.route.queryParams.subscribe(params => {
+      const destination = (params['destination'] || params['q'] || '').trim();
+
+      this.searchTerm = destination;
       this.selectedCity = params['city'] || '';
       this.selectedCountry = params['country'] || '';
-      this.selectedDate = params['date'] || '';
+      this.selectedDate = params['startDate'] || params['date'] || '';
       this.departure = params['departure'] || '';
-      this.destination = params['destination'] || '';
-      this.returnDate = params['returnDate'] || '';
+      this.destination = destination;
+      this.returnDate = params['endDate'] || params['returnDate'] || '';
       this.travelers = Number(params['travelers']) || 1;
       this.filterTravelPlans();
     });
@@ -87,8 +93,12 @@ export class TripsComponent implements OnInit {
         const browseable = trips.filter(t => !myIds.has(t.id));
         this.travelPlans = browseable;
         this.filteredTravelPlans = browseable;
-        this.cities = [...new Set(trips.map(trip => trip.primaryCityName).filter(Boolean))].sort();
-        this.countries = [...new Set(trips.map(trip => trip.primaryCountryName).filter(Boolean))].sort();
+        if (this.cities.length === 0) {
+          this.cities = [...new Set(trips.map(trip => trip.primaryCityName).filter(Boolean))].sort();
+        }
+        if (this.countries.length === 0) {
+          this.countries = [...new Set(trips.map(trip => trip.primaryCountryName).filter(Boolean))].sort();
+        }
         this.statuses = [...new Set(trips.map(trip => trip.statusLabel).filter(Boolean))].sort();
         this.isLoading = false;
         this.filterTravelPlans();
@@ -99,6 +109,20 @@ export class TripsComponent implements OnInit {
         this.filteredTravelPlans = [];
         this.isLoading = false;
       }
+    });
+  }
+
+  loadCityOptions(): void {
+    this.destinationService.getAllCities().subscribe({
+      next: (cities) => {
+        this.cities = [...new Set(cities.map(city => city.name).filter(Boolean))].sort();
+        this.countries = [...new Set(
+          cities
+            .map(city => city.countryName)
+            .filter((country): country is string => !!country)
+        )].sort();
+      },
+      error: (err) => console.error('Error loading city options:', err)
     });
   }
 
@@ -131,15 +155,16 @@ export class TripsComponent implements OnInit {
     this.filteredTravelPlans = this.travelPlans.filter(item => {
       const matchesSearch =
         !term ||
-        item.title.toLowerCase().includes(term) ||
-        item.shortDescription.toLowerCase().includes(term) ||
-        item.primaryCityName.toLowerCase().includes(term) ||
-        item.primaryCountryName.toLowerCase().includes(term) ||
+        (item.title || '').toLowerCase().includes(term) ||
+        (item.shortDescription || '').toLowerCase().includes(term) ||
+        (item.primaryCityName || '').toLowerCase().includes(term) ||
+        (item.primaryCountryName || '').toLowerCase().includes(term) ||
+        (item.locationLabel || '').toLowerCase().includes(term) ||
         item.highlights.some(highlight => highlight.toLowerCase().includes(term));
 
       const matchesCity = !this.selectedCity || item.primaryCityName === this.selectedCity;
       const matchesCountry = !this.selectedCountry || item.primaryCountryName === this.selectedCountry;
-      const matchesDate = !this.selectedDate || (item.startDate <= this.selectedDate && item.endDate >= this.selectedDate);
+      const matchesDate = this.matchesSelectedDateRange(item);
       const matchesDuration =
         !this.selectedDuration ||
         (this.selectedDuration === '1-3' && item.durationDays >= 1 && item.durationDays <= 3) ||
@@ -150,6 +175,22 @@ export class TripsComponent implements OnInit {
 
       return matchesSearch && matchesCity && matchesCountry && matchesDate && matchesDuration && matchesBudget && matchesStatus;
     });
+  }
+
+  private matchesSelectedDateRange(item: EnrichedTrip): boolean {
+    if (!this.selectedDate && !this.returnDate) {
+      return true;
+    }
+
+    if (this.selectedDate && this.returnDate) {
+      return item.startDate <= this.returnDate && item.endDate >= this.selectedDate;
+    }
+
+    if (this.selectedDate) {
+      return item.startDate <= this.selectedDate && item.endDate >= this.selectedDate;
+    }
+
+    return item.startDate <= this.returnDate;
   }
 
   onCityChange(): void {
@@ -178,6 +219,8 @@ export class TripsComponent implements OnInit {
         city: this.selectedCity,
         country: this.selectedCountry,
         date: this.selectedDate,
+        startDate: this.selectedDate,
+        endDate: this.returnDate,
         departure: this.departure,
         destination: this.destination,
         returnDate: this.returnDate,

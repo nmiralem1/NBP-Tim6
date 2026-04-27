@@ -45,11 +45,22 @@
         </div>
 
         <div class="filter-group">
-          <label for="travelDate">Date</label>
+          <label for="travelDate">From</label>
           <input
             id="travelDate"
             type="date"
             [(ngModel)]="selectedDate"
+            (change)="filterTravelPlans()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="returnDate">To</label>
+          <input
+            id="returnDate"
+            type="date"
+            [min]="selectedDate || null"
+            [(ngModel)]="returnDate"
             (change)="filterTravelPlans()"
           />
         </div>

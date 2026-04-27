@@ -7,7 +7,7 @@
     <h1>Plan your perfect trip</h1>
     <p>Discover destinations, organize itineraries, and explore the world – all in one place.</p>
 
-    <div class="search-bar">
+    <form class="search-bar" (ngSubmit)="searchTrips()">
       <div class="search-group">
         <label for="destination">Destination</label>
         <input
@@ -15,7 +15,23 @@
           type="text"
           placeholder="City, country or region"
           [(ngModel)]="destination"
+          name="destination"
+          autocomplete="off"
+          (input)="filterCitySuggestions()"
+          (focus)="filterCitySuggestions()"
+          (blur)="hideCitySuggestions()"
         />
+        <div class="city-suggestions" *ngIf="showCitySuggestions">
+          <button
+            class="city-suggestion"
+            type="button"
+            *ngFor="let city of filteredCityOptions"
+            (mousedown)="selectCitySuggestion(city)"
+          >
+            <span>{{ city.name }}</span>
+            <small>{{ city.countryName }}</small>
+          </button>
+        </div>
       </div>
 
       <div class="search-group">
@@ -24,6 +40,7 @@
           id="startDate"
           type="date"
           [(ngModel)]="startDate"
+          name="startDate"
         />
       </div>
 
@@ -32,7 +49,9 @@
         <input
           id="endDate"
           type="date"
+          [min]="startDate || null"
           [(ngModel)]="endDate"
+          name="endDate"
         />
       </div>
 
@@ -41,6 +60,7 @@
         <select
           id="travelers"
           [(ngModel)]="travelers"
+          name="travelers"
         >
           <option value="1">1 traveler</option>
           <option value="2">2 travelers</option>
@@ -49,10 +69,11 @@
         </select>
       </div>
 
-        <button class="btn-icon" type="button" (click)="searchTrips()">
-        <img src="https://img.icons8.com/ios-filled/24/ffffff/search--v1.png" />
+        <button class="btn-icon" type="submit" aria-label="Search trips">
+        <img src="https://img.icons8.com/ios-filled/24/ffffff/search--v1.png" alt="" />
         </button>
-    </div>
+      <p class="search-error" *ngIf="searchError">{{ searchError }}</p>
+    </form>
   </div>
 </header>
 
