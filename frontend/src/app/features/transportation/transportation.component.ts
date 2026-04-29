@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin, map, catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface TransportationOption {
   id: number;
@@ -17,6 +20,32 @@ interface TransportationOption {
   available: boolean;
   amenities: string[];
   availableDate: string;
+}
+
+interface TransportApi {
+  id: number;
+  tripId?: number;
+  fromCityId: number;
+  toCityId: number;
+  transportTypeId: number;
+  companyName?: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  ticketPrice?: number;
+  seatNumber?: string;
+  bookingReference?: string;
+  premiumFlag?: number;
+}
+
+interface TransportTypeApi {
+  id: number;
+  name: string;
+}
+
+interface CityApi {
+  id: number;
+  name: string;
+  countryId?: number;
 }
 
 @Component({
@@ -38,106 +67,21 @@ export class TransportationComponent implements OnInit {
   maxPrice: number | null = null;
   selectedRating: string = '';
 
-  fromOptions: string[] = ['Sarajevo', 'Paris', 'Rome', 'Barcelona'];
-  toOptions: string[] = ['Paris', 'Rome', 'Barcelona', 'Milan'];
-  transportationTypes: string[] = ['Bus', 'Flight', 'Train'];
+  fromOptions: string[] = [];
+  toOptions: string[] = [];
+  transportationTypes: string[] = [];
 
-  dummyTransportationOptions: TransportationOption[] = [
-    {
-      id: 1,
-      provider: 'FlixBus',
-      type: 'Bus',
-      from: 'Sarajevo',
-      to: 'Paris',
-      departureLocation: 'Sarajevo Central Bus Station',
-      arrivalLocation: 'Paris Bercy Station',
-      departureTime: '07:30',
-      arrivalTime: '22:00',
-      duration: '14h 30m',
-      price: 120,
-      rating: 4.4,
-      available: true,
-      amenities: ['Wi-Fi', 'Air conditioning', 'USB charging'],
-      availableDate: '2026-04-20'
-    },
-    {
-      id: 2,
-      provider: 'Ryanair',
-      type: 'Flight',
-      from: 'Sarajevo',
-      to: 'Rome',
-      departureLocation: 'Sarajevo International Airport',
-      arrivalLocation: 'Rome Ciampino Airport',
-      departureTime: '10:15',
-      arrivalTime: '11:40',
-      duration: '1h 25m',
-      price: 95,
-      rating: 4.2,
-      available: true,
-      amenities: ['Cabin baggage', 'Online check-in'],
-      availableDate: '2026-04-22'
-    },
-    {
-      id: 3,
-      provider: 'Trenitalia',
-      type: 'Train',
-      from: 'Rome',
-      to: 'Milan',
-      departureLocation: 'Roma Termini',
-      arrivalLocation: 'Milano Centrale',
-      departureTime: '09:00',
-      arrivalTime: '12:10',
-      duration: '3h 10m',
-      price: 80,
-      rating: 4.7,
-      available: true,
-      amenities: ['Wi-Fi', 'Power outlets', 'Reserved seats'],
-      availableDate: '2026-04-25'
-    },
-    {
-      id: 4,
-      provider: 'Vueling',
-      type: 'Flight',
-      from: 'Barcelona',
-      to: 'Paris',
-      departureLocation: 'Barcelona El Prat Airport',
-      arrivalLocation: 'Paris Orly Airport',
-      departureTime: '15:20',
-      arrivalTime: '17:05',
-      duration: '1h 45m',
-      price: 110,
-      rating: 4.3,
-      available: false,
-      amenities: ['Cabin baggage', 'Priority boarding'],
-      availableDate: '2026-04-28'
-    },
-    {
-      id: 5,
-      provider: 'FlixBus',
-      type: 'Bus',
-      from: 'Rome',
-      to: 'Barcelona',
-      departureLocation: 'Rome Tiburtina Bus Station',
-      arrivalLocation: 'Barcelona Nord Station',
-      departureTime: '06:45',
-      arrivalTime: '19:30',
-      duration: '12h 45m',
-      price: 105,
-      rating: 4.1,
-      available: true,
-      amenities: ['Wi-Fi', 'Air conditioning'],
-      availableDate: '2026-04-24'
-    }
-  ];
+  private readonly transportApiUrl = `${environment.apiUrl}/transport`;
+  private readonly transportTypesApiUrl = `${environment.apiUrl}/transport-types`;
+  private readonly citiesApiUrl = `${environment.apiUrl}/cities`;
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    this.loadTransportationOptions();
-
     this.route.queryParams.subscribe(params => {
       this.selectedFrom = params['from'] || '';
       this.selectedTo = params['to'] || '';
@@ -145,13 +89,73 @@ export class TransportationComponent implements OnInit {
       this.selectedReturnDate = params['returnDate'] || '';
       this.travelers = Number(params['travelers']) || 1;
 
-      this.filterTransportation();
+      this.loadTransportationOptions();
     });
   }
 
   loadTransportationOptions(): void {
-    this.transportationOptions = this.dummyTransportationOptions;
-    this.filteredTransportationOptions = this.dummyTransportationOptions;
+    forkJoin({
+      transports: this.http.get<TransportApi[]>(this.transportApiUrl).pipe(
+        catchError(error => {
+          console.error('Failed to load transport:', error);
+          return of([]);
+        })
+      ),
+      transportTypes: this.http.get<TransportTypeApi[]>(this.transportTypesApiUrl).pipe(
+        catchError(error => {
+          console.error('Failed to load transport types:', error);
+          return of([]);
+        })
+      ),
+      cities: this.http.get<CityApi[]>(this.citiesApiUrl).pipe(
+        catchError(error => {
+          console.error('Failed to load cities:', error);
+          return of([]);
+        })
+      )
+    })
+      .pipe(
+        map(({ transports, transportTypes, cities }) => {
+          return transports.map(transport => {
+            const fromCity = cities.find(city => city.id === transport.fromCityId);
+            const toCity = cities.find(city => city.id === transport.toCityId);
+            const transportType = transportTypes.find(type => type.id === transport.transportTypeId);
+
+            return {
+              id: transport.id,
+              provider: transport.companyName || 'Transport provider',
+              type: transportType?.name || 'Transport',
+              from: fromCity?.name || 'Unknown city',
+              to: toCity?.name || 'Unknown city',
+              departureLocation: fromCity?.name || 'Unknown departure location',
+              arrivalLocation: toCity?.name || 'Unknown arrival location',
+              departureTime: this.formatTime(transport.departureTime),
+              arrivalTime: this.formatTime(transport.arrivalTime),
+              duration: this.formatDuration(transport.departureTime, transport.arrivalTime),
+              price: Number(transport.ticketPrice || 0),
+              rating: 4.5,
+              available: true,
+              amenities: this.buildAmenities(transport),
+              availableDate: this.formatDate(transport.departureTime)
+            };
+          });
+        })
+      )
+      .subscribe({
+        next: options => {
+          this.transportationOptions = options;
+          this.fromOptions = this.getUniqueSortedValues(options.map(item => item.from));
+          this.toOptions = this.getUniqueSortedValues(options.map(item => item.to));
+          this.transportationTypes = this.getUniqueSortedValues(options.map(item => item.type));
+
+          this.filterTransportation();
+        },
+        error: error => {
+          console.error('Transportation loading failed:', error);
+          this.transportationOptions = [];
+          this.filteredTransportationOptions = [];
+        }
+      });
   }
 
   filterTransportation(): void {
@@ -166,7 +170,7 @@ export class TransportationComponent implements OnInit {
         item.to.toLowerCase().includes(term) ||
         item.departureLocation.toLowerCase().includes(term) ||
         item.arrivalLocation.toLowerCase().includes(term) ||
-        item.amenities.some(a => a.toLowerCase().includes(term));
+        item.amenities.some(amenity => amenity.toLowerCase().includes(term));
 
       const matchesFrom =
         !this.selectedFrom || item.from === this.selectedFrom;
@@ -186,7 +190,15 @@ export class TransportationComponent implements OnInit {
       const matchesRating =
         !this.selectedRating || item.rating >= Number(this.selectedRating);
 
-      return matchesSearch && matchesFrom && matchesTo && matchesDate && matchesType && matchesPrice && matchesRating;
+      return (
+        matchesSearch &&
+        matchesFrom &&
+        matchesTo &&
+        matchesDate &&
+        matchesType &&
+        matchesPrice &&
+        matchesRating
+      );
     });
   }
 
@@ -200,12 +212,112 @@ export class TransportationComponent implements OnInit {
     this.selectedType = '';
     this.maxPrice = null;
     this.selectedRating = '';
-    this.filteredTransportationOptions = this.transportationOptions;
+
+    this.filteredTransportationOptions = [...this.transportationOptions];
   }
 
   bookTransportation(item: TransportationOption): void {
     if (!item.available) return;
 
-    this.router.navigate(['/book', item.id, item.id]);
+    this.router.navigate(['/book/transport', item.id], {
+      queryParams: {
+        type: 'transport',
+        provider: item.provider,
+        transportType: item.type,
+        from: item.from,
+        to: item.to,
+        departureLocation: item.departureLocation,
+        arrivalLocation: item.arrivalLocation,
+        departureTime: item.departureTime,
+        arrivalTime: item.arrivalTime,
+        duration: item.duration,
+        price: item.price,
+
+        checkIn: this.selectedDate,
+        checkOut: this.selectedReturnDate,
+        guests: this.travelers
+      }
+    });
+  }
+
+  private getUniqueSortedValues(values: string[]): string[] {
+    return [...new Set(values.filter(value => !!value && value !== 'Unknown city'))].sort();
+  }
+
+  private formatTime(dateTime?: string): string {
+    if (!dateTime) {
+      return 'Flexible';
+    }
+
+    const date = new Date(dateTime);
+
+    if (Number.isNaN(date.getTime())) {
+      return 'Flexible';
+    }
+
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  private formatDate(dateTime?: string): string {
+    if (!dateTime) {
+      return '';
+    }
+
+    const date = new Date(dateTime);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toISOString().split('T')[0];
+  }
+
+  private formatDuration(departureTime?: string, arrivalTime?: string): string {
+    if (!departureTime || !arrivalTime) {
+      return 'Flexible duration';
+    }
+
+    const departure = new Date(departureTime);
+    const arrival = new Date(arrivalTime);
+
+    if (Number.isNaN(departure.getTime()) || Number.isNaN(arrival.getTime())) {
+      return 'Flexible duration';
+    }
+
+    const diffMs = arrival.getTime() - departure.getTime();
+
+    if (diffMs < 0) {
+      return 'Flexible duration';
+    }
+
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+    return `${hours}h ${minutes}m`;
+  }
+
+  private buildAmenities(transport: TransportApi): string[] {
+    const amenities: string[] = [];
+
+    if (transport.seatNumber) {
+      amenities.push(`Seat ${transport.seatNumber}`);
+    }
+
+    if (transport.bookingReference) {
+      amenities.push(`Booking ref: ${transport.bookingReference}`);
+    }
+
+    if (transport.premiumFlag) {
+      amenities.push('Premium');
+    }
+
+    if (amenities.length === 0) {
+      amenities.push('Standard');
+    }
+
+    return amenities;
   }
 }
