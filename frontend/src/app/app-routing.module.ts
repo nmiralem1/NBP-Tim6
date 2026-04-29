@@ -26,6 +26,7 @@ const routes: Routes = [
   { path: 'destinations/:id', component: DestinationDetailsComponent },
   { path: 'accommodations', component: AccommodationsComponent },
   { path: 'accommodations/:id', component: AccommodationDetailsComponent },
+  { path: 'book/transport/:id', component: BookComponent },
   { path: 'book/:accommodationId/:roomId', component: BookComponent },
   { path: 'activities', component: ActivitiesComponent },
   { path: 'activities/:id', component: ActivityDetailsComponent },

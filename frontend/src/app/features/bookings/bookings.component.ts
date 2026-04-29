@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { BookingDto, BookingService } from '../../core/services/booking.service';
+import { ReviewService } from '../../core/services/review.service';
 
 interface UserProfile {
+  id?: number;
   username: string;
   email: string;
   phone?: string;
@@ -14,6 +16,7 @@ interface UserProfile {
 
 interface BookingView {
   id: number;
+  accommodationId: number;
   title: string;
   type: 'Accommodation';
   bookingDate: string;
@@ -55,9 +58,13 @@ export class BookingsComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
+  reviewError = '';
+  isSubmittingReview = false;
+
   constructor(
     public authService: AuthService,
     private bookingService: BookingService,
+    private reviewService: ReviewService,
     private router: Router
   ) {}
 
@@ -73,6 +80,20 @@ export class BookingsComponent implements OnInit {
     this.loadBookings();
   }
 
+  private get currentUserId(): number | null {
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (!currentUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(currentUser)?.id ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   loadBookings(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -83,7 +104,7 @@ export class BookingsComponent implements OnInit {
         this.filteredBookings = [...this.bookings];
         this.isLoading = false;
       },
-      error: (error) => {
+      error: () => {
         this.errorMessage = 'Error loading bookings.';
         this.isLoading = false;
       }
@@ -93,10 +114,11 @@ export class BookingsComponent implements OnInit {
   mapBooking(item: BookingDto): BookingView {
     return {
       id: item.id,
+      accommodationId: item.accommodationId,
       title: `Booking #${item.bookingReference || item.id}`,
       type: 'Accommodation',
       bookingDate: item.createdAt ? item.createdAt.split('T')[0] : '',
-      status: item.bookingStatus || '',
+      status: (item.bookingStatus || '').toLowerCase(),
       location: `Accommodation ID: ${item.accommodationId}`,
       price: item.totalPrice || 0,
       checkIn: item.checkIn,
@@ -134,6 +156,13 @@ export class BookingsComponent implements OnInit {
   }
 
   openReviewModal(booking: BookingView): void {
+    this.reviewError = '';
+
+    if (booking.status !== 'confirmed') {
+      this.reviewError = 'You can leave a review only for confirmed bookings.';
+      return;
+    }
+
     this.selectedBooking = booking;
     this.reviewText = booking.reviewText || '';
     this.selectedStars = booking.reviewRating || 0;
@@ -145,6 +174,8 @@ export class BookingsComponent implements OnInit {
     this.selectedBooking = null;
     this.reviewText = '';
     this.selectedStars = 0;
+    this.reviewError = '';
+    this.isSubmittingReview = false;
   }
 
   setStars(star: number): void {
@@ -154,15 +185,60 @@ export class BookingsComponent implements OnInit {
   submitReview(): void {
     if (!this.selectedBooking) return;
 
-    const index = this.bookings.findIndex(b => b.id === this.selectedBooking?.id);
+    this.reviewError = '';
 
-    if (index !== -1) {
-      this.bookings[index].reviewText = this.reviewText;
-      this.bookings[index].reviewRating = this.selectedStars;
+    if (this.selectedBooking.status !== 'confirmed') {
+      this.reviewError = 'You can leave a review only for confirmed bookings.';
+      return;
     }
 
-    this.filterBookings();
-    this.closeReviewModal();
+    if (this.selectedStars < 1) {
+      this.reviewError = 'Please select a rating before submitting.';
+      return;
+    }
+
+    if (!this.reviewText.trim()) {
+      this.reviewError = 'Please write a review before submitting.';
+      return;
+    }
+
+    const userId = this.currentUserId;
+
+    if (!userId) {
+      this.reviewError = 'User is not logged in.';
+      return;
+    }
+
+    this.isSubmittingReview = true;
+
+    this.reviewService.createReview({
+      userId,
+      accommodationId: this.selectedBooking.accommodationId,
+      rating: this.selectedStars,
+      note: this.reviewText.trim()
+    }).subscribe({
+      next: () => {
+        const index = this.bookings.findIndex(
+          b => b.id === this.selectedBooking?.id
+        );
+
+        if (index !== -1) {
+          this.bookings[index].reviewText = this.reviewText.trim();
+          this.bookings[index].reviewRating = this.selectedStars;
+        }
+
+        this.filterBookings();
+        this.closeReviewModal();
+      },
+      error: (error) => {
+        console.error('Review submit error:', error);
+        this.reviewError =
+          error?.error?.message ||
+          error?.error ||
+          'Failed to submit review.';
+        this.isSubmittingReview = false;
+      }
+    });
   }
 
   getTypeClass(type: string): string {

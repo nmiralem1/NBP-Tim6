@@ -67,6 +67,10 @@
         {{ errorMessage }}
       </div>
 
+      <div *ngIf="reviewError && !isReviewModalOpen" class="empty-state">
+        {{ reviewError }}
+      </div>
+
       <div class="bookings-list">
         <div class="booking-card" *ngFor="let booking of filteredBookings">
           <div class="booking-image">
@@ -104,19 +108,29 @@
               <p class="review-rating">Rating: {{ booking.reviewRating }} / 5</p>
             </div>
 
-            <button class="primary-btn review-btn" type="button" (click)="openReviewModal(booking)">
-              Leave review
+            <button
+              class="primary-btn review-btn"
+              type="button"
+              [disabled]="booking.status !== 'confirmed'"
+              (click)="openReviewModal(booking)"
+            >
+              {{ booking.status === 'confirmed' ? 'Leave review' : 'Review unavailable' }}
             </button>
+
+            <p class="date" *ngIf="booking.status !== 'confirmed'">
+              Reviews are available only for confirmed bookings.
+            </p>
           </div>
         </div>
       </div>
 
-    <p class="empty-state" *ngIf="!isLoading && bookings.length === 0">
-      You do not have any bookings yet.
-    </p>
-    <p class="empty-state" *ngIf="!isLoading && bookings.length > 0 && filteredBookings.length === 0">
-      No bookings match your selected filters.
-    </p>
+      <p class="empty-state" *ngIf="!isLoading && bookings.length === 0">
+        You do not have any bookings yet.
+      </p>
+
+      <p class="empty-state" *ngIf="!isLoading && bookings.length > 0 && filteredBookings.length === 0">
+        No bookings match your selected filters.
+      </p>
     </main>
 
   </div>
@@ -131,6 +145,10 @@
       <p class="selected-booking" *ngIf="selectedBooking">
         {{ selectedBooking.title }}
       </p>
+
+      <div class="empty-state" *ngIf="reviewError">
+        {{ reviewError }}
+      </div>
 
       <div class="stars-row">
         <span
@@ -154,11 +172,21 @@
       </div>
 
       <div class="modal-actions">
-        <button class="secondary-btn" type="button" (click)="closeReviewModal()">
+        <button
+          class="secondary-btn"
+          type="button"
+          (click)="closeReviewModal()"
+        >
           Cancel
         </button>
-        <button class="primary-btn" type="button" (click)="submitReview()">
-          Submit review
+
+        <button
+          class="primary-btn"
+          type="button"
+          (click)="submitReview()"
+          [disabled]="isSubmittingReview"
+        >
+          {{ isSubmittingReview ? 'Submitting...' : 'Submit review' }}
         </button>
       </div>
     </div>

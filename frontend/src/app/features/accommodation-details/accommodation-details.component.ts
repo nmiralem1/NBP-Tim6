@@ -67,13 +67,21 @@ export class AccommodationDetailsComponent implements OnInit {
     }
 
     bookRoom(room: { available: boolean; id: number }): void {
-        if (!room.available || !this.accommodation) return;
-        if (!this.authService.isLoggedIn()) {
-            this.router.navigate(['/login']);
-            return;
-        }
-        this.router.navigate(['/book', this.accommodation.id, room.id]);
+    if (!room.available || !this.accommodation) return;
+
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
     }
+
+    this.router.navigate(['/book', this.accommodation.id, room.id], {
+      queryParams: {
+        checkIn: this.bookingForm.checkInDate,
+        checkOut: this.bookingForm.checkOutDate,
+        guests: this.bookingForm.guests
+      }
+    });
+  }
 
     openTripModal(): void {
         if (!this.authService.isLoggedIn()) {

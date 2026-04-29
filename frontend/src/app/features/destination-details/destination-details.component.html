@@ -143,9 +143,6 @@
 
                 <div class="horizontal-scroll">
                     <div class="info-card" *ngFor="let item of destination.transportOptions">
-                        <div class="card-image">
-                            <img [src]="item.imageUrl" [alt]="item.type" />
-                        </div>
                         <div class="card-content">
                             <h3>{{ item.type }}</h3>
                             <p>{{ item.provider }}</p>
