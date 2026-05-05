@@ -15,6 +15,5 @@ public interface ActivityService {
     void updateActivity(Activity activity);
 
     void deleteActivity(Integer id);
-    List<Activity> getAllActivities();
 
 }
