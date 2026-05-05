@@ -89,10 +89,16 @@ public class PaymentController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Payment recorded successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid payment data")
+            @ApiResponse(responseCode = "400", description = "Invalid payment data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping
-    public String create(@Valid @RequestBody Payment payment) {
+    public String create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Payment details including booking/trip reference and amount",
+                    required = true
+            )
+            @Valid @RequestBody Payment payment) {
         service.create(payment);
         return "Payment successfully recorded!";
     }
@@ -104,12 +110,17 @@ public class PaymentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Payment updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid payment data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated"),
             @ApiResponse(responseCode = "404", description = "Payment not found")
     })
     @PutMapping("/{id}")
     public String update(
             @Parameter(description = "ID of the payment", example = "1")
             @PathVariable Integer id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated payment details",
+                    required = true
+            )
             @Valid @RequestBody Payment payment) {
         payment.setId(id);
         service.update(payment);

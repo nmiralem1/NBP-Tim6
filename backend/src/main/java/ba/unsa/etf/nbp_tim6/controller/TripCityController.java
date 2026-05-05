@@ -74,10 +74,16 @@ public class TripCityController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "City successfully added to trip"),
-            @ApiResponse(responseCode = "400", description = "Invalid trip-city data")
+            @ApiResponse(responseCode = "400", description = "Invalid trip-city data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping
-    public String create(@Valid @RequestBody TripCity tripCity) {
+    public String create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Trip-city relation details including trip ID and city ID",
+                    required = true
+            )
+            @Valid @RequestBody TripCity tripCity) {
         service.create(tripCity);
         return "City successfully added to trip!";
     }
@@ -89,12 +95,17 @@ public class TripCityController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trip-city relation updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid trip-city data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated"),
             @ApiResponse(responseCode = "404", description = "Trip-city relation not found")
     })
     @PutMapping("/{id}")
     public String update(
             @Parameter(description = "ID of the trip-city relation", example = "1")
             @PathVariable Integer id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated trip-city relation details",
+                    required = true
+            )
             @Valid @RequestBody TripCity tripCity) {
         tripCity.setId(id);
         service.update(tripCity);
