@@ -36,10 +36,16 @@ public class BookingController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Booking created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid booking data")
+            @ApiResponse(responseCode = "400", description = "Invalid booking data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping
-    public ResponseEntity<BookingCreatedDto> createBooking(@Valid @RequestBody Booking booking) {
+    public ResponseEntity<BookingCreatedDto> createBooking(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Booking details including accommodation ID, dates, and guest count",
+                    required = true
+            )
+            @Valid @RequestBody Booking booking) {
         BookingCreatedDto result = bookingService.createBooking(booking);
         return ResponseEntity.ok(result);
     }
@@ -81,12 +87,17 @@ public class BookingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Booking updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid booking data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PutMapping("/{id}")
     public String updateBooking(
             @Parameter(description = "ID of the booking", example = "1")
             @PathVariable Integer id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated booking details",
+                    required = true
+            )
             @Valid @RequestBody Booking booking) {
         booking.setId(id);
         bookingService.updateBooking(booking);
@@ -123,8 +134,14 @@ public class BookingController {
     }
 
     @Operation(summary = "Get bookings by trip ID", description = "Returns all bookings for a specific trip")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Bookings retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
     @GetMapping("/trip/{tripId}")
-    public List<Booking> getBookingsByTripId(@PathVariable Integer tripId) {
+    public List<Booking> getBookingsByTripId(
+            @Parameter(description = "ID of the trip", example = "1")
+            @PathVariable Integer tripId) {
         return bookingService.getBookingsByTripId(tripId);
     }
 }

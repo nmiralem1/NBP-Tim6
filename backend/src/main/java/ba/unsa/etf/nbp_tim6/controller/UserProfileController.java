@@ -51,6 +51,10 @@ public class UserProfileController {
     @PutMapping("/me")
     public ResponseEntity<User> updateMyProfile(
             Authentication authentication,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "User profile update data",
+                    required = true
+            )
             @RequestBody UpdateProfileRequest request
     ) {
         String currentUsername = authentication.getName();
