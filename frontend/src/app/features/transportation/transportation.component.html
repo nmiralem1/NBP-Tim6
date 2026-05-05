@@ -6,17 +6,6 @@
         <h2>Search</h2>
 
         <div class="filter-group">
-          <label for="search">Search transport</label>
-          <input
-            id="search"
-            type="text"
-            placeholder="Search provider, station, airport..."
-            [(ngModel)]="searchTerm"
-            (input)="filterTransportation()"
-          />
-        </div>
-
-        <div class="filter-group">
           <label for="from">From</label>
           <select
             id="from"
@@ -49,8 +38,18 @@
           <input
             id="date"
             type="date"
+            [min]="minDate"
             [(ngModel)]="selectedDate"
-            (change)="filterTransportation()"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label for="travelers">Number of travelers</label>
+          <input
+            id="travelers"
+            type="number"
+            min="1"
+            [(ngModel)]="travelers"
           />
         </div>
 
@@ -68,29 +67,9 @@
           </select>
         </div>
 
-        <div class="filter-group">
-          <label for="price">Maximum price</label>
-          <input
-            id="price"
-            type="number"
-            placeholder="Enter max price"
-            [(ngModel)]="maxPrice"
-            (input)="filterTransportation()"
-          />
-        </div>
-
-        <div class="filter-group">
-          <label for="rating">Minimum rating</label>
-          <select
-            id="rating"
-            [(ngModel)]="selectedRating"
-            (change)="filterTransportation()"
-          >
-            <option value="">All ratings</option>
-            <option value="4">4+ stars</option>
-            <option value="4.5">4.5+ stars</option>
-          </select>
-        </div>
+        <p class="error-message" *ngIf="bookingErrorMessage">
+          {{ bookingErrorMessage }}
+        </p>
 
         <button class="primary-btn" type="button" (click)="filterTransportation()">
           Show transport
@@ -124,7 +103,7 @@
             <p><strong>Time:</strong> {{ item.departureTime }} - {{ item.arrivalTime }}</p>
             <p><strong>Duration:</strong> {{ item.duration }}</p>
             <p class="price">From {{ item.price }} KM</p>
-            <p class="rating">Rating: {{ item.rating }}</p>
+
             <p [class.available]="item.available" [class.unavailable]="!item.available">
               {{ item.available ? 'Available' : 'Currently unavailable' }}
             </p>
@@ -134,7 +113,6 @@
                 {{ amenity }}
               </span>
             </div>
-
             <button
               class="book-btn"
               [disabled]="!item.available"

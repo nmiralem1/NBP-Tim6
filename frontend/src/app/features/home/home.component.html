@@ -122,25 +122,4 @@
             </div>
         </div>
     </section>
-
-    <!-- Reviews Section -->
-    <section class="section reviews">
-        <div class="section-header">
-            <h2>Traveler Reviews</h2>
-            <a href="/reviews" class="view-all">View all →</a>
-        </div>
-        <div class="reviews-grid">
-            <div *ngFor="let review of reviews" class="review-card">
-                <div class="user-meta">
-                    <div class="avatar">👤</div>
-                    <div class="user-info">
-                        <strong>{{ review.userName }}</strong>
-                        <span>{{ review.location }}</span>
-                    </div>
-                </div>
-                <p class="rating">{{ review.rating }}</p>
-                <p>{{ review.note }}</p>
-            </div>
-        </div>
-    </section>
 </div>

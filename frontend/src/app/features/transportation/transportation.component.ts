@@ -57,19 +57,21 @@ export class TransportationComponent implements OnInit {
   transportationOptions: TransportationOption[] = [];
   filteredTransportationOptions: TransportationOption[] = [];
 
-  searchTerm: string = '';
-  selectedFrom: string = '';
-  selectedTo: string = '';
-  selectedDate: string = '';
-  selectedReturnDate: string = '';
-  travelers: number = 1;
-  selectedType: string = '';
+  searchTerm = '';
+  selectedFrom = '';
+  selectedTo = '';
+  selectedDate = '';
+  travelers = 1;
+  selectedType = '';
   maxPrice: number | null = null;
-  selectedRating: string = '';
+
+  bookingErrorMessage = '';
 
   fromOptions: string[] = [];
   toOptions: string[] = [];
   transportationTypes: string[] = [];
+
+  minDate = this.getTodayDate();
 
   private readonly transportApiUrl = `${environment.apiUrl}/transport`;
   private readonly transportTypesApiUrl = `${environment.apiUrl}/transport-types`;
@@ -86,7 +88,6 @@ export class TransportationComponent implements OnInit {
       this.selectedFrom = params['from'] || '';
       this.selectedTo = params['to'] || '';
       this.selectedDate = params['departureDate'] || '';
-      this.selectedReturnDate = params['returnDate'] || '';
       this.travelers = Number(params['travelers']) || 1;
 
       this.loadTransportationOptions();
@@ -172,33 +173,12 @@ export class TransportationComponent implements OnInit {
         item.arrivalLocation.toLowerCase().includes(term) ||
         item.amenities.some(amenity => amenity.toLowerCase().includes(term));
 
-      const matchesFrom =
-        !this.selectedFrom || item.from === this.selectedFrom;
+      const matchesFrom = !this.selectedFrom || item.from === this.selectedFrom;
+      const matchesTo = !this.selectedTo || item.to === this.selectedTo;
+      const matchesType = !this.selectedType || item.type === this.selectedType;
+      const matchesPrice = this.maxPrice === null || item.price <= this.maxPrice;
 
-      const matchesTo =
-        !this.selectedTo || item.to === this.selectedTo;
-
-      const matchesDate =
-        !this.selectedDate || item.availableDate === this.selectedDate;
-
-      const matchesType =
-        !this.selectedType || item.type === this.selectedType;
-
-      const matchesPrice =
-        this.maxPrice === null || item.price <= this.maxPrice;
-
-      const matchesRating =
-        !this.selectedRating || item.rating >= Number(this.selectedRating);
-
-      return (
-        matchesSearch &&
-        matchesFrom &&
-        matchesTo &&
-        matchesDate &&
-        matchesType &&
-        matchesPrice &&
-        matchesRating
-      );
+      return matchesSearch && matchesFrom && matchesTo && matchesType && matchesPrice;
     });
   }
 
@@ -207,17 +187,24 @@ export class TransportationComponent implements OnInit {
     this.selectedFrom = '';
     this.selectedTo = '';
     this.selectedDate = '';
-    this.selectedReturnDate = '';
     this.travelers = 1;
     this.selectedType = '';
     this.maxPrice = null;
-    this.selectedRating = '';
+    this.bookingErrorMessage = '';
 
     this.filteredTransportationOptions = [...this.transportationOptions];
   }
 
   bookTransportation(item: TransportationOption): void {
-    if (!item.available) return;
+    this.bookingErrorMessage = '';
+
+    if (!item.available) {
+      return;
+    }
+
+    if (!this.isBookingFormValid()) {
+      return;
+    }
 
     this.router.navigate(['/book/transport', item.id], {
       queryParams: {
@@ -232,71 +219,43 @@ export class TransportationComponent implements OnInit {
         arrivalTime: item.arrivalTime,
         duration: item.duration,
         price: item.price,
-
         checkIn: this.selectedDate,
-        checkOut: this.selectedReturnDate,
+        checkOut: this.selectedDate,
         guests: this.travelers
       }
     });
   }
 
+  private isBookingFormValid(): boolean {
+    if (!this.selectedDate || !this.travelers) {
+      this.bookingErrorMessage = 'Please fill in all the information before continuing to booking.';
+      return false;
+    }
+
+    if (this.selectedDate < this.minDate) {
+      this.bookingErrorMessage = 'Date cannot be before today.';
+      return false;
+    }
+
+    if (Number(this.travelers) < 1) {
+      this.bookingErrorMessage = 'Number of travelers must be at least 1.';
+      return false;
+    }
+
+    return true;
+  }
+
+  private getTodayDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   private getUniqueSortedValues(values: string[]): string[] {
-    return [...new Set(values.filter(value => !!value && value !== 'Unknown city'))].sort();
-  }
-
-  private formatTime(dateTime?: string): string {
-    if (!dateTime) {
-      return 'Flexible';
-    }
-
-    const date = new Date(dateTime);
-
-    if (Number.isNaN(date.getTime())) {
-      return 'Flexible';
-    }
-
-    return date.toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  private formatDate(dateTime?: string): string {
-    if (!dateTime) {
-      return '';
-    }
-
-    const date = new Date(dateTime);
-
-    if (Number.isNaN(date.getTime())) {
-      return '';
-    }
-
-    return date.toISOString().split('T')[0];
-  }
-
-  private formatDuration(departureTime?: string, arrivalTime?: string): string {
-    if (!departureTime || !arrivalTime) {
-      return 'Flexible duration';
-    }
-
-    const departure = new Date(departureTime);
-    const arrival = new Date(arrivalTime);
-
-    if (Number.isNaN(departure.getTime()) || Number.isNaN(arrival.getTime())) {
-      return 'Flexible duration';
-    }
-
-    const diffMs = arrival.getTime() - departure.getTime();
-
-    if (diffMs < 0) {
-      return 'Flexible duration';
-    }
-
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
-
-    return `${hours}h ${minutes}m`;
+    return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
   }
 
   private buildAmenities(transport: TransportApi): string[] {
@@ -310,14 +269,62 @@ export class TransportationComponent implements OnInit {
       amenities.push(`Booking ref: ${transport.bookingReference}`);
     }
 
-    if (transport.premiumFlag) {
+    if (transport.premiumFlag === 1) {
       amenities.push('Premium');
     }
 
-    if (amenities.length === 0) {
-      amenities.push('Standard');
+    return amenities;
+  }
+
+  private formatTime(value?: string): string {
+    if (!value) return 'N/A';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value.length >= 5 ? value.substring(0, 5) : value;
     }
 
-    return amenities;
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  private formatDate(value?: string): string {
+    if (!value) return '';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return value.substring(0, 10);
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private formatDuration(departure?: string, arrival?: string): string {
+    if (!departure || !arrival) return 'N/A';
+
+    const departureDate = new Date(departure);
+    const arrivalDate = new Date(arrival);
+
+    if (Number.isNaN(departureDate.getTime()) || Number.isNaN(arrivalDate.getTime())) {
+      return 'N/A';
+    }
+
+    const diffMs = arrivalDate.getTime() - departureDate.getTime();
+
+    if (diffMs <= 0) return 'N/A';
+
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+
+    return `${hours}h ${minutes}m`;
   }
 }

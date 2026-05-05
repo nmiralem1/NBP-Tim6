@@ -67,6 +67,9 @@
                     <p class="address">{{ item.address }}</p>
                     <p class="success-msg" *ngIf="addToTripSuccess">{{ addToTripSuccess }}</p>
                     <div class="hero-actions">
+                      <p class="error-message" *ngIf="bookingError">
+                        {{ bookingError }}
+                      </p>
                         <button class="book-btn" (click)="bookRoom({available: true, id: 0})">Book now</button>
                         <button class="trip-btn" (click)="openTripModal()" *ngIf="authService.isLoggedIn()">Add to my trip</button>
                     </div>
@@ -161,7 +164,7 @@
                               {{ room.available ? 'Available' : 'Currently unavailable' }}
                           </p>
 
-                          <!-- 🔥 BOOK BUTTON -->
+                          <!-- BOOK BUTTON -->
                           <button
                               class="book-btn"
                               [disabled]="!room.available"
