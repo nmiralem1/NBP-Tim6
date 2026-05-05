@@ -38,7 +38,11 @@ public class ActivityRepositoryImpl implements ActivityRepository {
         activity.setImageUrl(rs.getString("image_url"));
         return activity;
     };
-
+    @Override
+    public List<Activity> findAll() {
+        String sql = "SELECT * FROM NBPT6.ACTIVITIES ORDER BY ID";
+        return jdbcTemplate.query(sql, activityRowMapper);
+    }
     @Override
     public int save(Activity activity) {
         String sql = """

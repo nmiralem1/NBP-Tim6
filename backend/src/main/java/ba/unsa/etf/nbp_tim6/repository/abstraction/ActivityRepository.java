@@ -13,4 +13,6 @@ public interface ActivityRepository {
     int update(Activity activity);
 
     int delete(Integer id);
+    List<Activity> findAll();
+
 }

@@ -27,15 +27,48 @@ public class ActivityController {
     }
 
     @Operation(
+            summary = "Get activities by trip ID",
+            description = "Returns all activities associated with a specific trip"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Activities retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
+    @GetMapping("/trip/{tripId}")
+    public List<Activity> getActivitiesByTripId(
+            @Parameter(description = "ID of the trip", example = "5")
+            @PathVariable Integer tripId) {
+        return activityService.getActivitiesByTripId(tripId);
+    }
+
+    @Operation(
+            summary = "Get all activities",
+            description = "Returns a list of all activities"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Activities retrieved successfully")
+    })
+    @GetMapping
+    public List<Activity> getAllActivities() {
+        return activityService.getAllActivities();
+    }
+
+    @Operation(
             summary = "Create activity",
             description = "Creates a new activity for a trip"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Activity created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid activity data")
+            @ApiResponse(responseCode = "400", description = "Invalid activity data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping
-    public String createActivity(@Valid @RequestBody Activity activity) {
+    public String createActivity(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Activity details including name, description, and optional location",
+                    required = true
+            )
+            @Valid @RequestBody Activity activity) {
         activityService.createActivity(activity);
         return "Activity created!";
     }
@@ -56,33 +89,23 @@ public class ActivityController {
     }
 
     @Operation(
-            summary = "Get activities by trip ID",
-            description = "Returns all activities associated with a specific trip"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Activities retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Trip not found")
-    })
-    @GetMapping("/trip/{tripId}")
-    public List<Activity> getActivitiesByTripId(
-            @Parameter(description = "ID of the trip", example = "5")
-            @PathVariable Integer tripId) {
-        return activityService.getActivitiesByTripId(tripId);
-    }
-
-    @Operation(
             summary = "Update activity",
             description = "Updates an existing activity by its ID"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Activity updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid activity data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated"),
             @ApiResponse(responseCode = "404", description = "Activity not found")
     })
     @PutMapping("/{id}")
     public String updateActivity(
             @Parameter(description = "ID of the activity", example = "1")
             @PathVariable Integer id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated activity details",
+                    required = true
+            )
             @Valid @RequestBody Activity activity) {
         activity.setId(id);
         activityService.updateActivity(activity);
