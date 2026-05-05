@@ -28,6 +28,7 @@ export interface AccommodationListItem {
     countryName: string;
     type: string;
     pricePerNight: number;
+    maxGuests: number;
     rating: number;
     imageUrl: string;
     amenities: string[];
@@ -116,6 +117,7 @@ export class AccommodationService {
             countryName: city?.countryName || 'Unknown country',
             type: this.mapAccommodationType(accommodation.accommodationTypeId),
             pricePerNight: Number(accommodation.pricePerNight || 0),
+            maxGuests: accommodation.maxGuests || 0,
             rating: Number(accommodation.stars || 0),
             imageUrl: accommodation.imageUrl || 'assets/images/placeholder.jpg',
             amenities: this.buildAmenities(accommodation),

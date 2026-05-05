@@ -44,10 +44,16 @@ public class TripController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trip created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid trip data")
+            @ApiResponse(responseCode = "400", description = "Invalid trip data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping
-    public String createTrip(@Valid @RequestBody Trip trip) {
+    public String createTrip(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Trip details including title, dates, budget, and optional description",
+                    required = true
+            )
+            @Valid @RequestBody Trip trip) {
         tripService.createTrip(trip);
         return "Trip created!";
     }
@@ -89,12 +95,17 @@ public class TripController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Trip updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid trip data"),
+            @ApiResponse(responseCode = "401", description = "User not authenticated"),
             @ApiResponse(responseCode = "404", description = "Trip not found")
     })
     @PutMapping("/{id}")
     public String updateTrip(
             @Parameter(description = "ID of the trip", example = "1")
             @PathVariable Integer id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated trip details",
+                    required = true
+            )
             @Valid @RequestBody Trip trip) {
         trip.setId(id);
         tripService.updateTrip(trip);

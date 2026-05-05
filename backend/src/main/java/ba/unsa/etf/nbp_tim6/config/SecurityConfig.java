@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/countries/**", "/api/countries").permitAll()
+                        .requestMatchers("/api/stripe/webhook").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/cities", "/api/cities/**",
                                 "/api/trips", "/api/trips/**",
@@ -43,7 +44,12 @@ public class SecurityConfig {
                                 "/api/trip-cities", "/api/trip-cities/**",
                                 "/api/accommodations", "/api/accommodations/**",
                                 "/api/activities", "/api/activities/**",
-                                "/api/reviews", "/api/reviews/**")
+                                "/api/reviews", "/api/reviews/**",
+                                "/api/payment-methods", "/api/payment-methods/**",
+                                "/api/transport", "/api/transport/**",
+                                "/api/transport-types", "/api/transport-types/**",
+                                "/api/bookings/trip/**",
+                                "/api/trip-activities/trip/**")
                         .permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/error").permitAll()
                         .anyRequest().authenticated());

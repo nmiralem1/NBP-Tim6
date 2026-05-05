@@ -1,5 +1,6 @@
 package ba.unsa.etf.nbp_tim6.service;
 
+import ba.unsa.etf.nbp_tim6.dto.BookingCreatedDto;
 import ba.unsa.etf.nbp_tim6.model.Booking;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.AccommodationRepository;
@@ -26,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
         this.userRepository = userRepository;
     }
 
-    public void createBooking(Booking booking) {
+    public BookingCreatedDto createBooking(Booking booking) {
 
         // Date validation
         long days = ChronoUnit.DAYS.between(
@@ -48,10 +49,12 @@ public class BookingServiceImpl implements BookingService {
         booking.setBookingStatus("pending");
 
         // Generate booking reference
-        booking.setBookingReference(UUID.randomUUID().toString());
+        String ref = UUID.randomUUID().toString();
+        booking.setBookingReference(ref);
 
-        // Save
-        bookingRepository.save(booking);
+        // Save and return generated ID
+        Integer bookingId = bookingRepository.saveAndReturnId(booking);
+        return new BookingCreatedDto(bookingId, total, ref);
     }
 
     @Override
@@ -83,5 +86,15 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found!"));
         return bookingRepository.findByUserId(user.getId());
+    }
+
+    @Override
+    public void updateBookingStatus(Integer bookingId, String status) {
+        bookingRepository.updateStatus(bookingId, status);
+    }
+
+    @Override
+    public java.util.List<Booking> getBookingsByTripId(Integer tripId) {
+        return bookingRepository.findByTripId(tripId);
     }
 }

@@ -8,6 +8,8 @@ public interface ActivityRepository {
 
     Activity findById(Integer id);
 
+    List<Activity> findAll();
+
     List<Activity> findByTripId(Integer tripId);
 
     int update(Activity activity);

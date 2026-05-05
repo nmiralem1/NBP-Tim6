@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EnrichedTrip, TripService } from '../../core/services/trip.service';
+import { EnrichedTrip, TripActivity, TripService } from '../../core/services/trip.service';
+import { BookingDto, BookingService } from '../../core/services/booking.service';
+import { Activity, ActivityService } from '../../core/services/activity.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -9,6 +11,9 @@ import { EnrichedTrip, TripService } from '../../core/services/trip.service';
 })
 export class TripDetailsComponent implements OnInit {
   travelPlan: EnrichedTrip | null = null;
+  tripBookings: BookingDto[] = [];
+  tripActivities: TripActivity[] = [];
+  activitiesMap: Map<number, Activity> = new Map();
 
   bookingInfo = {
     departure: '',
@@ -24,7 +29,9 @@ export class TripDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private tripService: TripService
+    private tripService: TripService,
+    private bookingService: BookingService,
+    private activityService: ActivityService
   ) {}
 
   ngOnInit(): void {
@@ -38,14 +45,14 @@ export class TripDetailsComponent implements OnInit {
 
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
-
       if (!id) {
         this.errorMessage = 'Trip could not be found.';
         this.isLoading = false;
         return;
       }
-
       this.loadTravelPlan(id);
+      this.loadTripBookings(id);
+      this.loadTripActivities(id);
     });
   }
 
@@ -65,6 +72,51 @@ export class TripDetailsComponent implements OnInit {
         this.errorMessage = 'Trip details could not be loaded.';
         this.travelPlan = null;
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadTripBookings(tripId: number): void {
+    this.bookingService.getBookingsByTripId(tripId).subscribe({
+      next: bookings => this.tripBookings = bookings,
+      error: () => {}
+    });
+  }
+
+  loadTripActivities(tripId: number): void {
+    this.tripService.getTripActivities(tripId).subscribe({
+      next: tripActivities => {
+        this.tripActivities = tripActivities;
+        tripActivities.forEach(ta => {
+          this.activityService.getActivityById(ta.activityId).subscribe({
+            next: activity => this.activitiesMap.set(ta.activityId, activity),
+            error: () => {}
+          });
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  getActivity(activityId: number): Activity | undefined {
+    return this.activitiesMap.get(activityId);
+  }
+
+  removeActivity(tripActivityId: number): void {
+    this.tripService.removeActivityFromTrip(tripActivityId).subscribe({
+      next: () => {
+        this.tripActivities = this.tripActivities.filter(ta => ta.id !== tripActivityId);
+      },
+      error: () => {}
+    });
+  }
+
+  payBooking(booking: BookingDto): void {
+    this.router.navigate(['/book', booking.accommodationId, 0], {
+      queryParams: {
+        tripId: booking.tripId,
+        bookingId: booking.id,
+        totalPrice: booking.totalPrice
       }
     });
   }

@@ -8,6 +8,8 @@ public interface ActivityService {
 
     Activity getActivityById(Integer id);
 
+    List<Activity> getAllActivities();
+
     List<Activity> getActivitiesByTripId(Integer tripId);
 
     void updateActivity(Activity activity);

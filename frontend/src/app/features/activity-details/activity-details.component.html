@@ -1,5 +1,5 @@
 <div class="activity-details-page" *ngIf="activity as item">
-    <div class="details-layout">
+  <div class="details-layout">
 
     <aside class="booking-sidebar">
       <div class="booking-card">
@@ -7,36 +7,21 @@
           ← Back to activities
         </button>
 
-        <h2>Check Availability</h2>
-
-        <div class="filter-group">
-          <label for="activityDate">Date</label>
-          <input
-            id="activityDate"
-            type="date"
-            [(ngModel)]="bookingForm.activityDate"
-          />
-        </div>
-
-        <div class="filter-group">
-          <label for="participants">Participants</label>
-          <input
-            id="participants"
-            type="number"
-            min="1"
-            [(ngModel)]="bookingForm.participants"
-          />
-        </div>
-
-        <button class="primary-btn" type="button" (click)="searchAvailability()">
-          Search availability
-        </button>
+        <h2>Activity Info</h2>
 
         <div class="quick-info">
-          <p><strong>Available:</strong> {{ item.availableFrom }} - {{ item.availableTo }}</p>
-          <p><strong>Duration:</strong> {{ item.duration }}</p>
-          <p><strong>Meeting point:</strong> {{ item.meetingPoint }}</p>
+          <p><strong>Date:</strong> {{ item.activityDate || 'Flexible' }}</p>
+          <p *ngIf="item.startTime"><strong>Start:</strong> {{ item.startTime }}</p>
+          <p *ngIf="item.endTime"><strong>End:</strong> {{ item.endTime }}</p>
+          <p><strong>Location:</strong> {{ item.location }}</p>
+          <p><strong>Price:</strong> {{ item.price }} KM / person</p>
         </div>
+
+        <button class="primary-btn" type="button" (click)="openTripModal()">
+          Add to my trip
+        </button>
+
+        <p class="success-msg" *ngIf="addToTripSuccess">{{ addToTripSuccess }}</p>
       </div>
     </aside>
 
@@ -50,72 +35,45 @@
         </div>
 
         <div class="hero-content">
-          <p class="location">{{ item.cityName }}, {{ item.countryName }}</p>
           <h1>{{ item.name }}</h1>
-          <p class="type">{{ item.type }}</p>
-          <p class="rating">Rating: {{ item.rating }}</p>
-          <p class="price">From {{ item.price }} KM / person</p>
+          <p class="location">{{ item.location }}</p>
+          <p class="price">{{ item.price }} KM / person</p>
           <p class="description">{{ item.description }}</p>
-          <p class="address">{{ item.meetingPoint }}</p>
-        </div>
-      </section>
-
-      <section class="content-section">
-        <div class="section-header">
-          <h2>Included</h2>
-        </div>
-
-        <div class="amenities-list">
-          <span class="amenity-chip" *ngFor="let included of item.included">
-            {{ included }}
-          </span>
-        </div>
-      </section>
-
-      <section class="content-section">
-        <div class="section-header">
-          <h2>Activity Options</h2>
-        </div>
-
-        <div class="activity-options">
-          <div class="activity-option-card" *ngFor="let option of item.activityOptions">
-            <div class="option-content">
-              <h3>{{ option.title }}</h3>
-              <p>Duration: {{ option.duration }}</p>
-              <p>Group size: {{ option.groupSize }}</p>
-              <p>From {{ option.price }} KM / person</p>
-
-              <p [class.available]="option.available" [class.unavailable]="!option.available">
-                {{ option.available ? 'Available' : 'Currently unavailable' }}
-              </p>
-
-              <button
-                class="book-btn"
-                [disabled]="!option.available"
-                (click)="bookActivity(option)"
-              >
-                {{ option.available ? 'Book now' : 'Unavailable' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="content-section">
-        <div class="section-header">
-          <h2>Reviews</h2>
-        </div>
-
-        <div class="reviews-list">
-          <div class="review-card" *ngFor="let review of item.reviews">
-            <h3>{{ review.author }}</h3>
-            <p class="review-rating">Rating: {{ review.rating }}</p>
-            <p class="review-comment">{{ review.comment }}</p>
-            <p class="review-date">{{ review.date }}</p>
-          </div>
         </div>
       </section>
     </main>
 
+  </div>
+</div>
+
+<div class="activity-details-page" *ngIf="isLoading && !activity">
+  <p class="state-message">Loading activity...</p>
+</div>
+
+<!-- Add to trip modal -->
+<div class="modal-overlay" *ngIf="showTripModal" (click)="showTripModal = false">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <h2>Add to My Trip</h2>
+
+    <div class="filter-group">
+      <label for="tripSelect">Select trip</label>
+      <select id="tripSelect" [(ngModel)]="selectedTripId">
+        <option [ngValue]="null">-- Choose a trip --</option>
+        <option *ngFor="let t of myTrips" [ngValue]="t.id">{{ t.title }}</option>
+      </select>
+    </div>
+
+    <p class="no-trips-msg" *ngIf="myTrips.length === 0">
+      You have no personal trips yet. Create one first from the Trips page.
+    </p>
+
+    <p class="error-msg" *ngIf="addToTripError">{{ addToTripError }}</p>
+
+    <div class="modal-actions">
+      <button class="secondary-btn" type="button" (click)="showTripModal = false">Cancel</button>
+      <button class="primary-btn" type="button" (click)="confirmAddToTrip()" [disabled]="isAddingToTrip || myTrips.length === 0">
+        {{ isAddingToTrip ? 'Adding...' : 'Add to trip' }}
+      </button>
+    </div>
   </div>
 </div>

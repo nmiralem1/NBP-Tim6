@@ -73,7 +73,7 @@ public class UserRepositoryImpl implements UserRepository {
                     "VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM nbp.nbp_role WHERE name = ?))";
             jdbcTemplate.update(sql, user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(),
                     user.getPasswordHash(), user.getPhone(),
-                    user.getRole() != null ? user.getRole() : "REGISTERED_USER");
+                    user.getRole() != null ? user.getRole() : "USER");
             return findByUsername(user.getUsername()).orElseThrow();
         } else {
             String sql = "UPDATE nbp.nbp_user SET first_name = ?, last_name = ?, username = ?, email = ?, password = ?, phone_number = ?, "
@@ -81,7 +81,7 @@ public class UserRepositoryImpl implements UserRepository {
                     "role_id = (SELECT id FROM nbp.nbp_role WHERE name = ?) WHERE id = ?";
             jdbcTemplate.update(sql, user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(),
                     user.getPasswordHash(), user.getPhone(),
-                    user.getRole() != null ? user.getRole() : "REGISTERED_USER", user.getId());
+                    user.getRole() != null ? user.getRole() : "USER", user.getId());
             return user;
         }
     }

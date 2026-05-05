@@ -271,3 +271,34 @@
     font-size: 28px;
   }
 }
+
+.error-message {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.filters-sidebar {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.filters-card {
+  padding-bottom: 28px;
+}
+
+.validation-message {
+  color: #e11d48;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 12px 0 16px;
+}
+
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  margin-top: 10px;
+}

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NgForm, NgModel } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
 
@@ -11,24 +10,12 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginData = { username: '', password: '' };
   errorMessage = '';
-  submitted = false;
   isSubmitting = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
-  isFieldInvalid(field: NgModel | null): boolean {
-    return !!field && Boolean(field.invalid) && (field.touched || this.submitted);
-  }
-
-  onSubmit(form: NgForm) {
-    this.submitted = true;
+  onSubmit() {
     this.errorMessage = '';
-
-    if (form.invalid) {
-      Object.values(form.controls).forEach(control => control.markAsTouched());
-      return;
-    }
-
     this.isSubmitting = true;
 
     const payload = {

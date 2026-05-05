@@ -17,7 +17,6 @@ public class Booking {
     @Schema(description = "Unique identifier of the booking", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
-    @NotNull(message = "Trip ID is required")
     @Schema(description = "ID of the trip associated with this booking", example = "5")
     private Integer tripId;
 
