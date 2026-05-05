@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/services/auth.service';
 
 interface TransportationOption {
   id: number;
@@ -80,7 +81,8 @@ export class TransportationComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -199,6 +201,13 @@ export class TransportationComponent implements OnInit {
     this.bookingErrorMessage = '';
 
     if (!item.available) {
+      return;
+    }
+
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
       return;
     }
 

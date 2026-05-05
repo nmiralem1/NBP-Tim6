@@ -44,6 +44,8 @@ public class SecurityConfig {
                                 "/api/activities", "/api/activities/**",
                                 "/api/reviews", "/api/reviews/**",
                                 "/api/payment-methods", "/api/payment-methods/**",
+                                "/api/transport", "/api/transport/**",
+                                "/api/transport-types", "/api/transport-types/**",
                                 "/api/bookings/trip/**",
                                 "/api/trip-activities/trip/**")
                         .permitAll()
