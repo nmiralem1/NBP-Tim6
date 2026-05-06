@@ -1,6 +1,8 @@
 package ba.unsa.etf.nbp_tim6.repository.abstraction;
 
+import ba.unsa.etf.nbp_tim6.model.ProfileImage;
 import ba.unsa.etf.nbp_tim6.model.User;
+
 import java.util.Optional;
 
 public interface UserRepository {
@@ -17,4 +19,8 @@ public interface UserRepository {
     User save(User user);
 
     User updateProfile(Integer id, String firstName, String lastName, String username, String email, String phone);
+
+    void saveProfileImage(Integer userId, byte[] imageData, String contentType, String fileName);
+
+    Optional<ProfileImage> findProfileImageByUserId(Integer userId);
 }
