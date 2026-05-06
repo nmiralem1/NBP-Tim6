@@ -1,39 +1,100 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
-    selector: 'app-navbar',
-    templateUrl: './navbar.component.html',
-    styleUrls: ['./navbar.component.scss']
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
-    isMenuOpen = false;
+export class NavbarComponent implements OnInit, OnDestroy {
+  isMenuOpen = false;
+  navbarProfileImageUrl: string | null = null;
 
-    constructor(
-        public authService: AuthService,
-        private router: Router
-    ) {}
+  private routerSubscription?: Subscription;
 
-    toggleMenu(): void {
-        this.isMenuOpen = !this.isMenuOpen;
+  constructor(
+    public authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadNavbarProfileImage();
+
+    window.addEventListener('profileImageUpdated', this.handleProfileImageUpdated);
+
+    this.routerSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.loadNavbarProfileImage();
+      });
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('profileImageUpdated', this.handleProfileImageUpdated);
+    this.routerSubscription?.unsubscribe();
+
+    if (this.navbarProfileImageUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.navbarProfileImageUrl);
+    }
+  }
+
+  private handleProfileImageUpdated = (): void => {
+    this.loadNavbarProfileImage();
+  };
+
+  loadNavbarProfileImage(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.clearNavbarProfileImage();
+      return;
     }
 
-    closeMenu(): void {
-        this.isMenuOpen = false;
+    this.userService.getProfileImage().subscribe({
+      next: (blob) => {
+        if (this.navbarProfileImageUrl?.startsWith('blob:')) {
+          URL.revokeObjectURL(this.navbarProfileImageUrl);
+        }
+
+        this.navbarProfileImageUrl = URL.createObjectURL(blob);
+      },
+      error: () => {
+        this.clearNavbarProfileImage();
+      }
+    });
+  }
+
+  clearNavbarProfileImage(): void {
+    if (this.navbarProfileImageUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(this.navbarProfileImageUrl);
     }
 
-    logout(): void {
+    this.navbarProfileImageUrl = null;
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
+  logout(): void {
+    this.clearNavbarProfileImage();
+
     this.authService.logout().subscribe({
-        next: () => {
+      next: () => {
         this.isMenuOpen = false;
         this.router.navigate(['/login']);
-        },
-        error: (err) => {
+      },
+      error: (err) => {
         console.error('Logout error:', err);
         this.isMenuOpen = false;
         this.router.navigate(['/login']);
-        }
+      }
     });
-    }
+  }
 }

@@ -123,6 +123,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.successMessage = 'Profile image updated successfully.';
         this.isUploadingImage = false;
         this.loadProfileImage();
+        window.dispatchEvent(new Event('profileImageUpdated'));
         input.value = '';
       },
       error: (err) => {
