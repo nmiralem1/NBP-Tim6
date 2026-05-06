@@ -13,16 +13,24 @@ type BookingType = 'accommodation' | 'transport';
 
 interface TransportBooking {
   id: number;
+  tripId: number | null;
+  fromCityId: number;
+  toCityId: number;
+  transportTypeId: number;
   provider: string;
   transportType: string;
   from: string;
   to: string;
   departureLocation: string;
   arrivalLocation: string;
+  rawDepartureTime: string;
+  rawArrivalTime: string;
   departureTime: string;
   arrivalTime: string;
   duration: string;
   price: number;
+  seatNumber: string;
+  bookingReference: string;
 }
 
 @Component({
@@ -80,6 +88,9 @@ export class BookComponent implements OnInit {
       this.guests = guestsParam ? Number(guestsParam) : 1;
 
       const type = qp.get('type');
+      const bookingId = qp.get('bookingId');
+      const totalPrice = qp.get('totalPrice');
+      const bookingReference = qp.get('bookingReference') || '';
 
       if (type === 'transport') {
         this.bookingType = 'transport';
@@ -89,18 +100,6 @@ export class BookComponent implements OnInit {
 
         const t = qp.get('tripId');
         this.tripId = t ? Number(t) : null;
-
-        const bookingId = qp.get('bookingId');
-        const totalPrice = qp.get('totalPrice');
-
-        if (bookingId && totalPrice) {
-          this.createdBooking = {
-            bookingId: Number(bookingId),
-            totalPrice: Number(totalPrice),
-            bookingReference: ''
-          };
-          this.currentStep = 'payment';
-        }
 
         this.route.paramMap.subscribe(params => {
           this.accommodationId = Number(params.get('accommodationId'));
@@ -113,6 +112,15 @@ export class BookComponent implements OnInit {
           this.loadAccommodation();
         });
       }
+
+      if (bookingId && totalPrice) {
+        this.createdBooking = {
+          bookingId: Number(bookingId),
+          totalPrice: Number(totalPrice),
+          bookingReference
+        };
+        this.currentStep = 'payment';
+      }
     });
 
     this.loadPaymentMethods();
@@ -121,20 +129,31 @@ export class BookComponent implements OnInit {
 
   private loadTransportBooking(qp: any): void {
     const transportId = Number(this.route.snapshot.paramMap.get('id'));
+    const tripId = qp.get('tripId');
 
     this.transportBooking = {
       id: transportId,
+      tripId: tripId ? Number(tripId) : null,
+      fromCityId: Number(qp.get('fromCityId') || 0),
+      toCityId: Number(qp.get('toCityId') || 0),
+      transportTypeId: Number(qp.get('transportTypeId') || 0),
       provider: qp.get('provider') || 'Transport provider',
       transportType: qp.get('transportType') || 'Transport',
       from: qp.get('from') || '',
       to: qp.get('to') || '',
       departureLocation: qp.get('departureLocation') || '',
       arrivalLocation: qp.get('arrivalLocation') || '',
+      rawDepartureTime: qp.get('rawDepartureTime') || '',
+      rawArrivalTime: qp.get('rawArrivalTime') || '',
       departureTime: qp.get('departureTime') || '',
       arrivalTime: qp.get('arrivalTime') || '',
       duration: qp.get('duration') || '',
-      price: Number(qp.get('price') || 0)
+      price: Number(qp.get('price') || 0),
+      seatNumber: qp.get('seatNumber') || '',
+      bookingReference: qp.get('bookingReference') || ''
     };
+
+    this.tripId = this.transportBooking.tripId;
   }
 
   private loadAccommodation(): void {
@@ -180,7 +199,7 @@ export class BookComponent implements OnInit {
 
   get estimatedPrice(): number {
     if (this.bookingType === 'transport') {
-      return this.transportBooking?.price || 0;
+      return (this.transportBooking?.price || 0) * Math.max(Number(this.guests || 1), 1);
     }
 
     if (!this.accommodation) return 0;
@@ -230,7 +249,7 @@ export class BookComponent implements OnInit {
         this.currentStep = 'payment';
       },
       error: err => {
-        this.bookingError = err?.error?.message || 'Failed to create booking. Please try again.';
+        this.bookingError = this.getErrorMessage(err, 'Failed to create booking. Please try again.');
         this.isLoadingBooking = false;
       }
     });
@@ -255,14 +274,24 @@ export class BookComponent implements OnInit {
     this.isLoadingBooking = true;
     this.bookingError = '';
 
-    this.createdBooking = {
-      bookingId: this.transportBooking.id,
-      totalPrice: this.transportBooking.price,
-      bookingReference: `TR-${this.transportBooking.id}-${Date.now()}`
-    };
-
-    this.isLoadingBooking = false;
-    this.currentStep = 'payment';
+    this.bookingService.createBooking({
+      userId: this.userId,
+      transportId: this.transportBooking.id,
+      checkIn: this.checkIn,
+      checkOut: this.checkOut,
+      guestsCount: this.guests,
+      ...(this.transportBooking.tripId ? { tripId: this.transportBooking.tripId } : {})
+    }).subscribe({
+      next: result => {
+        this.createdBooking = result;
+        this.isLoadingBooking = false;
+        this.currentStep = 'payment';
+      },
+      error: err => {
+        this.bookingError = this.getErrorMessage(err, 'Failed to create transport booking. Please try again.');
+        this.isLoadingBooking = false;
+      }
+    });
   }
 
   selectPaymentMethod(id: number): void {
@@ -339,11 +368,6 @@ export class BookComponent implements OnInit {
 
     if (!this.createdBooking || !this.userId) return;
 
-    if (this.bookingType === 'transport') {
-      this.finalizeTransportPayment();
-      return;
-    }
-
     this.isProcessingPayment = true;
     this.paymentError = '';
 
@@ -354,7 +378,8 @@ export class BookComponent implements OnInit {
       currency: 'EUR',
       bookingId: this.createdBooking.bookingId,
       userId: this.userId,
-      paymentMethodId: this.selectedPaymentMethodId
+      paymentMethodId: this.selectedPaymentMethodId,
+      ...(this.tripId ? { tripId: this.tripId } : {})
     }).subscribe({
       next: async intentResponse => {
         if (this.isCardMethod(this.selectedPaymentMethodId!)) {
@@ -364,20 +389,10 @@ export class BookComponent implements OnInit {
         }
       },
       error: err => {
-        this.paymentError = err?.error?.message || 'Failed to initialize payment. Please try again.';
+        this.paymentError = this.getErrorMessage(err, 'Failed to initialize payment. Please try again.');
         this.isProcessingPayment = false;
       }
     });
-  }
-
-  private finalizeTransportPayment(): void {
-    this.isProcessingPayment = true;
-    this.paymentError = '';
-
-    setTimeout(() => {
-      this.isProcessingPayment = false;
-      this.currentStep = 'success';
-    }, 500);
   }
 
   private async confirmCardPayment(clientSecret: string): Promise<void> {
@@ -406,7 +421,8 @@ export class BookComponent implements OnInit {
       bookingId: this.createdBooking.bookingId,
       userId: this.userId,
       paymentMethodId: this.selectedPaymentMethodId,
-      amount: this.createdBooking.totalPrice
+      amount: this.createdBooking.totalPrice,
+      ...(this.tripId ? { tripId: this.tripId } : {})
     }).subscribe({
       next: () => {
         this.isProcessingPayment = false;
@@ -420,6 +436,11 @@ export class BookComponent implements OnInit {
   }
 
   goToBookings(): void {
+    if (this.bookingType === 'transport' && this.tripId) {
+      this.router.navigate(['/trips', this.tripId]);
+      return;
+    }
+
     this.router.navigate(['/bookings']);
   }
 
@@ -445,5 +466,29 @@ export class BookComponent implements OnInit {
     if (n.includes('cash')) return '💵';
 
     return '💰';
+  }
+
+  private getErrorMessage(err: any, fallback: string): string {
+    if (!err) {
+      return fallback;
+    }
+
+    if (typeof err.error === 'string') {
+      return err.error;
+    }
+
+    if (err.error?.message) {
+      return err.error.message;
+    }
+
+    if (err.error?.error) {
+      return err.error.error;
+    }
+
+    if (err.message) {
+      return err.message;
+    }
+
+    return fallback;
   }
 }

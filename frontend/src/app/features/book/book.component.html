@@ -254,7 +254,7 @@
       </div>
 
       <button class="primary-btn" type="button" (click)="goToBookings()">
-        View my bookings
+        {{ bookingType === 'transport' ? 'Back to trip' : 'View my bookings' }}
       </button>
     </div>
   </div>

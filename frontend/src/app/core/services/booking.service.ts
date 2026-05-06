@@ -6,7 +6,8 @@ export interface BookingDto {
   id: number;
   tripId: number;
   userId: number;
-  accommodationId: number;
+  accommodationId?: number | null;
+  transportId?: number | null;
   checkIn: string;
   checkOut: string;
   guestsCount: number;
@@ -19,7 +20,8 @@ export interface BookingDto {
 export interface CreateBookingRequest {
   tripId?: number;
   userId: number;
-  accommodationId: number;
+  accommodationId?: number;
+  transportId?: number;
   checkIn: string;
   checkOut: string;
   guestsCount: number;

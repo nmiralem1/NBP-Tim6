@@ -24,9 +24,11 @@ public class Booking {
     @Schema(description = "ID of the user who made the booking", example = "10")
     private Integer userId;
 
-    @NotNull(message = "Accommodation ID is required")
     @Schema(description = "ID of the booked accommodation", example = "3")
     private Integer accommodationId;
+
+    @Schema(description = "ID of the booked transport", example = "8")
+    private Integer transportId;
 
     @NotNull(message = "Check-in date is required")
     @Schema(description = "Check-in date", example = "2026-06-01")
