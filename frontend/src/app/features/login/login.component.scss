@@ -1,9 +1,9 @@
-// Color palette - Green shades
-$primary-green: #27ae60;
-$dark-green: #1e8449;
-$light-green: #d5f4e6;
-$pale-green: #f0f9f6;
-$accent-green: #52be80;
+// Color palette - Blue shades
+$primary-green: #2563eb;
+$dark-green: #1e40af;
+$light-green: #dbeafe;
+$pale-green: #f0f9ff;
+$accent-green: #3b82f6;
 $text-dark: #2c3e50;
 $text-light: #ecf0f1;
 $border-color: #bdc3c7;
@@ -12,7 +12,7 @@ $border-color: #bdc3c7;
 .login-container {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9f6 0%, #e8f8f5 100%);
+  background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%);
 }
 
 // Decoration side (left)
