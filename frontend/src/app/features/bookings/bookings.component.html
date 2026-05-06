@@ -111,14 +111,14 @@
             <button
               class="primary-btn review-btn"
               type="button"
-              [disabled]="booking.status !== 'confirmed'"
+              [disabled]="booking.status !== 'confirmed' || booking.type !== 'Accommodation'"
               (click)="openReviewModal(booking)"
             >
-              {{ booking.status === 'confirmed' ? 'Leave review' : 'Review unavailable' }}
+              {{ booking.status === 'confirmed' && booking.type === 'Accommodation' ? 'Leave review' : 'Review unavailable' }}
             </button>
 
-            <p class="date" *ngIf="booking.status !== 'confirmed'">
-              Reviews are available only for confirmed bookings.
+            <p class="date" *ngIf="booking.status !== 'confirmed' || booking.type !== 'Accommodation'">
+              Reviews are available only for confirmed accommodation bookings.
             </p>
           </div>
         </div>

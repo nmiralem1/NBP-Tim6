@@ -3,15 +3,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/services/auth.service';
+import { Trip, TripService } from '../../core/services/trip.service';
 
 interface TransportationOption {
   id: number;
+  fromCityId: number;
+  toCityId: number;
+  transportTypeId: number;
   provider: string;
   type: string;
   from: string;
   to: string;
   departureLocation: string;
   arrivalLocation: string;
+  rawDepartureTime: string;
+  rawArrivalTime: string;
   departureTime: string;
   arrivalTime: string;
   duration: string;
@@ -20,6 +27,7 @@ interface TransportationOption {
   available: boolean;
   amenities: string[];
   availableDate: string;
+  seatNumber?: string;
 }
 
 interface TransportApi {
@@ -73,6 +81,14 @@ export class TransportationComponent implements OnInit {
 
   minDate = this.getTodayDate();
 
+  myTrips: Trip[] = [];
+  showTripModal = false;
+  selectedTripId: number | null = null;
+  selectedTransport: TransportationOption | null = null;
+  isAddingToTrip = false;
+  addToTripError = '';
+  addToTripSuccess = '';
+
   private readonly transportApiUrl = `${environment.apiUrl}/transport`;
   private readonly transportTypesApiUrl = `${environment.apiUrl}/transport-types`;
   private readonly citiesApiUrl = `${environment.apiUrl}/cities`;
@@ -80,8 +96,15 @@ export class TransportationComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private tripService: TripService,
+    public authService: AuthService
   ) {}
+
+  private get currentUserId(): number | null {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user)?.id ?? null : null;
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -92,6 +115,14 @@ export class TransportationComponent implements OnInit {
 
       this.loadTransportationOptions();
     });
+
+    const userId = this.currentUserId;
+    if (userId) {
+      this.tripService.getTripsByUserId(userId).subscribe({
+        next: trips => this.myTrips = trips,
+        error: () => {}
+      });
+    }
   }
 
   loadTransportationOptions(): void {
@@ -124,12 +155,17 @@ export class TransportationComponent implements OnInit {
 
             return {
               id: transport.id,
+              fromCityId: transport.fromCityId,
+              toCityId: transport.toCityId,
+              transportTypeId: transport.transportTypeId,
               provider: transport.companyName || 'Transport provider',
               type: transportType?.name || 'Transport',
               from: fromCity?.name || 'Unknown city',
               to: toCity?.name || 'Unknown city',
               departureLocation: fromCity?.name || 'Unknown departure location',
               arrivalLocation: toCity?.name || 'Unknown arrival location',
+              rawDepartureTime: transport.departureTime || '',
+              rawArrivalTime: transport.arrivalTime || '',
               departureTime: this.formatTime(transport.departureTime),
               arrivalTime: this.formatTime(transport.arrivalTime),
               duration: this.formatDuration(transport.departureTime, transport.arrivalTime),
@@ -137,7 +173,8 @@ export class TransportationComponent implements OnInit {
               rating: 4.5,
               available: true,
               amenities: this.buildAmenities(transport),
-              availableDate: this.formatDate(transport.departureTime)
+              availableDate: this.formatDate(transport.departureTime),
+              seatNumber: transport.seatNumber
             };
           });
         })
@@ -155,8 +192,60 @@ export class TransportationComponent implements OnInit {
           console.error('Transportation loading failed:', error);
           this.transportationOptions = [];
           this.filteredTransportationOptions = [];
-        }
-      });
+      }
+    });
+  }
+
+  openTripModal(item: TransportationOption): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.selectedTransport = item;
+    this.selectedTripId = null;
+    this.addToTripError = '';
+    this.addToTripSuccess = '';
+    this.showTripModal = true;
+  }
+
+  confirmAddToTrip(): void {
+    if (!this.selectedTripId) {
+      this.addToTripError = 'Please select a trip.';
+      return;
+    }
+
+    if (!this.selectedTransport) {
+      this.addToTripError = 'Transport option is not available.';
+      return;
+    }
+
+    this.isAddingToTrip = true;
+    this.addToTripError = '';
+
+    this.http.post(this.transportApiUrl, {
+      tripId: this.selectedTripId,
+      fromCityId: this.selectedTransport.fromCityId,
+      toCityId: this.selectedTransport.toCityId,
+      transportTypeId: this.selectedTransport.transportTypeId,
+      companyName: this.selectedTransport.provider,
+      departureTime: this.selectedTransport.rawDepartureTime,
+      arrivalTime: this.selectedTransport.rawArrivalTime,
+      ticketPrice: this.selectedTransport.price,
+      seatNumber: this.selectedTransport.seatNumber || null,
+      bookingReference: null
+    }, { withCredentials: true, responseType: 'text' }).subscribe({
+      next: () => {
+        this.isAddingToTrip = false;
+        this.showTripModal = false;
+        this.addToTripSuccess = 'Transport added to your trip!';
+        setTimeout(() => this.addToTripSuccess = '', 3000);
+      },
+      error: err => {
+        this.isAddingToTrip = false;
+        this.addToTripError = err?.error || 'Failed to add transport to trip.';
+      }
+    });
   }
 
   filterTransportation(): void {

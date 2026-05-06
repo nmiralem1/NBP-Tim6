@@ -16,9 +16,10 @@ interface UserProfile {
 
 interface BookingView {
   id: number;
-  accommodationId: number;
+  accommodationId?: number | null;
+  transportId?: number | null;
   title: string;
-  type: 'Accommodation';
+  type: 'Accommodation' | 'Transport';
   bookingDate: string;
   status: string;
   location: string;
@@ -47,7 +48,7 @@ export class BookingsComponent implements OnInit {
   selectedType = '';
   selectedStatus = '';
 
-  bookingTypes: string[] = ['Accommodation'];
+  bookingTypes: string[] = ['Accommodation', 'Transport'];
   bookingStatuses: string[] = ['confirmed', 'pending', 'cancelled'];
 
   isReviewModalOpen = false;
@@ -115,11 +116,12 @@ export class BookingsComponent implements OnInit {
     return {
       id: item.id,
       accommodationId: item.accommodationId,
+      transportId: item.transportId,
       title: `Booking #${item.bookingReference || item.id}`,
-      type: 'Accommodation',
+      type: item.transportId ? 'Transport' : 'Accommodation',
       bookingDate: item.createdAt ? item.createdAt.split('T')[0] : '',
       status: (item.bookingStatus || '').toLowerCase(),
-      location: `Accommodation ID: ${item.accommodationId}`,
+      location: item.transportId ? `Transport ID: ${item.transportId}` : `Accommodation ID: ${item.accommodationId}`,
       price: item.totalPrice || 0,
       checkIn: item.checkIn,
       checkOut: item.checkOut,
@@ -158,6 +160,11 @@ export class BookingsComponent implements OnInit {
   openReviewModal(booking: BookingView): void {
     this.reviewError = '';
 
+    if (booking.type !== 'Accommodation') {
+      this.reviewError = 'Reviews are available only for accommodation bookings.';
+      return;
+    }
+
     if (booking.status !== 'confirmed') {
       this.reviewError = 'You can leave a review only for confirmed bookings.';
       return;
@@ -186,6 +193,11 @@ export class BookingsComponent implements OnInit {
     if (!this.selectedBooking) return;
 
     this.reviewError = '';
+
+    if (this.selectedBooking.type !== 'Accommodation' || !this.selectedBooking.accommodationId) {
+      this.reviewError = 'Reviews are available only for accommodation bookings.';
+      return;
+    }
 
     if (this.selectedBooking.status !== 'confirmed') {
       this.reviewError = 'You can leave a review only for confirmed bookings.';
@@ -245,6 +257,8 @@ export class BookingsComponent implements OnInit {
     switch (type) {
       case 'Accommodation':
         return 'type-accommodation';
+      case 'Transport':
+        return 'type-transport';
       default:
         return '';
     }

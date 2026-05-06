@@ -1,13 +1,19 @@
 package ba.unsa.etf.nbp_tim6.service;
 
 import ba.unsa.etf.nbp_tim6.dto.BookingCreatedDto;
+import ba.unsa.etf.nbp_tim6.model.Accommodation;
 import ba.unsa.etf.nbp_tim6.model.Booking;
+import ba.unsa.etf.nbp_tim6.model.Transport;
+import ba.unsa.etf.nbp_tim6.model.TripCity;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.AccommodationRepository;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.BookingRepository;
+import ba.unsa.etf.nbp_tim6.repository.abstraction.TransportRepository;
+import ba.unsa.etf.nbp_tim6.repository.abstraction.TripCityRepository;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import ba.unsa.etf.nbp_tim6.service.abstraction.BookingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
@@ -19,30 +25,61 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final AccommodationRepository accommodationRepository;
+    private final TransportRepository transportRepository;
     private final UserRepository userRepository;
+    private final TripCityRepository tripCityRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, AccommodationRepository accommodationRepository, UserRepository userRepository) {
+    public BookingServiceImpl(
+            BookingRepository bookingRepository,
+            AccommodationRepository accommodationRepository,
+            TransportRepository transportRepository,
+            UserRepository userRepository,
+            TripCityRepository tripCityRepository) {
         this.bookingRepository = bookingRepository;
         this.accommodationRepository = accommodationRepository;
+        this.transportRepository = transportRepository;
         this.userRepository = userRepository;
+        this.tripCityRepository = tripCityRepository;
     }
 
+    @Transactional
     public BookingCreatedDto createBooking(Booking booking) {
+        boolean accommodationBooking = booking.getAccommodationId() != null;
+        boolean transportBooking = booking.getTransportId() != null;
 
-        // Date validation
-        long days = ChronoUnit.DAYS.between(
-                booking.getCheckIn(),
-                booking.getCheckOut());
-
-        if (days <= 0) {
-            throw new RuntimeException("Check-out must be after check-in!");
+        if (accommodationBooking == transportBooking) {
+            throw new RuntimeException("Booking must contain exactly one accommodation or transport!");
         }
 
-        // Fetch price per night
-        BigDecimal pricePerNight = accommodationRepository.getPricePerNight(booking.getAccommodationId());
+        BigDecimal total;
 
-        // Calculate total price
-        BigDecimal total = pricePerNight.multiply(BigDecimal.valueOf(days));
+        if (accommodationBooking) {
+            long days = ChronoUnit.DAYS.between(
+                    booking.getCheckIn(),
+                    booking.getCheckOut());
+
+            if (days <= 0) {
+                throw new RuntimeException("Check-out must be after check-in!");
+            }
+
+            BigDecimal pricePerNight = accommodationRepository.getPricePerNight(booking.getAccommodationId());
+            total = pricePerNight.multiply(BigDecimal.valueOf(days));
+        } else {
+            if (booking.getGuestsCount() == null || booking.getGuestsCount() < 1) {
+                throw new RuntimeException("At least one traveler is required!");
+            }
+
+            Transport transport = transportRepository.findById(booking.getTransportId());
+            if (transport == null) {
+                throw new RuntimeException("Transport not found!");
+            }
+
+            total = transport.getTicketPrice().multiply(BigDecimal.valueOf(booking.getGuestsCount()));
+            if (booking.getTripId() == null) {
+                booking.setTripId(transport.getTripId());
+            }
+        }
+
         booking.setTotalPrice(total);
 
         // Set default status
@@ -54,7 +91,37 @@ public class BookingServiceImpl implements BookingService {
 
         // Save and return generated ID
         Integer bookingId = bookingRepository.saveAndReturnId(booking);
+        if (accommodationBooking) {
+            addAccommodationCityToTrip(booking);
+        }
         return new BookingCreatedDto(bookingId, total, ref);
+    }
+
+    private void addAccommodationCityToTrip(Booking booking) {
+        if (booking.getTripId() == null) {
+            return;
+        }
+
+        Accommodation accommodation = accommodationRepository.findById(booking.getAccommodationId());
+        if (accommodation == null || accommodation.getCityId() == null) {
+            return;
+        }
+
+        boolean alreadyInTrip = tripCityRepository.findByTripId(booking.getTripId()).stream()
+                .anyMatch(tripCity -> accommodation.getCityId().equals(tripCity.getCityId()));
+
+        if (alreadyInTrip) {
+            return;
+        }
+
+        TripCity tripCity = new TripCity();
+        tripCity.setTripId(booking.getTripId());
+        tripCity.setCityId(accommodation.getCityId());
+        tripCity.setArrivalDate(booking.getCheckIn());
+        tripCity.setDepartureDate(booking.getCheckOut());
+        tripCity.setNotes("Stay added from hotel booking");
+
+        tripCityRepository.save(tripCity);
     }
 
     @Override

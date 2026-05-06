@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EnrichedTrip, TripActivity, TripService } from '../../core/services/trip.service';
+import { EnrichedTrip, TripActivity, TripService, TripStop } from '../../core/services/trip.service';
 import { BookingDto, BookingService } from '../../core/services/booking.service';
 import { Activity, ActivityService } from '../../core/services/activity.service';
+import { TransportListItem, TransportService } from '../../core/services/transport.service';
+import { AccommodationService } from '../../core/services/accommodation.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -13,6 +15,8 @@ export class TripDetailsComponent implements OnInit {
   travelPlan: EnrichedTrip | null = null;
   tripBookings: BookingDto[] = [];
   tripActivities: TripActivity[] = [];
+  tripTransports: TransportListItem[] = [];
+  hotelCityStops: TripStop[] = [];
   activitiesMap: Map<number, Activity> = new Map();
 
   bookingInfo = {
@@ -31,7 +35,9 @@ export class TripDetailsComponent implements OnInit {
     private router: Router,
     private tripService: TripService,
     private bookingService: BookingService,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private transportService: TransportService,
+    private accommodationService: AccommodationService
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +59,7 @@ export class TripDetailsComponent implements OnInit {
       this.loadTravelPlan(id);
       this.loadTripBookings(id);
       this.loadTripActivities(id);
+      this.loadTripTransports(id);
     });
   }
 
@@ -78,8 +85,45 @@ export class TripDetailsComponent implements OnInit {
 
   loadTripBookings(tripId: number): void {
     this.bookingService.getBookingsByTripId(tripId).subscribe({
-      next: bookings => this.tripBookings = bookings,
+      next: bookings => {
+        this.tripBookings = bookings;
+        this.loadHotelCityStops(bookings);
+      },
       error: () => {}
+    });
+  }
+
+  loadHotelCityStops(bookings: BookingDto[]): void {
+    this.hotelCityStops = [];
+
+    bookings.forEach(booking => {
+      if (!booking.accommodationId) {
+        return;
+      }
+
+      this.accommodationService.getAccommodationById(booking.accommodationId).subscribe({
+        next: accommodation => {
+          const alreadyAdded = this.hotelCityStops.some(stop => stop.cityId === accommodation.cityId);
+          if (alreadyAdded) {
+            return;
+          }
+
+          this.hotelCityStops = [
+            ...this.hotelCityStops,
+            {
+              id: -booking.id,
+              cityId: accommodation.cityId,
+              cityName: accommodation.cityName,
+              countryName: accommodation.countryName,
+              imageUrl: accommodation.imageUrl,
+              arrivalDate: booking.checkIn,
+              departureDate: booking.checkOut,
+              notes: `Stay at ${accommodation.name}`
+            }
+          ];
+        },
+        error: () => {}
+      });
     });
   }
 
@@ -98,8 +142,62 @@ export class TripDetailsComponent implements OnInit {
     });
   }
 
+  loadTripTransports(tripId: number): void {
+    this.transportService.getTransportByTripId(tripId).subscribe({
+      next: transports => this.tripTransports = transports,
+      error: () => {}
+    });
+  }
+
   getActivity(activityId: number): Activity | undefined {
     return this.activitiesMap.get(activityId);
+  }
+
+  get hotelBookings(): BookingDto[] {
+    return this.tripBookings.filter(booking => !!booking.accommodationId);
+  }
+
+  get accommodationTotal(): number {
+    return this.hotelBookings.reduce((sum, booking) => sum + Number(booking.totalPrice || 0), 0);
+  }
+
+  get activitiesTotal(): number {
+    return this.tripActivities.reduce((sum, tripActivity) => {
+      const activity = this.getActivity(tripActivity.activityId);
+      return sum + Number(activity?.price || 0);
+    }, 0);
+  }
+
+  get transportTotal(): number {
+    return this.tripTransports.reduce((sum, transport) => sum + Number(transport.price || 0), 0);
+  }
+
+  get tripTotal(): number {
+    return this.accommodationTotal + this.activitiesTotal + this.transportTotal;
+  }
+
+  get displayedStops(): TripStop[] {
+    const stops = [...(this.travelPlan?.stops || [])];
+
+    this.hotelCityStops.forEach(hotelStop => {
+      if (!stops.some(stop => stop.cityId === hotelStop.cityId)) {
+        stops.push(hotelStop);
+      }
+    });
+
+    return stops.sort((a, b) => new Date(a.arrivalDate).getTime() - new Date(b.arrivalDate).getTime());
+  }
+
+  getTransportBooking(transportId: number): BookingDto | undefined {
+    return this.tripBookings.find(booking => booking.transportId === transportId);
+  }
+
+  isTransportPaid(transportId: number): boolean {
+    return this.getTransportBooking(transportId)?.bookingStatus === 'confirmed';
+  }
+
+  getTransportReference(transport: TransportListItem): string {
+    return this.getTransportBooking(transport.id)?.bookingReference || `TR-${transport.id}`;
   }
 
   removeActivity(tripActivityId: number): void {
@@ -117,6 +215,39 @@ export class TripDetailsComponent implements OnInit {
         tripId: booking.tripId,
         bookingId: booking.id,
         totalPrice: booking.totalPrice
+      }
+    });
+  }
+
+  payTransport(transport: TransportListItem): void {
+    const existingBooking = this.getTransportBooking(transport.id);
+
+    this.router.navigate(['/book/transport', transport.id], {
+      queryParams: {
+        type: 'transport',
+        tripId: transport.tripId,
+        bookingId: existingBooking?.id || null,
+        totalPrice: existingBooking?.totalPrice || null,
+        bookingReference: existingBooking?.bookingReference || '',
+        provider: transport.provider,
+        transportType: transport.type,
+        from: transport.from,
+        to: transport.to,
+        fromCityId: transport.fromCityId,
+        toCityId: transport.toCityId,
+        transportTypeId: transport.transportTypeId,
+        departureLocation: transport.from,
+        arrivalLocation: transport.to,
+        departureTime: transport.departureTime,
+        arrivalTime: transport.arrivalTime,
+        rawDepartureTime: transport.rawDepartureTime,
+        rawArrivalTime: transport.rawArrivalTime,
+        duration: transport.duration,
+        price: transport.price,
+        seatNumber: transport.seatNumber === 'Not assigned' ? '' : transport.seatNumber,
+        checkIn: transport.availableDate,
+        checkOut: transport.availableDate,
+        guests: 1
       }
     });
   }

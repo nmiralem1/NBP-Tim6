@@ -78,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
                     user.getEmail(),
                     fullName.isBlank() ? user.getUsername() : fullName,
                     String.valueOf(booking.getId()),
-                    booking.getTotalPrice() + " EUR"
+                    booking.getTotalPrice() + " KM"
             );
         }
     }

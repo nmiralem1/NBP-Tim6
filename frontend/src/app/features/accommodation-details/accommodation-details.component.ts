@@ -215,7 +215,7 @@ export class AccommodationDetailsComponent implements OnInit {
       },
       error: (err) => {
         this.isAddingToTrip = false;
-        this.addToTripError = err?.error?.message || 'Failed to add to trip.';
+        this.addToTripError = err?.error?.message || err?.error || 'Failed to add to trip.';
       }
     });
   }

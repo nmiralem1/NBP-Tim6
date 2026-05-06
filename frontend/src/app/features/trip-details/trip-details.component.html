@@ -48,6 +48,11 @@
           <label>Budget</label>
           <p class="price-value">{{ travelPlan.budget }} KM</p>
         </div>
+
+        <div class="filter-group">
+          <label>Estimated cost</label>
+          <p class="price-value">{{ tripTotal | number:'1.2-2' }} KM</p>
+        </div>
       </div>
     </aside>
 
@@ -69,7 +74,8 @@
             <span class="info-chip">{{ travelPlan.durationDays }} days</span>
             <span class="info-chip">{{ travelPlan.statusLabel }}</span>
             <span class="info-chip">{{ travelPlan.budget }} KM budget</span>
-            <span class="info-chip">{{ travelPlan.stops.length || 1 }} {{ travelPlan.stops.length === 1 ? 'city' : 'cities' }}</span>
+            <span class="info-chip">{{ tripTotal | number:'1.2-2' }} KM estimated</span>
+            <span class="info-chip">{{ displayedStops.length || 1 }} {{ displayedStops.length === 1 ? 'city' : 'cities' }}</span>
           </div>
         </div>
       </section>
@@ -92,7 +98,7 @@
         </div>
 
         <div class="agenda-list">
-          <div class="agenda-card" *ngFor="let stop of travelPlan.stops; let index = index">
+          <div class="agenda-card" *ngFor="let stop of displayedStops; let index = index">
             <div class="agenda-day">
               City {{ index + 1 }}
             </div>
@@ -119,12 +125,13 @@
         </div>
       </section>
 
-      <section class="content-section" *ngIf="tripBookings.length > 0">
+      <section class="content-section" *ngIf="hotelBookings.length > 0">
         <div class="section-header">
           <h2>Hotels in this trip</h2>
+          <p class="section-total">Total: {{ accommodationTotal | number:'1.2-2' }} KM</p>
         </div>
         <div class="trip-bookings-list">
-          <div class="trip-booking-card" *ngFor="let b of tripBookings">
+          <div class="trip-booking-card" *ngFor="let b of hotelBookings">
             <div class="trip-booking-info">
               <p class="booking-ref">Ref: {{ b.bookingReference }}</p>
               <p>Check-in: {{ b.checkIn }} &nbsp;→&nbsp; Check-out: {{ b.checkOut }}</p>
@@ -142,9 +149,42 @@
         </div>
       </section>
 
+      <section class="content-section" *ngIf="tripTransports.length > 0">
+        <div class="section-header">
+          <h2>Transport in this trip</h2>
+          <p class="section-total">Total: {{ transportTotal | number:'1.2-2' }} KM</p>
+        </div>
+        <div class="trip-bookings-list">
+          <div class="trip-booking-card" *ngFor="let transport of tripTransports">
+            <div class="trip-booking-info">
+              <p class="booking-ref">Ref: {{ getTransportReference(transport) }}</p>
+              <p><strong>{{ transport.provider }} · {{ transport.type }}</strong></p>
+              <p>{{ transport.from }} &nbsp;→&nbsp; {{ transport.to }}</p>
+              <p>Departure: {{ transport.availableDate }} at {{ transport.departureTime }}</p>
+              <p>Arrival: {{ transport.arrivalTime }} &nbsp;·&nbsp; Duration: {{ transport.duration }}</p>
+              <p>Total: {{ transport.price | number:'1.2-2' }} KM</p>
+              <span
+                class="status-chip"
+                [class.confirmed]="isTransportPaid(transport.id)"
+                *ngIf="transport.seatNumber">
+                {{ transport.seatNumber }}
+              </span>
+            </div>
+            <button
+              class="pay-btn"
+              *ngIf="!isTransportPaid(transport.id)"
+              (click)="payTransport(transport)">
+              Pay now
+            </button>
+            <span class="paid-badge" *ngIf="isTransportPaid(transport.id)">Paid</span>
+          </div>
+        </div>
+      </section>
+
       <section class="content-section" *ngIf="tripActivities.length > 0">
         <div class="section-header">
           <h2>Activities in this trip</h2>
+          <p class="section-total">Total: {{ activitiesTotal | number:'1.2-2' }} KM</p>
         </div>
         <div class="trip-bookings-list">
           <div class="trip-booking-card" *ngFor="let ta of tripActivities">
@@ -191,6 +231,11 @@
           <div class="info-box">
             <h3>Budget</h3>
             <p>{{ travelPlan.budget }} KM</p>
+          </div>
+
+          <div class="info-box">
+            <h3>Estimated cost</h3>
+            <p>{{ tripTotal | number:'1.2-2' }} KM</p>
           </div>
 
           <div class="info-box">

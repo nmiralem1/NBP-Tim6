@@ -120,6 +120,14 @@
             >
               {{ item.available ? 'Book now' : 'Unavailable' }}
             </button>
+            <button
+              class="secondary-action-btn"
+              type="button"
+              [disabled]="!item.available"
+              (click)="openTripModal(item)"
+            >
+              Add to my trip
+            </button>
           </div>
         </div>
       </div>
@@ -130,4 +138,38 @@
     </main>
 
   </div>
+
+  <div class="modal-overlay" *ngIf="showTripModal" (click)="showTripModal = false">
+    <div class="trip-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Add transport to trip</h2>
+        <button class="close-btn" type="button" (click)="showTripModal = false">×</button>
+      </div>
+
+      <div *ngIf="myTrips.length === 0" class="empty-trips">
+        <p>You have no trips yet.</p>
+        <a routerLink="/trips" (click)="showTripModal = false">Create one first</a>
+      </div>
+
+      <div *ngIf="myTrips.length > 0">
+        <p class="error-message" *ngIf="addToTripError">{{ addToTripError }}</p>
+
+        <div class="filter-group">
+          <label>Select trip</label>
+          <select [(ngModel)]="selectedTripId">
+            <option [ngValue]="null" disabled>Choose a trip...</option>
+            <option *ngFor="let trip of myTrips" [ngValue]="trip.id">
+              {{ trip.title }} ({{ trip.startDate }} - {{ trip.endDate }})
+            </option>
+          </select>
+        </div>
+
+        <button class="primary-btn" type="button" (click)="confirmAddToTrip()" [disabled]="isAddingToTrip">
+          {{ isAddingToTrip ? 'Adding...' : 'Add to trip' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="success-message" *ngIf="addToTripSuccess">{{ addToTripSuccess }}</p>
 </div>
