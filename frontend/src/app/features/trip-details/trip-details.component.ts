@@ -144,7 +144,7 @@ export class TripDetailsComponent implements OnInit {
 
   loadTripTransports(tripId: number): void {
     this.transportService.getTransportByTripId(tripId).subscribe({
-      next: transports => this.tripTransports = transports,
+      next: (transports: TransportListItem[]) => this.tripTransports = transports,
       error: () => {}
     });
   }
