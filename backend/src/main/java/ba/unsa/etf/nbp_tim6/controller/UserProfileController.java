@@ -5,6 +5,10 @@ import ba.unsa.etf.nbp_tim6.model.ProfileImage;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,11 +63,12 @@ public class UserProfileController {
     @PutMapping("/me")
     public ResponseEntity<User> updateMyProfile(
             Authentication authentication,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            @RequestBody(
                     description = "User profile update data",
-                    required = true
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = UpdateProfileRequest.class))
             )
-            @RequestBody UpdateProfileRequest request
+            @org.springframework.web.bind.annotation.RequestBody UpdateProfileRequest request
     ) {
         String currentUsername = authentication.getName();
 
@@ -95,6 +100,12 @@ public class UserProfileController {
     @PostMapping(value = "/me/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadMyProfileImage(
             Authentication authentication,
+            @Parameter(
+                    name = "file",
+                    description = "Image file to upload (JPG, PNG, or WEBP, max 2MB)",
+                    required = true,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
             @RequestParam("file") MultipartFile file
     ) throws IOException {
         String username = authentication.getName();
