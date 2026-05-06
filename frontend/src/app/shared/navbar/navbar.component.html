@@ -15,7 +15,18 @@
 
   <div class="nav-actions">
     <div class="user-container" *ngIf="authService.isLoggedIn(); else loginBtn">
-      <div class="user-profile" (click)="toggleMenu()">👤</div>
+      <div class="user-profile" (click)="toggleMenu()">
+        <img
+          *ngIf="navbarProfileImageUrl; else defaultUserIcon"
+          [src]="navbarProfileImageUrl"
+          alt="Profile image"
+          class="navbar-profile-image"
+        />
+
+        <ng-template #defaultUserIcon>
+          <span class="default-user-icon">👤</span>
+        </ng-template>
+      </div>
 
       <div class="dropdown-menu" [class.show]="isMenuOpen">
         <a routerLink="/profile" (click)="closeMenu()">My Profile</a>

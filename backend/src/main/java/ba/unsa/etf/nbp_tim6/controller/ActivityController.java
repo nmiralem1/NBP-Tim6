@@ -27,6 +27,21 @@ public class ActivityController {
     }
 
     @Operation(
+            summary = "Get activities by trip ID",
+            description = "Returns all activities associated with a specific trip"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Activities retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
+    @GetMapping("/trip/{tripId}")
+    public List<Activity> getActivitiesByTripId(
+            @Parameter(description = "ID of the trip", example = "5")
+            @PathVariable Integer tripId) {
+        return activityService.getActivitiesByTripId(tripId);
+    }
+
+    @Operation(
             summary = "Get all activities",
             description = "Returns a list of all activities"
     )
@@ -71,21 +86,6 @@ public class ActivityController {
             @Parameter(description = "ID of the activity", example = "1")
             @PathVariable Integer id) {
         return activityService.getActivityById(id);
-    }
-
-    @Operation(
-            summary = "Get activities by trip ID",
-            description = "Returns all activities associated with a specific trip"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Activities retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Trip not found")
-    })
-    @GetMapping("/trip/{tripId}")
-    public List<Activity> getActivitiesByTripId(
-            @Parameter(description = "ID of the trip", example = "5")
-            @PathVariable Integer tripId) {
-        return activityService.getActivitiesByTripId(tripId);
     }
 
     @Operation(

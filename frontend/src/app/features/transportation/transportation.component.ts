@@ -291,6 +291,13 @@ export class TransportationComponent implements OnInit {
       return;
     }
 
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     if (!this.isBookingFormValid()) {
       return;
     }

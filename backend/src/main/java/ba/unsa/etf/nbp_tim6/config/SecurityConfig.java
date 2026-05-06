@@ -39,11 +39,15 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/cities", "/api/cities/**",
                                 "/api/trips", "/api/trips/**",
+                                "/api/transport", "/api/transport/**",
+                                "/api/transport-types", "/api/transport-types/**",
                                 "/api/trip-cities", "/api/trip-cities/**",
                                 "/api/accommodations", "/api/accommodations/**",
                                 "/api/activities", "/api/activities/**",
                                 "/api/reviews", "/api/reviews/**",
                                 "/api/payment-methods", "/api/payment-methods/**",
+                                "/api/transport", "/api/transport/**",
+                                "/api/transport-types", "/api/transport-types/**",
                                 "/api/bookings/trip/**",
                                 "/api/trip-activities/trip/**")
                         .permitAll()

@@ -38,7 +38,11 @@ public class ActivityRepositoryImpl implements ActivityRepository {
         activity.setImageUrl(rs.getString("IMAGE_URL"));
         return activity;
     };
-
+    @Override
+    public List<Activity> findAll() {
+        String sql = "SELECT * FROM NBPT6.ACTIVITIES ORDER BY ID";
+        return jdbcTemplate.query(sql, activityRowMapper);
+    }
     @Override
     public int save(Activity activity) {
         String sql = """
@@ -65,12 +69,6 @@ public class ActivityRepositoryImpl implements ActivityRepository {
         String sql = "SELECT * FROM NBPT6.ACTIVITIES WHERE ID = ?";
         List<Activity> results = jdbcTemplate.query(sql, activityRowMapper, id);
         return results.isEmpty() ? null : results.get(0);
-    }
-
-    @Override
-    public List<Activity> findAll() {
-        String sql = "SELECT * FROM NBPT6.ACTIVITIES ORDER BY ID";
-        return jdbcTemplate.query(sql, activityRowMapper);
     }
 
     @Override

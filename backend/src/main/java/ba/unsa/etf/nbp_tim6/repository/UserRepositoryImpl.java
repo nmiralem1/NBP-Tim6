@@ -1,10 +1,12 @@
 package ba.unsa.etf.nbp_tim6.repository;
 
+import ba.unsa.etf.nbp_tim6.model.ProfileImage;
 import ba.unsa.etf.nbp_tim6.model.User;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import java.io.ByteArrayInputStream;
 
 import java.util.List;
 import java.util.Optional;
@@ -95,5 +97,73 @@ public class UserRepositoryImpl implements UserRepository {
         jdbcTemplate.update(sql, firstName, lastName, username, email, phone, id);
 
         return findById(id).orElseThrow();
+    }
+
+    @Override
+    public void saveProfileImage(Integer userId, byte[] imageData, String contentType, String fileName) {
+        String updateSql = """
+            UPDATE NBPT6.USER_PROFILES
+            SET PROFILE_IMAGE = ?,
+                PROFILE_IMAGE_CONTENT_TYPE = ?,
+                PROFILE_IMAGE_FILE_NAME = ?
+            WHERE USER_ID = ?
+            """;
+
+        int updatedRows = jdbcTemplate.update(updateSql, ps -> {
+            ps.setBinaryStream(1, new ByteArrayInputStream(imageData), imageData.length);
+            ps.setString(2, contentType);
+            ps.setString(3, fileName);
+            ps.setInt(4, userId);
+        });
+
+        if (updatedRows == 0) {
+            String insertSql = """
+                INSERT INTO NBPT6.USER_PROFILES (
+                    USER_ID,
+                    IMAGE_URL,
+                    BIO,
+                    PROFILE_IMAGE,
+                    PROFILE_IMAGE_CONTENT_TYPE,
+                    PROFILE_IMAGE_FILE_NAME
+                )
+                VALUES (
+                    ?,
+                    'assets/images/avatar-1.jpg',
+                    NULL,
+                    ?,
+                    ?,
+                    ?
+                )
+                """;
+
+            jdbcTemplate.update(insertSql, ps -> {
+                ps.setInt(1, userId);
+                ps.setBinaryStream(2, new ByteArrayInputStream(imageData), imageData.length);
+                ps.setString(3, contentType);
+                ps.setString(4, fileName);
+            });
+        }
+    }
+
+    @Override
+    public Optional<ProfileImage> findProfileImageByUserId(Integer userId) {
+        String sql = """
+                SELECT PROFILE_IMAGE, PROFILE_IMAGE_CONTENT_TYPE, PROFILE_IMAGE_FILE_NAME
+                FROM NBPT6.USER_PROFILES
+                WHERE USER_ID = ?
+                  AND PROFILE_IMAGE IS NOT NULL
+                """;
+
+        List<ProfileImage> images = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> new ProfileImage(
+                        rs.getBytes("PROFILE_IMAGE"),
+                        rs.getString("PROFILE_IMAGE_CONTENT_TYPE"),
+                        rs.getString("PROFILE_IMAGE_FILE_NAME")
+                ),
+                userId
+        );
+
+        return images.stream().findFirst();
     }
 }
