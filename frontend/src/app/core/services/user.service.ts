@@ -37,4 +37,21 @@ export class UserService {
       withCredentials: true
     });
   }
+
+  uploadProfileImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.apiUrl}/me/profile-image`, formData, {
+      responseType: 'text',
+      withCredentials: true
+    });
+  }
+
+  getProfileImage(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/me/profile-image`, {
+      responseType: 'blob',
+      withCredentials: true
+    });
+  }
 }
