@@ -7,6 +7,7 @@ import ba.unsa.etf.nbp_tim6.repository.abstraction.BookingRepository;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.PaymentRepository;
 import ba.unsa.etf.nbp_tim6.repository.abstraction.UserRepository;
 import ba.unsa.etf.nbp_tim6.service.abstraction.EmailService;
+import ba.unsa.etf.nbp_tim6.service.abstraction.InvoiceService;
 import ba.unsa.etf.nbp_tim6.service.abstraction.PaymentService;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +20,20 @@ public class PaymentServiceImpl implements PaymentService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final InvoiceService invoiceService;
 
     public PaymentServiceImpl(
             PaymentRepository repository,
             BookingRepository bookingRepository,
             UserRepository userRepository,
-            EmailService emailService
+            EmailService emailService,
+            InvoiceService invoiceService
     ) {
         this.repository = repository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.invoiceService = invoiceService;
     }
 
     @Override
@@ -80,6 +84,17 @@ public class PaymentServiceImpl implements PaymentService {
                     String.valueOf(booking.getId()),
                     booking.getTotalPrice() + " KM"
             );
+
+            // Resolve the saved payment ID so the invoice FK is correct
+            Payment savedPayment = repository.findByBookingId(payment.getBookingId());
+            if (savedPayment != null) {
+                try {
+                    invoiceService.generateAndSave(savedPayment, booking, user);
+                } catch (Exception e) {
+                    // Invoice generation failure must not roll back the payment
+                    System.err.println("Invoice generation failed for booking " + booking.getId() + ": " + e.getMessage());
+                }
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 ------------------------------------------------------------
 -- CLEANUP (Private Schema)
 ------------------------------------------------------------
+DELETE FROM NBPT6.INVOICES;
 DELETE FROM NBPT6.REVIEWS;
 DELETE FROM NBPT6.PAYMENTS;
 DELETE FROM NBPT6.BOOKINGS;

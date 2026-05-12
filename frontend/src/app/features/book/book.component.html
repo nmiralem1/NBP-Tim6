@@ -253,6 +253,16 @@
         <strong>{{ createdBooking.bookingReference }}</strong>
       </div>
 
+      <button
+        class="invoice-btn"
+        type="button"
+        (click)="downloadInvoice()"
+        [disabled]="isDownloadingInvoice"
+      >
+        <span class="invoice-icon">⬇</span>
+        {{ isDownloadingInvoice ? 'Preparing invoice...' : 'Download Invoice (PDF)' }}
+      </button>
+
       <button class="primary-btn" type="button" (click)="goToBookings()">
         {{ bookingType === 'transport' ? 'Back to trip' : 'View my bookings' }}
       </button>

@@ -363,6 +363,42 @@
   }
 }
 
+// Invoice download button
+.invoice-btn {
+  width: 100%;
+  padding: 13px;
+  background: #fff;
+  color: #1e3a8a;
+  border: 2px solid #1e3a8a;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  .invoice-icon {
+    font-size: 16px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #1e3a8a;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30,58,138,0.25);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 // Success state
 .success-container {
   max-width: 480px;
