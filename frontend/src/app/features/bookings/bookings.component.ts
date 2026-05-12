@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { BookingDto, BookingService } from '../../core/services/booking.service';
 import { ReviewService } from '../../core/services/review.service';
+import { InvoiceService } from '../../core/services/invoice.service';
 
 interface UserProfile {
   id?: number;
@@ -62,10 +63,13 @@ export class BookingsComponent implements OnInit {
   reviewError = '';
   isSubmittingReview = false;
 
+  downloadingInvoiceId: number | null = null;
+
   constructor(
     public authService: AuthService,
     private bookingService: BookingService,
     private reviewService: ReviewService,
+    private invoiceService: InvoiceService,
     private router: Router
   ) {}
 
@@ -275,6 +279,25 @@ export class BookingsComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  downloadInvoice(booking: BookingView): void {
+    this.downloadingInvoiceId = booking.id;
+
+    this.invoiceService.downloadPdfByBookingId(booking.id).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice-${booking.bookingReference || booking.id}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.downloadingInvoiceId = null;
+      },
+      error: () => {
+        this.downloadingInvoiceId = null;
+      }
+    });
   }
 
   getStarArray(): number[] {
