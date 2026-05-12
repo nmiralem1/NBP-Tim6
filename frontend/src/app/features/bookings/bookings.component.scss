@@ -315,6 +315,36 @@
   min-width: 160px;
 }
 
+.booking-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.invoice-btn {
+  border: 2px solid #1d4ed8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #1d4ed8;
+  transition: 0.2s ease;
+  min-width: 160px;
+
+  &:hover:not(:disabled) {
+    background: #1d4ed8;
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
 .empty-state {
   margin-top: 16px;
   font-size: 15px;

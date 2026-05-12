@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AccommodationDetailsItem, AccommodationService } from '../../core/services/accommodation.service';
 import { BookingService, BookingCreatedResponse } from '../../core/services/booking.service';
 import { PaymentService, PaymentMethod } from '../../core/services/payment.service';
+import { InvoiceService } from '../../core/services/invoice.service';
 import { UserService } from '../../core/services/user.service';
 import { environment } from '../../../environments/environment';
 
@@ -62,6 +63,7 @@ export class BookComponent implements OnInit {
 
   isLoadingBooking = false;
   isProcessingPayment = false;
+  isDownloadingInvoice = false;
   bookingError = '';
   paymentError = '';
 
@@ -74,6 +76,7 @@ export class BookComponent implements OnInit {
     private accommodationService: AccommodationService,
     private bookingService: BookingService,
     private paymentService: PaymentService,
+    private invoiceService: InvoiceService,
     private userService: UserService
   ) {}
 
@@ -431,6 +434,26 @@ export class BookComponent implements OnInit {
       error: () => {
         this.isProcessingPayment = false;
         this.currentStep = 'success';
+      }
+    });
+  }
+
+  downloadInvoice(): void {
+    if (!this.createdBooking) return;
+    this.isDownloadingInvoice = true;
+
+    this.invoiceService.downloadPdfByBookingId(this.createdBooking.bookingId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `invoice-${this.createdBooking!.bookingReference || this.createdBooking!.bookingId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.isDownloadingInvoice = false;
+      },
+      error: () => {
+        this.isDownloadingInvoice = false;
       }
     });
   }

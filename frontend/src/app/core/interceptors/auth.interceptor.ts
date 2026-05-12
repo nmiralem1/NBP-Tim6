@@ -39,10 +39,10 @@ export class AuthInterceptor implements HttpInterceptor {
                 }),
                 catchError((err) => {
                 this.isRefreshing = false;
-                this.authService.logout().subscribe({
-                    next: () => {},
-                    error: () => {}
-                });
+                // Only clear local auth state — don't make a backend call here.
+                // Calling logout() from inside the interceptor creates a cascade
+                // where the logout HTTP request itself can trigger another 401 cycle.
+                this.authService.clearLocalAuth();
                 return throwError(() => err);
                 })
             );

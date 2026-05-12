@@ -8,6 +8,8 @@ public interface PaymentRepository {
 
     Payment findById(Integer id);
 
+    Payment findByBookingId(Integer bookingId);
+
     List<Payment> findByTripId(Integer tripId);
 
     List<Payment> findByUserId(Integer userId);

@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private baseUrl = 'http://localhost:8080/api/auth';
+    private baseUrl = `${environment.apiUrl}/auth`;
     private currentUserSubject = new BehaviorSubject<any>(null);
     public currentUser = this.currentUserSubject.asObservable();
 
@@ -34,13 +35,17 @@ export class AuthService {
     }
 
     logout(): Observable<any> {
-        return this.http.post<any>(`${this.baseUrl}/logout`, {}, { withCredentials: true })
-            .pipe(
-                tap(() => {
-                    localStorage.removeItem('currentUser');
-                    this.currentUserSubject.next(null);
-                })
-            );
+        // Clear local state immediately so the UI updates right away,
+        // regardless of whether the backend call succeeds.
+        localStorage.removeItem('currentUser');
+        this.currentUserSubject.next(null);
+
+        return this.http.post<any>(`${this.baseUrl}/logout`, {}, { withCredentials: true });
+    }
+
+    clearLocalAuth(): void {
+        localStorage.removeItem('currentUser');
+        this.currentUserSubject.next(null);
     }
 
     refreshToken(): Observable<any> {

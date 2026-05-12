@@ -31,6 +31,13 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
+    public Payment findByBookingId(Integer bookingId) {
+        String sql = "SELECT ID, TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS FROM NBPT6.PAYMENTS WHERE BOOKING_ID = ? ORDER BY PAYMENT_DATE DESC FETCH FIRST 1 ROWS ONLY";
+        List<Payment> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Payment.class), bookingId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
     public List<Payment> findByTripId(Integer tripId) {
         String sql = "SELECT ID, TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS FROM NBPT6.PAYMENTS WHERE TRIP_ID = ?";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Payment.class), tripId);

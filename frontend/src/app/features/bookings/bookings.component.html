@@ -108,14 +108,25 @@
               <p class="review-rating">Rating: {{ booking.reviewRating }} / 5</p>
             </div>
 
-            <button
-              class="primary-btn review-btn"
-              type="button"
-              [disabled]="booking.status !== 'confirmed' || booking.type !== 'Accommodation'"
-              (click)="openReviewModal(booking)"
-            >
-              {{ booking.status === 'confirmed' && booking.type === 'Accommodation' ? 'Leave review' : 'Review unavailable' }}
-            </button>
+            <div class="booking-actions">
+              <button
+                class="primary-btn review-btn"
+                type="button"
+                [disabled]="booking.status !== 'confirmed' || booking.type !== 'Accommodation'"
+                (click)="openReviewModal(booking)"
+              >
+                {{ booking.status === 'confirmed' && booking.type === 'Accommodation' ? 'Leave review' : 'Review unavailable' }}
+              </button>
+
+              <button
+                class="invoice-btn"
+                type="button"
+                [disabled]="booking.status !== 'confirmed' || downloadingInvoiceId === booking.id"
+                (click)="downloadInvoice(booking)"
+              >
+                {{ downloadingInvoiceId === booking.id ? 'Downloading...' : 'Download Invoice' }}
+              </button>
+            </div>
 
             <p class="date" *ngIf="booking.status !== 'confirmed' || booking.type !== 'Accommodation'">
               Reviews are available only for confirmed accommodation bookings.
