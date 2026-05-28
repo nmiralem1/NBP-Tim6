@@ -19,28 +19,81 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public List<Review> findAll() {
-        String sql = "SELECT r.id, r.user_id as userId, r.accommodation_id as accommodationId, r.activity_id as activityId, r.rating, r.note, r.created_at as createdAt, (u.first_name || ' ' || u.last_name) as userName "
-                +
-                "FROM reviews r JOIN nbp.nbp_user u ON r.user_id = u.id";
+        String sql = """
+                SELECT
+                    id,
+                    user_id AS userId,
+                    accommodation_id AS accommodationId,
+                    activity_id AS activityId,
+                    rating,
+                    note,
+                    created_at AS createdAt,
+                    user_name AS userName,
+                    user_location AS userLocation
+                FROM NBPT6.V_REVIEWS_WITH_USER
+                """;
+
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class));
     }
 
     @Override
     public Review findById(Integer id) {
-        String sql = "SELECT id, user_id, accommodation_id, activity_id, rating, note, created_at FROM reviews WHERE id = ?";
+        String sql = """
+                SELECT
+                    id,
+                    user_id AS userId,
+                    accommodation_id AS accommodationId,
+                    activity_id AS activityId,
+                    rating,
+                    note,
+                    created_at AS createdAt,
+                    user_name AS userName,
+                    user_location AS userLocation
+                FROM NBPT6.V_REVIEWS_WITH_USER
+                WHERE id = ?
+                """;
+
         List<Review> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class), id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public List<Review> findByAccommodationId(Integer accommodationId) {
-        String sql = "SELECT id, user_id, accommodation_id, activity_id, rating, note, created_at FROM reviews WHERE accommodation_id = ?";
+        String sql = """
+                SELECT
+                    id,
+                    user_id AS userId,
+                    accommodation_id AS accommodationId,
+                    activity_id AS activityId,
+                    rating,
+                    note,
+                    created_at AS createdAt,
+                    user_name AS userName,
+                    user_location AS userLocation
+                FROM NBPT6.V_REVIEWS_WITH_USER
+                WHERE accommodation_id = ?
+                """;
+
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class), accommodationId);
     }
 
     @Override
     public List<Review> findByActivityId(Integer activityId) {
-        String sql = "SELECT id, user_id, accommodation_id, activity_id, rating, note, created_at FROM reviews WHERE activity_id = ?";
+        String sql = """
+                SELECT
+                    id,
+                    user_id AS userId,
+                    accommodation_id AS accommodationId,
+                    activity_id AS activityId,
+                    rating,
+                    note,
+                    created_at AS createdAt,
+                    user_name AS userName,
+                    user_location AS userLocation
+                FROM NBPT6.V_REVIEWS_WITH_USER
+                WHERE activity_id = ?
+                """;
+
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class), activityId);
     }
 
