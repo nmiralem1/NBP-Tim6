@@ -22,33 +22,59 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> findById(Integer id) {
-        String sql = "SELECT u.id, u.first_name, u.last_name, u.username, u.email, u.password as password_hash, u.phone_number as phone, r.name as role "
-                +
-                "FROM nbp.nbp_user u " +
-                "LEFT JOIN nbp.nbp_role r ON u.role_id = r.id " +
-                "WHERE u.id = ?";
+        String sql = """
+            SELECT 
+                id,
+                first_name,
+                last_name,
+                username,
+                email,
+                password_hash,
+                phone,
+                role
+            FROM NBPT6.V_USERS_WITH_ROLES
+            WHERE id = ?
+            """;
+
         List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class), id);
         return users.stream().findFirst();
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT u.id, u.FIRST_NAME, u.LAST_NAME, u.USERNAME, u.EMAIL, u.PASSWORD as password_hash, u.PHONE_NUMBER as phone, r.name as role "
-                +
-                "FROM nbp.nbp_user u " +
-                "LEFT JOIN nbp.nbp_role r ON u.role_id = r.id " +
-                "WHERE u.username = ?";
+        String sql = """
+            SELECT 
+                id,
+                first_name,
+                last_name,
+                username,
+                email,
+                password_hash,
+                phone,
+                role
+            FROM NBPT6.V_USERS_WITH_ROLES
+            WHERE username = ?
+            """;
+
         List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class), username);
         return users.stream().findFirst();
     }
-
     @Override
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT u.id, u.FIRST_NAME, u.LAST_NAME, u.USERNAME, u.EMAIL, u.PASSWORD as password_hash, u.PHONE_NUMBER as phone, r.name as role "
-                +
-                "FROM nbp.nbp_user u " +
-                "LEFT JOIN nbp.nbp_role r ON u.role_id = r.id " +
-                "WHERE u.email = ?";
+        String sql = """
+            SELECT 
+                id,
+                first_name,
+                last_name,
+                username,
+                email,
+                password_hash,
+                phone,
+                role
+            FROM NBPT6.V_USERS_WITH_ROLES
+            WHERE email = ?
+            """;
+
         List<User> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class), email);
         return users.stream().findFirst();
     }

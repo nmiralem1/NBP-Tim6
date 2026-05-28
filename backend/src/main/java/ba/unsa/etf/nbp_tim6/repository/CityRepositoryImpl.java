@@ -19,25 +19,58 @@ public class CityRepositoryImpl implements CityRepository {
 
     @Override
     public List<City> findAll() {
-        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
-                + "FROM cities c JOIN countries co ON c.country_id = co.id";
+        String sql = """
+                SELECT 
+                    id,
+                    country_id AS countryId,
+                    name,
+                    postal_code AS postalCode,
+                    description,
+                    image_url AS imageUrl,
+                    country_name AS countryName,
+                    continent
+                FROM NBPT6.V_CITIES_WITH_COUNTRY
+                """;
+
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class));
     }
 
     @Override
     public City findById(Integer id) {
-        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, "
-                + "c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
-                + "FROM cities c JOIN countries co ON c.country_id = co.id WHERE c.id = ?";
+        String sql = """
+                SELECT 
+                    id,
+                    country_id AS countryId,
+                    name,
+                    postal_code AS postalCode,
+                    description,
+                    image_url AS imageUrl,
+                    country_name AS countryName,
+                    continent
+                FROM NBPT6.V_CITIES_WITH_COUNTRY
+                WHERE id = ?
+                """;
+
         List<City> results = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), id);
         return results.isEmpty() ? null : results.get(0);
     }
 
     @Override
     public List<City> findByCountryId(Integer countryId) {
-        String sql = "SELECT c.id, c.country_id as countryId, c.name, c.postal_code as postalCode, "
-                + "c.description, c.image_url as imageUrl, co.name as countryName, co.continent "
-                + "FROM cities c JOIN countries co ON c.country_id = co.id WHERE c.country_id = ?";
+        String sql = """
+                SELECT 
+                    id,
+                    country_id AS countryId,
+                    name,
+                    postal_code AS postalCode,
+                    description,
+                    image_url AS imageUrl,
+                    country_name AS countryName,
+                    continent
+                FROM NBPT6.V_CITIES_WITH_COUNTRY
+                WHERE country_id = ?
+                """;
+
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(City.class), countryId);
     }
 
