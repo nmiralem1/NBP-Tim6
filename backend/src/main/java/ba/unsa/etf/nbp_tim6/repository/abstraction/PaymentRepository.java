@@ -14,6 +14,8 @@ public interface PaymentRepository {
 
     List<Payment> findByUserId(Integer userId);
 
+    String exportPaymentsAsXml();
+
     int save(Payment payment);
 
     int update(Payment payment);

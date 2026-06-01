@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -141,5 +144,24 @@ public class PaymentController {
             @PathVariable Integer id) {
         service.delete(id);
         return "Payment deleted!";
+    }
+
+    @Operation(
+            summary = "Export payments as XML",
+            description = "Returns all payment records from the NBPT6.PAYMENTS table in XML format using Oracle DBMS_XMLGEN."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payments successfully exported as XML"),
+            @ApiResponse(responseCode = "403", description = "Access forbidden"),
+            @ApiResponse(responseCode = "500", description = "Internal server error while generating XML")
+    })
+    @GetMapping(value = "/export/xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> exportXml() {
+        String xml = service.exportPaymentsAsXml();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_XML)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=payments.xml")
+                .body(xml);
     }
 }

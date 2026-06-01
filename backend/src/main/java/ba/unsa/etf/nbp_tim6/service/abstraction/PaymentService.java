@@ -12,6 +12,8 @@ public interface PaymentService {
 
     List<Payment> getByUser(Integer userId);
 
+    String exportPaymentsAsXml();
+
     void create(Payment payment);
 
     void update(Payment payment);
