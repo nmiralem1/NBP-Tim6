@@ -61,6 +61,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public String exportPaymentsAsXml() {
+        return repository.exportPaymentsAsXml();
+    }
+
+    @Override
     public void create(Payment payment) {
         repository.save(payment);
 

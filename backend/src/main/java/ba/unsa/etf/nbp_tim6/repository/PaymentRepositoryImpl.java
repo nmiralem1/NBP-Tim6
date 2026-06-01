@@ -49,6 +49,31 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Payment.class), userId);
     }
 
+
+    @Override
+    public String exportPaymentsAsXml() {
+        String sql = """
+            SELECT DBMS_XMLGEN.getXML(
+                'SELECT
+                    id,
+                    trip_id,
+                    booking_id,
+                    user_id,
+                    payment_method_id,
+                    amount,
+                    payment_date,
+                    payment_status,
+                    discount,
+                    stripe_payment_intent_id
+                FROM NBPT6.PAYMENTS
+                ORDER BY id'
+            ) AS xml_export
+            FROM dual
+            """;
+
+        return jdbcTemplate.queryForObject(sql, String.class);
+    }
+
     @Override
     public int save(Payment payment) {
         String sql = "INSERT INTO NBPT6.PAYMENTS (TRIP_ID, BOOKING_ID, USER_ID, PAYMENT_METHOD_ID, AMOUNT, PAYMENT_DATE, PAYMENT_STATUS) VALUES (?, ?, ?, ?, ?, ?, ?)";
